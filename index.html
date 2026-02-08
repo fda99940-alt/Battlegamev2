@@ -70,17 +70,19 @@
       <section class="panel avatar-panel" aria-live="polite" aria-label="Avatar commentator">
         <div class="avatar-window">
           <div class="avatar-window__portrait" aria-hidden="true">🤖</div>
-          <div class="avatar-window__speech">
-            <p id="avatarComment">Ready when you are.</p>
+          <div class="avatar-window__speech-group">
+            <div class="avatar-window__speech">
+              <p id="avatarComment">Ready when you are.</p>
+            </div>
+            <label class="avatar-select" aria-label="Choose avatar persona">
+              <span>Avatar</span>
+              <select id="avatarSelect">
+                <option value="friendly">Friendly</option>
+                <option value="evil">Evil</option>
+              </select>
+            </label>
           </div>
         </div>
-        <label class="avatar-select" aria-label="Choose avatar persona">
-          <span>Avatar</span>
-          <select id="avatarSelect">
-            <option value="friendly">Friendly</option>
-            <option value="evil">Evil</option>
-          </select>
-        </label>
         <nav class="avatar-history" aria-label="Avatar conversation history">
           <ul id="avatarHistoryList"></ul>
         </nav>

@@ -61,6 +61,7 @@ let activePreset = null;
     friendly: { icon: '🤖' },
     evil: { icon: '😈' },
   };
+  const avatarPersonaOrder = Object.keys(avatarPersonas);
   let currentAvatarPersona = loadAvatarPersona();
 
   const defaultLocale = 'en';
@@ -915,6 +916,21 @@ let activePreset = null;
         setAvatarPersona(avatarSelectEl.value);
       });
     }
+    if (avatarPortraitEl && avatarSelectEl) {
+      const showSelect = () => {
+        avatarSelectEl.parentElement?.classList.add('avatar-select--active');
+        if (avatarSelectEl.showPicker) {
+          avatarSelectEl.showPicker();
+        }
+        avatarSelectEl.focus();
+      };
+      const hideSelect = () => {
+        avatarSelectEl.parentElement?.classList.remove('avatar-select--active');
+      };
+      avatarPortraitEl.addEventListener('click', showSelect);
+      avatarSelectEl.addEventListener('blur', hideSelect);
+      avatarSelectEl.addEventListener('change', hideSelect);
+    }
     setAvatarPersona(currentAvatarPersona, { persist: false });
   }
 
@@ -928,6 +944,7 @@ let activePreset = null;
     }
     if (avatarSelectEl) {
       avatarSelectEl.value = normalized;
+      avatarSelectEl.parentElement?.setAttribute('data-avatar-icon', avatarPersonas[normalized].icon);
     }
     if (persist) {
       safeSetItem(avatarPersonaKey, normalized);
