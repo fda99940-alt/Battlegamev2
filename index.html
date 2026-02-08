@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mindsweeper</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow" data-i18n-key="hero.eyebrow">Browser first</p>
+          <h1 data-i18n-key="hero.title">Mindsweeper</h1>
+          <p class="hero-greeting" data-i18n-key="hero.greeting">Welcome to the game, anointed one.</p>
+          <p class="lede" data-i18n-key="hero.lede">
+            A neon-infused Minesweeper where rotation fields, flipping tiles, and persistent replays keep each round unpredictable.
+          </p>
+        </div>
+        <div class="hero-side">
+          <div class="hero-meta">
+            <p data-i18n-key="hero.meta.keyboard">Keyboard friendly</p>
+            <p data-i18n-key="hero.meta.history">Persistent run history</p>
+            <p data-i18n-key="hero.meta.replay">Replay + special effects</p>
+          </div>
+          <div class="hero-language-switcher">
+            <span data-i18n-key="label.language">Language</span>
+            <div class="language-selector">
+              <span id="languageLabel">🇺🇸 English</span>
+              <select id="languageSelect"></select>
+            </div>
+          </div>
+          <div class="hero-join">
+            <input
+              type="text"
+              id="roomCodeInput"
+              placeholder="Paste room code"
+              data-i18n-key="placeholder.roomCode"
+              data-i18n-attr="placeholder"
+            />
+            <button type="button" class="ghost" id="joinRoom" data-i18n-key="button.joinRoom">
+              Join room
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <section class="status-panel" aria-live="polite">
+        <div class="status-message" id="statusMessage" data-i18n-key="status.start">Click any cell to begin.</div>
+        <div class="status-grid">
+          <div class="status-card">
+            <span class="label" data-i18n-key="label.minesRemaining">Mines remaining</span>
+            <strong id="remainingMines">0</strong>
+          </div>
+          <div class="status-card">
+            <span class="label" data-i18n-key="label.cellsRevealed">Cells revealed</span>
+            <strong id="revealedCount">0</strong>
+          </div>
+          <div class="status-card">
+            <span class="label" data-i18n-key="label.rotationTriggers">Rotation triggers</span>
+            <strong id="rotationCount">0</strong>
+          </div>
+          <div class="status-card">
+            <span class="label" data-i18n-key="label.flipTriggers">Flip triggers</span>
+            <strong id="flipCount">0</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="board-wrapper">
+        <div class="seed-banner">
+          <span class="seed-banner__label" data-i18n-key="label.seed">Seed</span>
+          <span class="seed-banner__code" id="seedCode">—</span>
+          <button
+            type="button"
+            class="ghost seed-banner__copy"
+            id="copySeedCode"
+            data-i18n-key="button.copySeed"
+          >
+            Copy seed
+          </button>
+        </div>
+        <div id="board" class="board" role="grid" aria-label="Mindsweeper board"></div>
+        <p class="keyboard-hint" data-i18n-key="hint.keyboard">Arrow keys to move focus, Enter/Space to reveal, F to flag.</p>
+      </section>
+
+      <section class="panel controls">
+        <div class="panel-header">
+          <h2 data-i18n-key="panel.boardTitle">Board & specials</h2>
+          <p data-i18n-key="panel.boardSubtitle">Adjust the layout before starting a new round.</p>
+        </div>
+        <form id="configForm" class="config-form">
+          <label>
+            <span data-i18n-key="label.rows">Rows</span>
+            <input type="number" id="rowsInput" min="5" max="25" value="10" />
+          </label>
+          <label>
+            <span data-i18n-key="label.cols">Columns</span>
+            <input type="number" id="colsInput" min="5" max="25" value="10" />
+          </label>
+          <label>
+            <span data-i18n-key="label.mines">Mines</span>
+            <input type="number" id="minesInput" min="5" max="99" value="18" />
+          </label>
+          <label>
+            <span data-i18n-key="label.rotationSpecials">Rotation specials</span>
+            <input type="number" id="rotationInput" min="0" max="8" value="2" />
+          </label>
+          <label>
+            <span data-i18n-key="label.flipSpecials">Flip specials</span>
+            <input type="number" id="flipInput" min="0" max="8" value="2" />
+          </label>
+          <button type="submit" class="primary" data-i18n-key="button.applyLayout">Apply layout</button>
+        </form>
+        <div class="actions">
+          <button type="button" class="ghost" id="toggleSpecials">
+            Specials: on
+          </button>
+          <button type="button" class="ghost" id="showMinesHandle">
+            Show mines
+          </button>
+        </div> 
+        <div class="theme-switcher" aria-label="Choose a theme">
+          <span data-i18n-key="label.themes">Themes</span>
+          <div class="theme-buttons">
+            <button type="button" class="ghost theme-toggle" data-theme-option="neon" aria-pressed="false">
+              <span data-i18n-key="theme.neon">Neon</span>
+            </button>
+            <button type="button" class="ghost theme-toggle" data-theme-option="dusk" aria-pressed="false">
+              <span data-i18n-key="theme.dusk">Dusk</span>
+            </button>
+            <button type="button" class="ghost theme-toggle" data-theme-option="sunrise" aria-pressed="false">
+              <span data-i18n-key="theme.sunrise">Sunrise</span>
+            </button>
+            <button type="button" class="ghost theme-toggle" data-theme-option="midnight" aria-pressed="false">
+              <span data-i18n-key="theme.midnight">Midnight</span>
+            </button>
+            <button type="button" class="ghost theme-toggle" data-theme-option="verdant" aria-pressed="false">
+              <span data-i18n-key="theme.verdant">Verdant</span>
+            </button>
+            <button type="button" class="ghost theme-toggle" data-theme-option="ember" aria-pressed="false">
+              <span data-i18n-key="theme.ember">Ember</span>
+            </button>
+          </div>
+        </div>
+        <div class="preset-switcher" aria-label="Difficulty presets">
+          <span data-i18n-key="label.difficulty">Difficulty</span>
+          <div class="preset-buttons">
+            <button type="button" class="ghost preset-toggle" data-preset="easy" aria-pressed="false">
+              <span data-i18n-key="button.preset.easy">Easy</span>
+            </button>
+            <button type="button" class="ghost preset-toggle" data-preset="medium" aria-pressed="false">
+              <span data-i18n-key="button.preset.medium">Medium</span>
+            </button>
+            <button type="button" class="ghost preset-toggle" data-preset="hard" aria-pressed="false">
+              <span data-i18n-key="button.preset.hard">Hard</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel history">
+        <div class="panel-header">
+          <div>
+            <h2 data-i18n-key="section.history.title">History</h2>
+            <p data-i18n-key="section.history.desc">Replay or trim past runs.</p>
+          </div>
+          <div class="history-actions">
+            <button type="button" class="ghost" id="toggleHistory" data-i18n-key="button.hideHistory">
+              Hide history
+            </button>
+            <button type="button" class="ghost" id="clearHistory" data-i18n-key="button.clearHistory">
+              Clear history
+            </button>
+          </div>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </section>
+    </main>
+    <script src="translations.js" defer></script>
+    <script src="script.js" defer></script>
+  </body>
+</html>
