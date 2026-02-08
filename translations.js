@@ -20,9 +20,10 @@
     { code: 'mus', name: 'Melodia', flag: '🎼' },
     { code: 'ang', name: 'Angry', flag: '😡' },
     { code: 'elv', name: 'Elvish', flag: '🧝‍♂️' },
+    { code: 'bra', name: 'Braille', flag: '⠿' },
   ];
 
-    const TRANSLATIONS = {
+  const TRANSLATIONS = {
     en: {
       hero: {
         eyebrow: 'Browser first',
@@ -1926,7 +1927,127 @@
     },
   };
 
-    const EXTRA_THEME_NAMES = {
+  const BRAILLE_LETTERS = {
+    a: '\u2801',
+    b: '\u2803',
+    c: '\u2809',
+    d: '\u2819',
+    e: '\u2811',
+    f: '\u280b',
+    g: '\u281b',
+    h: '\u2813',
+    i: '\u280a',
+    j: '\u281a',
+    k: '\u2805',
+    l: '\u2807',
+    m: '\u280d',
+    n: '\u281d',
+    o: '\u2815',
+    p: '\u280f',
+    q: '\u281f',
+    r: '\u2817',
+    s: '\u280e',
+    t: '\u281e',
+    u: '\u2825',
+    v: '\u2827',
+    w: '\u283a',
+    x: '\u282d',
+    y: '\u283d',
+    z: '\u2835',
+  };
+
+  const BRAILLE_DIGITS = {
+    '1': '\u2801',
+    '2': '\u2803',
+    '3': '\u2809',
+    '4': '\u2819',
+    '5': '\u2811',
+    '6': '\u280b',
+    '7': '\u281b',
+    '8': '\u2813',
+    '9': '\u280a',
+    '0': '\u281a',
+  };
+
+  const BRAILLE_PUNCTUATION = {
+    ',': '\u2802',
+    '.': '\u2832',
+    '!': '\u2816',
+    '?': '\u2826',
+    ':': '\u2812',
+    ';': '\u2806',
+    '-': '\u2824',
+    '—': '\u2824',
+    "'": '\u2804',
+    '"': '\u2836',
+    '/': '\u282c',
+    '&': '\u2834',
+  };
+
+  const BRAILLE_NUMBER_PREFIX = '\u283c';
+  const BRAILLE_SPACE = '\u2800';
+  const BRAILLE_PLACEHOLDER_PATTERN = /\{[^}]+\}/g;
+
+  function brailleizeSegment(segment) {
+    let output = '';
+    let sawDigit = false;
+    for (const char of segment) {
+      if (char === ' ') {
+        output += BRAILLE_SPACE;
+        sawDigit = false;
+        continue;
+      }
+      const lower = char.toLowerCase();
+      if (BRAILLE_LETTERS[lower]) {
+        output += BRAILLE_LETTERS[lower];
+        sawDigit = false;
+      } else if (BRAILLE_DIGITS[char]) {
+        if (!sawDigit) {
+          output += BRAILLE_NUMBER_PREFIX;
+        }
+        output += BRAILLE_DIGITS[char];
+        sawDigit = true;
+      } else if (BRAILLE_PUNCTUATION[char]) {
+        output += BRAILLE_PUNCTUATION[char];
+        sawDigit = false;
+      } else {
+        output += char;
+        sawDigit = false;
+      }
+    }
+    return output;
+  }
+
+  function brailleizeString(value) {
+    let result = '';
+    let lastIndex = 0;
+    BRAILLE_PLACEHOLDER_PATTERN.lastIndex = 0;
+    let match;
+    while ((match = BRAILLE_PLACEHOLDER_PATTERN.exec(value)) !== null) {
+      result += brailleizeSegment(value.slice(lastIndex, match.index));
+      result += match[0];
+      lastIndex = match.index + match[0].length;
+    }
+    result += brailleizeSegment(value.slice(lastIndex));
+    return result;
+  }
+
+  function convertToBraille(value) {
+    if (typeof value === 'string') {
+      return brailleizeString(value);
+    }
+    if (Array.isArray(value)) {
+      return value.map(convertToBraille);
+    }
+    if (value && typeof value === 'object') {
+      return Object.fromEntries(Object.entries(value).map(([key, entryValue]) => [key, convertToBraille(entryValue)]));
+    }
+    return value;
+  }
+
+  TRANSLATIONS.bra = convertToBraille(TRANSLATIONS.en);
+
+  const EXTRA_THEME_NAMES = {
     fr: ['Néon', 'Crépuscule', 'Aurore', 'Minuit', 'Verdoyant', 'Braise'],
     pt: ['Neon', 'Crepúsculo', 'Aurora', 'Meia-noite', 'Verdejante', 'Brasa'],
     de: ['Neon', 'Dämmerung', 'Sonnenaufgang', 'Mitternacht', 'Grün', 'Glut'],
