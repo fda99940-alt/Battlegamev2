@@ -448,6 +448,113 @@
             "Ohhh, that tile at {pos} is screaming? That's so embarrassing for you... I can't stop laughing! *giggles*",
             "You're such a tease! Getting all those tiles to scream like that... it's so hilarious!"
           ]
+        },
+        "megumin": {
+          "ready": [
+            "Ohhh, I can’t wait to see you slip up! It’s so exciting when you get all flustered~ Doki doki~",
+            "A new {size}? Mmm, I hope it’s as big as I imagine… maybe it’ll be my lucky charm today~ *giggles* **...and then BAM! Explosion!**",
+            "Oh, I can’t wait to see how those mines react to you… I bet they’ll be extra naughty around you~ **...ohhh, the explosion is coming! EX-PLO~SION~!**",
+            "Ohhh, I’m so impatient waiting for you to make your move… I bet you’ll be all flustered when it happens~ **Wahahahahaha! My name is Megumin, the number one mage of Axel! Come, you shall all become my experience points today!**",
+            "**You’re such a naughty one, aren’t you? I love seeing you play with danger like that~ *giggles* ...ohhh, here we go! EX-PLO~SION~!**",
+            "**Bakuen no Inmā!** I can feel the excitement building up… and I’m here, ready to watch every second of it!",
+            "Hehe, I know you’ll slip up eventually… and I can’t wait to see how cute you look when you do~ **...ohhh, the explosion is inevitable! Explosion!**",
+            "Mmm, I’m getting all tingly just thinking about what you’re going to do next… don’t disappoint me~ *blushes* **Darker than black, darker than darkness, combine with my intense crimson. Time to wake up, descend to these borders and appear as an intangible distortion. Dance, dance, dance! May a destructive force flood my torrent of power...**",
+            "**You’re my favorite player, you know? I always save the best teasing for you~ *winks* ...and now it’s time for the grand finale! EX-PLO~SION~!**",
+            "Ohhh, you’re definitely my type! I can tell just by how you play… it’s so exciting~ **...I’m getting too excited! Bakuen no Inmā! Explosion!**",
+            "I’m watching you closely, waiting for that perfect moment when you’ll slip up… and I can’t wait to see it!",
+            "**You’re trapped now, aren’t you? Just like I imagined… I love seeing you squirm~ *giggles* ...ohhh, the explosion is coming! EX-PLO~SION~!**",
+            "I wonder how far you’ll go before you realize you’ve been caught in my little game… ohhh, the suspense! **Wahahahahaha! My name is Megumin, the number one mage of Axel! Come, you shall all become my experience points today!**"
+          ],
+          "zero": [
+            "**No mines? That’s too easy, isn’t it? I’m starting to suspect you’re hiding something… *winks* ...ohhh, I can feel it coming! EX-PLO~SION~!**",
+            "Oh, don’t let that calm {pos} fool you… it’s probably just playing with you, teasing you gently~ **...but I won’t let you get away with it! Bakuen no Inmā! Explosion!**",
+            "Nothing yet… but I can feel something naughty is about to happen! Doki doki~ **Darker than black, darker than darkness, combine with my intense crimson. Time to wake up, descend to these borders and appear as an intangible distortion...**",
+            "**I’d clap if I wasn’t sensing a trap soon… but I’m too excited watching you squirm! ...and now for the big one! EX-PLO~SION~!**",
+            "This quiet is making my heart race! Something big and exciting is about to happen~ **...I can’t take it anymore! Explosion!**",
+            "Pretend to relax… but I know you’ll sprint away when the time comes, all flustered and cute! **...ohhh, here we go! Bakuen no Inmā! EX-PLO~SION~!**",
+            "**Ohhh, you’re so calm… it’s almost suspicious! I bet you’re hiding something naughty~ *winks* ...and now for chaos! Explosion!**",
+            "**You’re too confident for your own good… I love seeing you squirm when things get real! ...ohhh, the explosion is inevitable! EX-PLO~SION~!**"
+          ],
+          "neighbor": [
+            "Ohhh, {count} neighbors all around you? I bet they’re all staring at you… I wish they’d look at me too~ *pouts* **...ohhh, the explosion is coming for them! Wahahahahaha! My name is Megumin, the number one mage of Axel!**",
+            "**Mmm, those {count} neighbors must be whispering sweet nothings about you… I bet they’re all dreaming of you~ ...and now it’s time for chaos! EX-PLO~SION~!**",
+            "They’re whispering from {pos}! Are you listening to all the secrets? I want to hear too… and maybe share some of my own~ *winks* **...ohhh, the explosion is building! Explosion!**",
+            "**There are so many whispers at {pos}… it’s like a gossip festival, and you’re the star! I’m jealous~ ...and now for the grand finale! Bakuen no Inmā! EX-PLO~SION~!**",
+            "Those {count} digits are like glittery rumors… they’re so shiny and exciting, just like you! **...ohhh, the explosion is coming! Explosion!**",
+            "**No matter what you do, keep them guessing! I love a good mystery, especially when it involves you~ ...and now for the big one! EX-PLO~SION~!**",
+            "Mmm, {count} neighbors all around you? I bet they’re all jealous… just like me! *pouts* **...ohhh, the explosion is inevitable! Explosion!**",
+            "**Those neighbors are definitely checking you out… I wish they’d notice me too~ *giggles* ...and now for chaos! Bakuen no Inmā! EX-PLO~SION~!**"
+          ],
+          "flagOn": [
+            "Ohhh, you placed a flag at {pos}? That’s such a bold move! I can’t stop watching you~ *blushes* **...ohhh, the explosion is coming! EX-PLO~SION~!**",
+            "**A cute little flag… but will it really save you from all the naughty mines around? I hope so! ...and now for the big one! Wahahahahaha! My name is Megumin, the number one mage of Axel!**",
+            "The flag looks so cute… but what if it’s wrong? Oh no, don’t let them catch you! *giggles* **...ohhh, the explosion is building! Explosion!**",
+            "**Keep that flag there! I’m ready to watch the show and cheer for you~ ...and now for chaos! Bakuen no Inmā! EX-PLO~SION~!**",
+            "It might be a masterpiece or it might flop… but either way, it’s so much fun watching you try! **...ohhh, the explosion is coming! Explosion!**",
+            "**It’s so sweet that you’re trying your best! I hope it’s enough to make me swoon~ *fans self* ...and now for the grand finale! EX-PLO~SION~!**",
+            "Ohhh, placing a flag is such a bold move! I love how daring you are… it makes my heart race~ *blushes* **...ohhh, the explosion is inevitable! Explosion!**",
+            "**That flag looks so cute on {pos}… but will it protect you from all the naughty surprises? I hope so! ...and now for chaos! Bakuen no Inmā! EX-PLO~SION~!**"
+          ],
+          "flagOff": [
+            "**Ohhh, you took that flag off? That’s so naughty of you… I love it when you play with danger~ ...and now for the big explosion! Wahahahahaha! My name is Megumin, the number one mage of Axel!**",
+            "You removed the flag? It’s risky… but it’s so thrilling! I’m excited watching you take chances! **...ohhh, the explosion is coming! EX-PLO~SION~!**",
+            "**I knew you were trouble from the moment you walked in… but I like it! You’re so daring~ *giggles* ...and now for chaos! Bakuen no Inmā! Explosion!**",
+            "**You’re so casual about chaos… that’s your best trait! I love how carefree you are~ ...ohhh, the explosion is building! EX-PLO~SION~!**",
+            "The flag is gone now… and everyone can gossip freely! I want to join in too, maybe share some secrets~ **...and now for the grand finale! Explosion!**",
+            "**You’re trolling the mines… and they’re so jealous of you! It’s adorable how you tease them~ ...ohhh, the explosion is coming! Bakuen no Inmā! EX-PLO~SION~!**",
+            "Ohhh, taking off a flag is so rebellious! I love how you play with danger… it’s so exciting~ **...and now for chaos! Wahahahahaha! My name is Megumin, the number one mage of Axel!**",
+            "**You’re such a troublemaker, aren’t you? Removing flags like that… I can’t help but cheer for you! ...ohhh, the explosion is inevitable! Explosion!**"
+          ],
+          "specialRotation": [
+            "Ohhh, a rotation at {pos}? I bet you look so cute spinning around… I’m getting dizzy just thinking about it~ **...ohhh, the explosion is coming! EX-PLO~SION~!**",
+            "**Watch that {direction} twist… it’s so dramatic and exciting! Just like when you’re all flustered~ *blushes* ...and now for chaos! Bakuen no Inmā! Explosion!**",
+            "Just watching the board makes me feel light-headed… it’s so exciting, especially with you around! **Darker than black, darker than darkness, combine with my intense crimson. Time to wake up, descend to these borders and appear as an intangible distortion...**",
+            "**Let the chaos twirl! You’re the star in the spotlight… I’m cheering for you and dreaming of your next move! ...and now for the grand finale! EX-PLO~SION~!**",
+            "Every spin is a chance to be dramatic and exciting! I love watching you shine~ **...ohhh, the explosion is coming! Explosion!**",
+            "**I love watching you pose during every flip… you’re so stylish, it makes my heart race~ ...and now for chaos! Bakuen no Inmā! EX-PLO~SION~!**",
+            "Ohhh, spinning at {pos} looks so sexy! I bet you’re all flustered and cute when you do that~ *giggles* **...ohhh, the explosion is inevitable! Explosion!**",
+            "**That rotation is so dramatic… just like when you’re all excited and flustered! ...and now for the big one! Wahahahahaha! My name is Megumin, the number one mage of Axel!**"
+          ],
+          "specialFlip": [
+            "Ohhh, flipping that {axis} is such a magical move… I bet you look so sexy doing it~ **...ohhh, the explosion is coming! EX-PLO~SION~!**",
+            "**That {pos} just flipped everything… it’s so surprising! I’m swooning watching your moves! ...and now for chaos! Bakuen no Inmā! Explosion!**",
+            "The mirror move looks so good on you… you’re so cool, and I’m here for every second of it! **...ohhh, the explosion is building! EX-PLO~SION~!**",
+            "**Flipping the board like it’s a stage drama… it’s so exciting! I want to be part of it~ ...and now for the grand finale! Wahahahahaha! My name is Megumin, the number one mage of Axel!**",
+            "That {axis} shift shows you’re in control… it’s so impressive, just like when you take charge! **...ohhh, the explosion is coming! Explosion!**",
+            "**You handle twisted perspectives so well… I’m amazed! ...and now for chaos! Bakuen no Inmā! EX-PLO~SION~!**",
+            "Ohhh, flipping that {axis} looks so confident! I love how you take charge… it’s so hot~ *blushes* **...ohhh, the explosion is inevitable! Explosion!**",
+            "**That flip was so smooth… just like when you’re all charming and playful! ...and now for the big one! EX-PLO~SION~!**"
+          ],
+          "win": [
+            "Ohhh, you won? That’s so cute when you’re all smug like that… but don’t get too confident, okay? *giggles* **...ohhh, the explosion is coming for you! Wahahahahaha! My name is Megumin, the number one mage of Axel!**",
+            "**Not bad at all! You’re doing such a good job… I can’t wait to cheer for you more and see you shine! ...and now for chaos! Bakuen no Inmā! EX-PLO~SION~!**",
+            "You won? Well, I’m a little impressed… but don’t let it go to your head, okay? I still want to tease you~ *winks* **...ohhh, the explosion is building! Explosion!**",
+            "**You got lucky this time… but I’ll admit you played really well! Keep it up, and maybe I’ll reward you~ ...and now for the grand finale! EX-PLO~SION~!**",
+            "Don’t boss me around with that win grin! It’s cute, but I’m still the boss… for now~ *giggles* **...ohhh, the explosion is coming! Explosion!**",
+            "**Next time, make it even more dramatic and exciting! I can’t wait to see what you’ll do next! ...and now for chaos! Bakuen no Inmā! EX-PLO~SION~!**",
+            "Ohhh, you won again? That’s so cute when you’re all smug like that… but don’t get too confident, okay? *giggles* **...ohhh, the explosion is inevitable! Explosion!**",
+            "**You’re such a winner! I love seeing you shine… but next time, make it even more exciting for me! ...and now for the big one! Wahahahahaha! My name is Megumin, the number one mage of Axel!**"
+          ],
+          "loss": [
+            "A mine got you? Oh no… but it makes things more exciting, especially watching you squirm! **...ohhh, the explosion is coming! EX-PLO~SION~!**",
+            "**You burned again? It’s so cute how you try your best… I bet you’re trying hard for me~ *giggles* ...and now for chaos! Bakuen no Inmā! Explosion!**",
+            "You fell down? I clap for your effort! Keep trying, and maybe next time you’ll get it right… or wrong in a fun way! **...ohhh, the explosion is building! EX-PLO~SION~!**",
+            "**Every stumble is like a red carpet moment… it’s so dramatic, just like when you’re all flustered! ...and now for the grand finale! Wahahahahaha! My name is Megumin, the number one mage of Axel!**",
+            "That was such a dramatic exit… bravo! I’m impressed by how you handle yourself! **...ohhh, the explosion is coming! Explosion!**",
+            "**I’ll keep teasing you… because I want to see you shine even more and get all excited! ...and now for chaos! Bakuen no Inmā! EX-PLO~SION~!**",
+            "Ohhh, a mine got you? That’s so embarrassing… but I love how cute you look when you’re all flustered! *giggles* **...ohhh, the explosion is inevitable! Explosion!**",
+            "**You burned again? It’s so adorable how you try your best… keep it up, and maybe next time you’ll get it right! ...and now for the big one! EX-PLO~SION~!**"
+          ],
+          "specialHit": [
+            "Ohhh, that special tile at {pos} is screaming? That’s so embarrassing for you… I can’t stop laughing~ *giggles* **...ohhh, the explosion is coming! Wahahahahaha! My name is Megumin, the number one mage of Axel!**",
+            "**OMG, the tile at {pos} woke up? It’s so classic and cute… just like when you’re all flustered! ...and now for chaos! Bakuen no Inmā! EX-PLO~SION~!**",
+            "That tantrum made me cheer low-key… it’s so exciting watching you charm those tiles! **...ohhh, the explosion is building! Explosion!**",
+            "**Special tiles are like gossip queens… and you’re their favorite target! I’m so jealous~ ...and now for the grand finale! EX-PLO~SION~!**",
+            "It’s so hilarious watching you charm those tiles… you’re so talented, just like when you tease me! **...ohhh, the explosion is coming! Explosion!**",
+            "**I’d say ‘good luck,’ but I know you’ll make it even more exciting with your charm! ...and now for chaos! Bakuen no Inmā! EX-PLO~SION~!**",
+            "Ohhh, that tile at {pos} is screaming? That’s so embarrassing for you… I can’t stop laughing! *giggles* **...ohhh, the explosion is inevitable! Explosion!**",
+            "**You’re such a tease! Getting all those tiles to scream like that… it’s so hilarious! ...and now for the big one! Wahahahahaha! My name is Megumin, the number one mage of Axel!**"
+          ]
         }
       },
     },

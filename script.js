@@ -62,6 +62,7 @@ let activePreset = null;
     evil: { icon: '😈' },
     cute: { icon: '🐰' },
     teasing: { icon: '😜' },
+    megumin: { icon: '🧙‍♀️' },
   };
   const avatarPersonaOrder = Object.keys(avatarPersonas);
   let currentAvatarPersona = loadAvatarPersona();
