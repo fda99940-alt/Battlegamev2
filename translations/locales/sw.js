@@ -96,4 +96,19 @@
         keyboard: 'Mishale kuchukua umakini, Enter/Eneo kufichua, F kumaliza.',
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['sw'] = {
+  "seedLabel": "Mbegu",
+  "copySeed": "Nakili mbegu",
+  "joinRoom": "Pakia mbegu",
+  "copyRoom": "Nakili mbegu",
+  "placeholder": "Bandika mbegu",
+  "historyCode": "Mbegu {code}",
+  "historyPending": "Mbegu inasubiri",
+  "enterRoom": "Weka mbegu kwanza.",
+  "roomNotFound": "Mbegu {code} haijapatikana.",
+  "joiningRoom": "Inapakia mbegu {code}...",
+  "copySuccess": "Mbegu {code} imenakiliwa.",
+  "copyFallback": "Mbegu {code}"
+};
 })();

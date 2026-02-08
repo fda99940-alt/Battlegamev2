@@ -96,4 +96,19 @@
         keyboard: 'Arrow keys move focus, Enter/Space reveal, F to flag, hmm',
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['yoda'] = {
+  "seedLabel": "Seed",
+  "copySeed": "Copy seed, you will",
+  "joinRoom": "Load seed, you must",
+  "copyRoom": "Copy seed",
+  "placeholder": "Paste seed, you must",
+  "historyCode": "Seed {code}, ready it is",
+  "historyPending": "Seed pending, patience",
+  "enterRoom": "Enter a seed first, do not rush",
+  "roomNotFound": "Seed {code} not found, lost it is",
+  "joiningRoom": "Loading seed {code}..., steady be",
+  "copySuccess": "Seed {code} copied, share you will",
+  "copyFallback": "Seed {code}"
+};
 })();

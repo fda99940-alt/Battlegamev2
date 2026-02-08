@@ -96,4 +96,19 @@
         keyboard: 'Setas para mover, Enter/Espaço para revelar, F para sinalizar.',
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['pt'] = {
+  "seedLabel": "Semente",
+  "copySeed": "Copiar semente",
+  "joinRoom": "Carregar semente",
+  "copyRoom": "Copiar semente",
+  "placeholder": "Cole a semente",
+  "historyCode": "Semente {code}",
+  "historyPending": "Semente pendente",
+  "enterRoom": "Insira uma semente primeiro.",
+  "roomNotFound": "Semente {code} não encontrada.",
+  "joiningRoom": "Carregando semente {code}…",
+  "copySuccess": "Semente {code} copiada.",
+  "copyFallback": "Semente {code}"
+};
 })();

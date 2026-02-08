@@ -96,4 +96,19 @@
         keyboard: 'Lamban linnar, Enter/Space cennan, F halya.',
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['elv'] = {
+  "seedLabel": "Seda",
+  "copySeed": "Seda kopi",
+  "joinRoom": "Seda telya",
+  "copyRoom": "Seda kopi",
+  "placeholder": "Seda tampë",
+  "historyCode": "Seda {code}",
+  "historyPending": "Seda úvë",
+  "enterRoom": "Anta seda yéni.",
+  "roomNotFound": "Seda {code} úvë hirna.",
+  "joiningRoom": "Seda {code} telya…",
+  "copySuccess": "Seda {code} kopië.",
+  "copyFallback": "Seda {code}"
+};
 })();

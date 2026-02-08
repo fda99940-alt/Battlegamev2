@@ -96,4 +96,19 @@
         keyboard: 'So\'wI\' QIv, Enter/Space choq, F flag.',
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['tlh'] = {
+  "seedLabel": "tI'",
+  "copySeed": "tI' yIqIj",
+  "joinRoom": "tI' yIloda",
+  "copyRoom": "tI' yIqIj",
+  "placeholder": "tI' tIchen",
+  "historyCode": "tI' {code}",
+  "historyPending": "tI' loReady",
+  "enterRoom": "tI' yI'ogh zuerst.",
+  "roomNotFound": "tI' {code} tu'be'lu'.",
+  "joiningRoom": "tI' {code} loDlu'...",
+  "copySuccess": "tI' {code} qIj.",
+  "copyFallback": "tI' {code}"
+};
 })();

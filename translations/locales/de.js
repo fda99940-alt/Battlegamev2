@@ -96,4 +96,19 @@
         keyboard: 'Pfeile bewegen, Enter/Space öffnen, F markieren.',
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['de'] = {
+  "seedLabel": "Seed",
+  "copySeed": "Seed kopieren",
+  "joinRoom": "Seed laden",
+  "copyRoom": "Seed kopieren",
+  "placeholder": "Seed einfügen",
+  "historyCode": "Seed {code}",
+  "historyPending": "Seed ausstehend",
+  "enterRoom": "Zuerst einen Seed eingeben.",
+  "roomNotFound": "Seed {code} nicht gefunden.",
+  "joiningRoom": "Seed {code} wird geladen…",
+  "copySuccess": "Seed {code} kopiert.",
+  "copyFallback": "Seed {code}"
+};
 })();

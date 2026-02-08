@@ -96,4 +96,19 @@
         keyboard: 'Flèches pour bouger, Entrée/Espace pour révéler, F pour marquer.',
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['fr'] = {
+  "seedLabel": "Graine",
+  "copySeed": "Copier la graine",
+  "joinRoom": "Charger la graine",
+  "copyRoom": "Copier la graine",
+  "placeholder": "Collez la graine",
+  "historyCode": "Graine {code}",
+  "historyPending": "Graine en attente",
+  "enterRoom": "Saisissez d’abord une graine.",
+  "roomNotFound": "Graine {code} introuvable.",
+  "joiningRoom": "Chargement de la graine {code}…",
+  "copySuccess": "Graine {code} copiée dans le presse-papiers.",
+  "copyFallback": "Graine {code}"
+};
 })();

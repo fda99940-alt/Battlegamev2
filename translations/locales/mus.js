@@ -96,4 +96,19 @@
         keyboard: '♩♩♩',
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['mus'] = {
+  "seedLabel": "♪ Seed",
+  "copySeed": "♫ Copy seed",
+  "joinRoom": "♪ Load seed",
+  "copyRoom": "♫ Copy seed",
+  "placeholder": "♫♪",
+  "historyCode": "Seed {code}",
+  "historyPending": "Seed pending",
+  "enterRoom": "♫ Enter a seed.",
+  "roomNotFound": "Seed {code}♬",
+  "joiningRoom": "♩ Loading {code}…",
+  "copySuccess": "♬{code}",
+  "copyFallback": "{code}"
+};
 })();

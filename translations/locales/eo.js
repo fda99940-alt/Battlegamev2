@@ -96,4 +96,19 @@
         keyboard: 'Sagonoj movas, En/Spaco malkaŝas, F flagas.',
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['eo'] = {
+  "seedLabel": "Semo",
+  "copySeed": "Kopii semon",
+  "joinRoom": "Ŝargi semon",
+  "copyRoom": "Kopii semon",
+  "placeholder": "Algluu semon",
+  "historyCode": "Semo {code}",
+  "historyPending": "Semo atendata",
+  "enterRoom": "Unue enigu semon.",
+  "roomNotFound": "Semo {code} ne trovita.",
+  "joiningRoom": "Ŝargante semon {code}…",
+  "copySuccess": "Semo {code} kopiita.",
+  "copyFallback": "Semo {code}"
+};
 })();

@@ -96,4 +96,19 @@
         keyboard: 'फोकस के लिए एरो, खोलने के लिए Enter/Space, F से ध्वज लगाएँ।',
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['hi'] = {
+  "seedLabel": "सीड",
+  "copySeed": "सीड कॉपी करें",
+  "joinRoom": "सीड लोड करें",
+  "copyRoom": "सीड कॉपी करें",
+  "placeholder": "सीड चिपकाएँ",
+  "historyCode": "सीड {code}",
+  "historyPending": "सीड लंबित",
+  "enterRoom": "पहले सीड दर्ज करें।",
+  "roomNotFound": "सीड {code} नहीं मिला।",
+  "joiningRoom": "सीड {code} लोड हो रहा है…",
+  "copySuccess": "सीड {code} क्लिपबोर्ड पर कॉपी हुआ।",
+  "copyFallback": "सीड {code}"
+};
 })();

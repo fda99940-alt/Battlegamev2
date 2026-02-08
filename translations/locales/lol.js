@@ -96,4 +96,19 @@
         keyboard: 'Arrows move, Enter/Space reveal, F flag.',
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['lol'] = {
+  "seedLabel": "Seedz",
+  "copySeed": "Copy seedz",
+  "joinRoom": "Load seedz",
+  "copyRoom": "Copy seedz",
+  "placeholder": "Paste seedz",
+  "historyCode": "Seed {code}",
+  "historyPending": "Seed pending",
+  "enterRoom": "Paste a seed furst.",
+  "roomNotFound": "Seed {code} not found, kthx.",
+  "joiningRoom": "Loading seed {code}…",
+  "copySuccess": "Seed {code} copied :3",
+  "copyFallback": "Seed {code}"
+};
 })();

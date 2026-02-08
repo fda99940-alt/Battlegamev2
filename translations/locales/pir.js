@@ -96,4 +96,19 @@
         keyboard: 'Arrow keys sail, Enter/Space reveal, F flag.',
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['pir'] = {
+  "seedLabel": "Seed",
+  "copySeed": "Copy seed",
+  "joinRoom": "Hoist seed",
+  "copyRoom": "Copy seed",
+  "placeholder": "Paste th’ seed",
+  "historyCode": "Seed {code}",
+  "historyPending": "Seed be waitin’",
+  "enterRoom": "Enter a seed first, matey.",
+  "roomNotFound": "Seed {code} ain’t in the log.",
+  "joiningRoom": "Hoistin’ seed {code}…",
+  "copySuccess": "Seed {code} copied to yer clipboard.",
+  "copyFallback": "Seed {code}"
+};
 })();

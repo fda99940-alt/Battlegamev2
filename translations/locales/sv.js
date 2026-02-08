@@ -96,4 +96,19 @@
         keyboard: 'Pilar flyttar, Enter/Space avslöjar, F flaggar.',
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['sv'] = {
+  "seedLabel": "Seed",
+  "copySeed": "Kopiera seed",
+  "joinRoom": "Ladda seed",
+  "copyRoom": "Kopiera seed",
+  "placeholder": "Klistra in seed",
+  "historyCode": "Seed {code}",
+  "historyPending": "Seed väntar",
+  "enterRoom": "Ange ett seed först.",
+  "roomNotFound": "Seed {code} hittades inte.",
+  "joiningRoom": "Laddar seed {code}…",
+  "copySuccess": "Seed {code} kopierat.",
+  "copyFallback": "Seed {code}"
+};
 })();

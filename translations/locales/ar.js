@@ -96,4 +96,19 @@
         keyboard: 'أسهم الحركة، Enter/Space للتأكيد، F لعلم.',
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['ar'] = {
+  "seedLabel": "بذرة",
+  "copySeed": "نسخ البذرة",
+  "joinRoom": "تحميل البذرة",
+  "copyRoom": "نسخ البذرة",
+  "placeholder": "الصق البذرة",
+  "historyCode": "البذرة {code}",
+  "historyPending": "بذرة قيد الانتظار",
+  "enterRoom": "أدخل البذرة أولاً.",
+  "roomNotFound": "البذرة {code} غير موجودة.",
+  "joiningRoom": "يتم تحميل البذرة {code}…",
+  "copySuccess": "تم نسخ البذرة {code}.",
+  "copyFallback": "البذرة {code}"
+};
 })();

@@ -96,4 +96,19 @@
         keyboard: '矢印キーで移動、Enter/Spaceで開く、Fで旗を立てる。',
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['ja'] = {
+  "seedLabel": "シード",
+  "copySeed": "シードをコピー",
+  "joinRoom": "シードを読み込む",
+  "copyRoom": "シードをコピー",
+  "placeholder": "シードを貼り付け",
+  "historyCode": "シード {code}",
+  "historyPending": "シード待ち",
+  "enterRoom": "まずシードを入力してください。",
+  "roomNotFound": "シード {code} が見つかりません。",
+  "joiningRoom": "シード {code} を読み込み中…",
+  "copySuccess": "シード {code} をコピーしました。",
+  "copyFallback": "シード {code}"
+};
 })();

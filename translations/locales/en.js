@@ -188,4 +188,19 @@
         },
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['en'] = {
+  "seedLabel": "Seed",
+  "copySeed": "Copy seed",
+  "joinRoom": "Load seed",
+  "copyRoom": "Copy seed",
+  "placeholder": "Paste seed",
+  "historyCode": "Seed {code}",
+  "historyPending": "Seed pending",
+  "enterRoom": "Enter a seed first.",
+  "roomNotFound": "Seed {code} not found.",
+  "joiningRoom": "Loading seed {code}...",
+  "copySuccess": "Seed {code} copied to clipboard.",
+  "copyFallback": "Seed {code}"
+};
 })();

@@ -96,4 +96,19 @@
         keyboard: '方向键移动焦点，回车/空格翻开，F 标记。',
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['zh'] = {
+  "seedLabel": "种子",
+  "copySeed": "复制种子",
+  "joinRoom": "加载种子",
+  "copyRoom": "复制种子",
+  "placeholder": "粘贴种子",
+  "historyCode": "种子 {code}",
+  "historyPending": "种子待定",
+  "enterRoom": "请先输入种子。",
+  "roomNotFound": "未找到种子 {code}。",
+  "joiningRoom": "正在加载种子 {code}…",
+  "copySuccess": "种子 {code} 已复制到剪贴板。",
+  "copyFallback": "种子 {code}"
+};
 })();

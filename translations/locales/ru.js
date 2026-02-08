@@ -96,4 +96,19 @@
         keyboard: 'Стрелки перемещают, Enter/Space открывает, F флаг.',
       },
     };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['ru'] = {
+  "seedLabel": "Сид",
+  "copySeed": "Скопировать сид",
+  "joinRoom": "Загрузить сид",
+  "copyRoom": "Скопировать сид",
+  "placeholder": "Вставьте сид",
+  "historyCode": "Сид {code}",
+  "historyPending": "Сид в ожидании",
+  "enterRoom": "Сначала введите сид.",
+  "roomNotFound": "Сид {code} не найден.",
+  "joiningRoom": "Загружаем сид {code}…",
+  "copySuccess": "Сид {code} скопирован.",
+  "copyFallback": "Сид {code}"
+};
 })();
