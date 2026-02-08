@@ -67,6 +67,23 @@
         </div>
       </section>
 
+      <section class="panel avatar-panel" aria-live="polite" aria-label="Avatar commentator">
+        <div class="avatar-window">
+          <div class="avatar-window__portrait" aria-hidden="true">🤖</div>
+          <div class="avatar-window__speech">
+            <p id="avatarComment">Ready when you are.</p>
+          </div>
+        </div>
+        <div class="avatar-switcher" aria-label="Choose avatar persona">
+          <button type="button" class="ghost avatar-toggle" data-avatar-option="friendly" aria-pressed="true">
+            Friendly
+          </button>
+          <button type="button" class="ghost avatar-toggle" data-avatar-option="evil" aria-pressed="false">
+            Evil
+          </button>
+        </div>
+      </section>
+
       <section class="board-wrapper">
         <div class="seed-banner">
           <span class="seed-banner__label" data-i18n-key="label.seed">Seed</span>

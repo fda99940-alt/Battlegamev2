@@ -51,6 +51,85 @@ let activePreset = null;
   const languageLabel = document.getElementById('languageLabel');
   const localeKey = 'mindsweeperLocale';
   const languages = LANGUAGE_OPTIONS;
+  const avatarCommentEl = document.getElementById('avatarComment');
+  const avatarWindowEl = document.querySelector('.avatar-window');
+  const avatarPortraitEl = document.querySelector('.avatar-window__portrait');
+  const avatarSwitcherButtons = document.querySelectorAll('[data-avatar-option]');
+  const avatarPersonaKey = 'mindsweeperAvatarPersona';
+  const avatarPersonas = {
+    friendly: {
+      icon: '🤖',
+      lines: {
+        ready: [
+          'Fresh {size} board loaded. Let’s sweep.',
+          'Grid {size} is primed. Eyes up.',
+          'New {size} layout ready. Stay sharp.',
+        ],
+        zero: [
+          'Clear skies at {pos}. No mines nearby.',
+          'Nothing but air around {pos}. Keep going.',
+        ],
+        neighbor: [
+          '{count} mines glancing near {pos}. Careful.',
+          'Watch that {pos}—{count} neighbors nearby.',
+        ],
+        flagOn: ['Flag planted at {pos}. That’ll slow them down.'],
+        flagOff: ['Flag lifted at {pos}. Retry that scan.'],
+        specialRotation: [
+          'Rotation blast at {pos} ({direction}). Watch the spin.',
+          'Spin trigger at {pos}, turning {direction}.',
+        ],
+        specialFlip: [
+          'Flip field at {pos} flips {axis}. Stay oriented.',
+          'Mirrored view triggered {axis} from {pos}.',
+        ],
+        win: [
+          'Victory! The {size} grid bows to you.',
+          'You cleared {size}. Celebrate the sweep!',
+        ],
+        loss: [
+          'Ouch. Mine at {pos} got the better of us.',
+          'Loss logged at {pos}. Mines were waiting.',
+        ],
+      },
+    },
+    evil: {
+      icon: '😈',
+      lines: {
+        ready: [
+          'Finally, another {size} grid to corrupt.',
+          'The {size} board is feeding my impatience.',
+        ],
+        zero: [
+          'Empty space at {pos}? Fine, I’ll wait.',
+          'Still nothing around {pos}. Boring.',
+        ],
+        neighbor: [
+          '{count} mines near {pos}? I’d say trust your instincts—if you have any.',
+          'Those {count} neighbors near {pos} are just teasing you.',
+        ],
+        flagOn: ['You flag {pos}? Cute. I’ll enjoy the surprise.'],
+        flagOff: ['Flag removed at {pos}. Let them dance there.'],
+        specialRotation: [
+          'Rotation trap at {pos} slams {direction}. Good luck, mortal.',
+          'Spin triggered {direction} at {pos}. Keep up if you can.',
+        ],
+        specialFlip: [
+          'Flip {axis} from {pos}. Panic now.',
+          'Mirrored chaos {axis} from {pos}. I told you.',
+        ],
+        win: [
+          'You survived {size}? Even my minions are stunned.',
+          'Fine, {size} cleared. I’ll be back.',
+        ],
+        loss: [
+          'Mine at {pos} just ate you. Delicious.',
+          'You walked into {pos} and paid the price.',
+        ],
+      },
+    },
+  };
+  let currentAvatarPersona = loadAvatarPersona();
 
   const defaultLocale = 'en';
   let currentLocale = loadLocale();
@@ -93,6 +172,9 @@ let activePreset = null;
     [1, 0],
     [1, 1],
   ];
+
+  let avatarPulseTimer = null;
+  const avatarPulseDuration = 1400;
 
   configForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -204,6 +286,7 @@ let activePreset = null;
    */
   function init() {
     initLanguageSwitcher();
+    initAvatarSwitcher();
     applyStaticTranslations();
     updateSpecialsButton();
     updateShowMinesButton();
@@ -247,6 +330,7 @@ let activePreset = null;
     updateStatus();
     showStatusMessage('status.newBoard');
     grid[0]?.[0]?.element?.focus();
+    speakAvatar('ready', { size: `${config.rows}×${config.cols}` });
   }
 
   /**
@@ -300,7 +384,7 @@ let activePreset = null;
         if (action.type === 'reveal') {
           revealCell(cell, { replay: true, recordAction: false, checkVictory: false });
         } else if (action.type === 'flag') {
-          applyFlag(cell, action.flagged, { recordAction: false, replay: true });
+          applyFlag(cell, action.flagged, { recordAction: false, replay: true, userAction: false });
         }
       }
       step += 1;
@@ -518,7 +602,7 @@ let activePreset = null;
   function revealCell(cell, options = {}) {
     if (!gameActive && !options.replay) return;
     if (!cell || cell.revealed || cell.flagged) return;
-    const { recordAction = true, replay = false, checkVictory = true } = options;
+    const { recordAction = true, replay = false, checkVictory = true, userAction = true } = options;
     cell.revealed = true;
     const cellEl = cell.element;
     if (!cellEl) return;
@@ -535,18 +619,21 @@ let activePreset = null;
       runActions.push({ type: 'reveal', row: cell.row, col: cell.col });
     }
     if (cell.special) {
-      triggerSpecial(cell.special);
+      triggerSpecial(cell.special, cell);
     }
     if (!cell.isMine && cell.neighborMines === 0) {
       getNeighbors(cell).forEach((neighbor) => {
         if (!neighbor.revealed) {
-          revealCell(neighbor, { recordAction: false, replay, checkVictory });
+          revealCell(neighbor, { recordAction: false, replay, checkVictory, userAction: false });
         }
       });
     }
+    if (userAction && !replay && !cell.isMine && !cell.special) {
+      commentOnReveal(cell);
+    }
     updateStatus();
     if (!replay && cell.isMine) {
-      handleLoss();
+      handleLoss(cell);
       return;
     }
     if (!replay && checkVictory && checkForWin()) {
@@ -560,7 +647,7 @@ let activePreset = null;
   function applyFlag(cell, shouldFlag, options = {}) {
     if (!gameActive && !options.replay) return;
     if (!cell || cell.revealed) return;
-    const { recordAction = true } = options;
+    const { recordAction = true, replay = false, userAction = true } = options;
     const wasFlagged = cell.flagged;
     cell.flagged = shouldFlag;
     const cellEl = cell.element;
@@ -576,13 +663,16 @@ let activePreset = null;
     if (recordAction && !isReplaying) {
       runActions.push({ type: 'flag', row: cell.row, col: cell.col, flagged: shouldFlag });
     }
+    if (userAction && !replay) {
+      commentOnFlag(cell, shouldFlag);
+    }
     updateStatus();
   }
 
   /**
    * Activates a discovered special cell, adjusting rotation or flip state if specials are enabled.
    */
-  function triggerSpecial(special) {
+  function triggerSpecial(special, cell) {
     if (!special || special.triggered) return;
     special.triggered = true;
     if (special.type === 'rotation') {
@@ -603,6 +693,7 @@ let activePreset = null;
     }
     applyTransform();
     updateStatus();
+    commentOnSpecial(special, cell);
   }
 
   /**
@@ -654,11 +745,12 @@ let activePreset = null;
   /**
    * Handles a loss by revealing all mines, notifying the player, and saving the outcome.
    */
-  function handleLoss() {
+  function handleLoss(cell) {
     gameActive = false;
     revealAllMines();
     showStatusMessage('status.loss');
     saveRun('loss');
+    speakAvatar('loss', { pos: describeCellPosition(cell) });
   }
 
   /**
@@ -669,6 +761,7 @@ let activePreset = null;
     revealAllMines();
     showStatusMessage('status.win');
     saveRun('win');
+    speakAvatar('win', { size: `${config.rows}×${config.cols}` });
   }
 
   /**
@@ -866,6 +959,115 @@ let activePreset = null;
    */
   function showStatusMessage(key, replacements = {}) {
     setStatus(t(key, replacements));
+  }
+
+  function describeCellPosition(cell) {
+    if (!cell) return 'the board';
+    return `${cell.row + 1},${cell.col + 1}`;
+  }
+
+  function loadAvatarPersona() {
+    const stored = safeGetItem(avatarPersonaKey);
+    if (stored && avatarPersonas[stored]) {
+      return stored;
+    }
+    return 'friendly';
+  }
+
+  function initAvatarSwitcher() {
+    if (avatarSwitcherButtons?.length) {
+      avatarSwitcherButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          setAvatarPersona(button.dataset.avatarOption);
+        });
+      });
+    }
+    setAvatarPersona(currentAvatarPersona, { persist: false });
+  }
+
+  function setAvatarPersona(persona, options = {}) {
+    const normalized = avatarPersonas[persona] ? persona : 'friendly';
+    const { persist = true } = options;
+    if (currentAvatarPersona === normalized && options.force !== true) return;
+    currentAvatarPersona = normalized;
+    if (avatarPortraitEl) {
+      avatarPortraitEl.textContent = avatarPersonas[normalized].icon;
+    }
+    avatarSwitcherButtons.forEach((button) => {
+      const isActive = button.dataset.avatarOption === normalized;
+      button.classList.toggle('avatar-toggle--active', isActive);
+      button.setAttribute('aria-pressed', String(isActive));
+    });
+    if (persist) {
+      safeSetItem(avatarPersonaKey, normalized);
+    }
+  }
+
+  function getAvatarLines(key) {
+    return (
+      avatarPersonas[currentAvatarPersona]?.lines?.[key] ||
+      avatarPersonas.friendly.lines?.[key] ||
+      []
+    );
+  }
+
+  function resolveAvatarLine(key, replacements = {}) {
+    const choices = getAvatarLines(key);
+    if (!choices?.length) {
+      return replacements.fallback || '';
+    }
+    let template = choices[Math.floor(Math.random() * choices.length)];
+    Object.entries(replacements).forEach(([token, value]) => {
+      template = template.replace(new RegExp(`\\{${token}\\}`, 'g'), value);
+    });
+    return template;
+  }
+
+  function setAvatarComment(message, options = {}) {
+    if (!avatarCommentEl) return;
+    if (!message) return;
+    avatarCommentEl.textContent = message;
+    if (!avatarWindowEl) return;
+    avatarWindowEl.classList.add('avatar-window--active');
+    if (avatarPulseTimer) {
+      clearTimeout(avatarPulseTimer);
+    }
+    avatarPulseTimer = setTimeout(() => {
+      avatarWindowEl.classList.remove('avatar-window--active');
+    }, options.duration || avatarPulseDuration);
+  }
+
+  function speakAvatar(key, replacements = {}, options = {}) {
+    const message = resolveAvatarLine(key, replacements);
+    setAvatarComment(message, options);
+  }
+
+  function commentOnReveal(cell) {
+    if (!cell || cell.isMine || cell.special) return;
+    const replacements = { pos: describeCellPosition(cell) };
+    if (cell.neighborMines === 0) {
+      speakAvatar('zero', replacements);
+    } else {
+      speakAvatar('neighbor', { ...replacements, count: cell.neighborMines });
+    }
+  }
+
+  function commentOnFlag(cell, shouldFlag) {
+    speakAvatar(shouldFlag ? 'flagOn' : 'flagOff', {
+      pos: describeCellPosition(cell),
+    });
+  }
+
+  function commentOnSpecial(special, cell) {
+    if (!special || !cell) return;
+    const pos = describeCellPosition(cell);
+    if (special.type === 'rotation') {
+      const direction = special.direction === 'ccw' ? 'counter-clockwise' : 'clockwise';
+      speakAvatar('specialRotation', { pos, direction }, { duration: 1700 });
+    } else if (special.type === 'flip') {
+      const axis = special.axis === 'horizontal' ? 'horizontally' : 'vertically';
+      speakAvatar('specialFlip', { pos, axis }, { duration: 1700 });
+    }
   }
 
   /**
