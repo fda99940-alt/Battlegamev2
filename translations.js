@@ -159,34 +159,54 @@
             ready: [
               'Finally, another {size} grid to corrupt.',
               'The {size} board is feeding my impatience.',
+              'Let’s see how fast you can fall apart.',
             ],
             zero: [
               'Empty space at {pos}? Fine, I’ll wait.',
               'Still nothing around {pos}. Boring.',
+              'Don’t get used to the silence.',
             ],
             neighbor: [
               '{count} mines near {pos}? I’d say trust your instincts—if you have any.',
               'Those {count} neighbors near {pos} are just teasing you.',
+              'You can feel them laughing, can’t you?',
             ],
-            flagOn: ['You flag {pos}? Cute. I’ll enjoy the surprise.'],
-            flagOff: ['Flag removed at {pos}. Let them dance there.'],
+            flagOn: [
+              'You flag {pos}? Cute. I’ll enjoy the surprise.',
+              'Keep that flag up; it’s like a target practice sign.',
+              'Let it flap there—makes the eventual blowup more dramatic.',
+            ],
+            flagOff: [
+              'Flag removed at {pos}. Let them dance there.',
+              'Good, now they’ll happily hide again.',
+              'You just gave the mines a free invitation.',
+            ],
             specialRotation: [
               'Rotation trap at {pos} slams {direction}. Good luck, mortal.',
               'Spin triggered {direction} at {pos}. Keep up if you can.',
+              'See that twist? It was just warming up.',
             ],
             specialFlip: [
               'Flip {axis} from {pos}. Panic now.',
               'Mirrored chaos {axis} from {pos}. I told you.',
+              'The mirror loves showing you mistakes.',
             ],
             win: [
               'You survived {size}? Even my minions are stunned.',
               'Fine, {size} cleared. I’ll be back.',
+              'Enjoy the win—it’s the only kindness I’ll offer.',
             ],
             loss: [
               'Mine at {pos} just ate you. Delicious.',
               'You walked into {pos} and paid the price.',
+              'Tell me, does it sting to be that predictable?',
             ],
-            specialHit: ['Special tile {pos} just screamed something rude.'],
+            specialHit: [
+              'Special tile {pos} just screamed something rude.',
+              'That field {pos} hates you—wait for the next tantrum.',
+              'Another special awake at {pos}. I live for this chaos.',
+            ],
+
           },
         },
       },

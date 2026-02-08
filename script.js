@@ -54,8 +54,8 @@ let activePreset = null;
   const avatarCommentEl = document.getElementById('avatarComment');
   const avatarWindowEl = document.querySelector('.avatar-window');
   const avatarHistoryListEl = document.getElementById('avatarHistoryList');
+  const avatarSelectEl = document.getElementById('avatarSelect');
   const avatarPortraitEl = document.querySelector('.avatar-window__portrait');
-  const avatarSwitcherButtons = document.querySelectorAll('[data-avatar-option]');
   const avatarPersonaKey = 'mindsweeperAvatarPersona';
   const avatarPersonas = {
     friendly: { icon: '🤖' },
@@ -910,11 +910,9 @@ let activePreset = null;
   }
 
   function initAvatarSwitcher() {
-    if (avatarSwitcherButtons?.length) {
-      avatarSwitcherButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-          setAvatarPersona(button.dataset.avatarOption);
-        });
+    if (avatarSelectEl) {
+      avatarSelectEl.addEventListener('change', () => {
+        setAvatarPersona(avatarSelectEl.value);
       });
     }
     setAvatarPersona(currentAvatarPersona, { persist: false });
@@ -928,11 +926,9 @@ let activePreset = null;
     if (avatarPortraitEl) {
       avatarPortraitEl.textContent = avatarPersonas[normalized].icon;
     }
-    avatarSwitcherButtons.forEach((button) => {
-      const isActive = button.dataset.avatarOption === normalized;
-      button.classList.toggle('avatar-toggle--active', isActive);
-      button.setAttribute('aria-pressed', String(isActive));
-    });
+    if (avatarSelectEl) {
+      avatarSelectEl.value = normalized;
+    }
     if (persist) {
       safeSetItem(avatarPersonaKey, normalized);
     }

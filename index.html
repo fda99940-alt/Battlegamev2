@@ -74,14 +74,13 @@
             <p id="avatarComment">Ready when you are.</p>
           </div>
         </div>
-        <div class="avatar-switcher" aria-label="Choose avatar persona">
-          <button type="button" class="ghost avatar-toggle" data-avatar-option="friendly" aria-pressed="true">
-            Friendly
-          </button>
-          <button type="button" class="ghost avatar-toggle" data-avatar-option="evil" aria-pressed="false">
-            Evil
-          </button>
-        </div>
+        <label class="avatar-select" aria-label="Choose avatar persona">
+          <span>Avatar</span>
+          <select id="avatarSelect">
+            <option value="friendly">Friendly</option>
+            <option value="evil">Evil</option>
+          </select>
+        </label>
         <nav class="avatar-history" aria-label="Avatar conversation history">
           <ul id="avatarHistoryList"></ul>
         </nav>
