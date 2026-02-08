@@ -42,3 +42,7 @@ Open `index.html` in a modern browser. No build step or server is required—the
 - Add multiplayer room-code matchmaking or shared leaderboards for synchronized challenges.
 - Introduce daily/weekly locked presets with modifiers to keep returning players engaged.
 - Track best times per layout and show a mini leaderboard so you can chase personal records.
+
+## Notes
+
+- Built with help from an AI coding assistant (Codex, GPT-5) under human supervision, following the author’s guidance to shape the experience.
