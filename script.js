@@ -614,6 +614,7 @@ let activePreset = null;
   function triggerSpecial(special, cell) {
     if (!special || special.triggered) return;
     special.triggered = true;
+    const pos = describeCellPosition(cell);
     speakAvatar('specialHit', { pos });
     if (special.type === 'rotation') {
       rotationTriggers += 1;

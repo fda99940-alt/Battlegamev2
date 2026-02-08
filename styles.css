@@ -326,6 +326,9 @@ body {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   margin-top: 0.5rem;
   padding-top: 0.5rem;
+  max-height: 120px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
 }
 
 .avatar-history ul {
@@ -341,9 +344,8 @@ body {
   font-size: 0.75rem;
   color: var(--text-faint);
   line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .status-message {
