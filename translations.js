@@ -119,6 +119,77 @@
       hint: {
         keyboard: 'Arrow keys to move focus, Enter/Space to reveal, F to flag.',
       },
+      avatar: {
+        personas: {
+          friendly: {
+            ready: [
+              'Fresh {size} board loaded. Let’s sweep.',
+              'Grid {size} is primed. Eyes up.',
+              'New {size} layout ready. Stay sharp.',
+            ],
+            zero: [
+              'Clear skies at {pos}. No mines nearby.',
+              'Nothing but air around {pos}. Keep going.',
+            ],
+            neighbor: [
+              '{count} mines glancing near {pos}. Careful.',
+              'Watch that {pos}—{count} neighbors nearby.',
+            ],
+            flagOn: ['Flag planted at {pos}. That’ll slow them down.'],
+            flagOff: ['Flag lifted at {pos}. Retry that scan.'],
+            specialRotation: [
+              'Rotation blast at {pos} ({direction}). Watch the spin.',
+              'Spin trigger at {pos}, turning {direction}.',
+            ],
+            specialFlip: [
+              'Flip field at {pos} flips {axis}. Stay oriented.',
+              'Mirrored view triggered {axis} from {pos}.',
+            ],
+            win: [
+              'Victory! The {size} grid bows to you.',
+              'You cleared {size}. Celebrate the sweep!',
+            ],
+            loss: [
+              'Ouch. Mine at {pos} got the better of us.',
+              'Loss logged at {pos}. Mines were waiting.',
+            ],
+            specialHit: ['Special tile at {pos} woke up. Brace yourself.'],
+          },
+          evil: {
+            ready: [
+              'Finally, another {size} grid to corrupt.',
+              'The {size} board is feeding my impatience.',
+            ],
+            zero: [
+              'Empty space at {pos}? Fine, I’ll wait.',
+              'Still nothing around {pos}. Boring.',
+            ],
+            neighbor: [
+              '{count} mines near {pos}? I’d say trust your instincts—if you have any.',
+              'Those {count} neighbors near {pos} are just teasing you.',
+            ],
+            flagOn: ['You flag {pos}? Cute. I’ll enjoy the surprise.'],
+            flagOff: ['Flag removed at {pos}. Let them dance there.'],
+            specialRotation: [
+              'Rotation trap at {pos} slams {direction}. Good luck, mortal.',
+              'Spin triggered {direction} at {pos}. Keep up if you can.',
+            ],
+            specialFlip: [
+              'Flip {axis} from {pos}. Panic now.',
+              'Mirrored chaos {axis} from {pos}. I told you.',
+            ],
+            win: [
+              'You survived {size}? Even my minions are stunned.',
+              'Fine, {size} cleared. I’ll be back.',
+            ],
+            loss: [
+              'Mine at {pos} just ate you. Delicious.',
+              'You walked into {pos} and paid the price.',
+            ],
+            specialHit: ['Special tile {pos} just screamed something rude.'],
+          },
+        },
+      },
     },
     es: {
       hero: {

@@ -53,81 +53,13 @@ let activePreset = null;
   const languages = LANGUAGE_OPTIONS;
   const avatarCommentEl = document.getElementById('avatarComment');
   const avatarWindowEl = document.querySelector('.avatar-window');
+  const avatarHistoryListEl = document.getElementById('avatarHistoryList');
   const avatarPortraitEl = document.querySelector('.avatar-window__portrait');
   const avatarSwitcherButtons = document.querySelectorAll('[data-avatar-option]');
   const avatarPersonaKey = 'mindsweeperAvatarPersona';
   const avatarPersonas = {
-    friendly: {
-      icon: '🤖',
-      lines: {
-        ready: [
-          'Fresh {size} board loaded. Let’s sweep.',
-          'Grid {size} is primed. Eyes up.',
-          'New {size} layout ready. Stay sharp.',
-        ],
-        zero: [
-          'Clear skies at {pos}. No mines nearby.',
-          'Nothing but air around {pos}. Keep going.',
-        ],
-        neighbor: [
-          '{count} mines glancing near {pos}. Careful.',
-          'Watch that {pos}—{count} neighbors nearby.',
-        ],
-        flagOn: ['Flag planted at {pos}. That’ll slow them down.'],
-        flagOff: ['Flag lifted at {pos}. Retry that scan.'],
-        specialRotation: [
-          'Rotation blast at {pos} ({direction}). Watch the spin.',
-          'Spin trigger at {pos}, turning {direction}.',
-        ],
-        specialFlip: [
-          'Flip field at {pos} flips {axis}. Stay oriented.',
-          'Mirrored view triggered {axis} from {pos}.',
-        ],
-        win: [
-          'Victory! The {size} grid bows to you.',
-          'You cleared {size}. Celebrate the sweep!',
-        ],
-        loss: [
-          'Ouch. Mine at {pos} got the better of us.',
-          'Loss logged at {pos}. Mines were waiting.',
-        ],
-      },
-    },
-    evil: {
-      icon: '😈',
-      lines: {
-        ready: [
-          'Finally, another {size} grid to corrupt.',
-          'The {size} board is feeding my impatience.',
-        ],
-        zero: [
-          'Empty space at {pos}? Fine, I’ll wait.',
-          'Still nothing around {pos}. Boring.',
-        ],
-        neighbor: [
-          '{count} mines near {pos}? I’d say trust your instincts—if you have any.',
-          'Those {count} neighbors near {pos} are just teasing you.',
-        ],
-        flagOn: ['You flag {pos}? Cute. I’ll enjoy the surprise.'],
-        flagOff: ['Flag removed at {pos}. Let them dance there.'],
-        specialRotation: [
-          'Rotation trap at {pos} slams {direction}. Good luck, mortal.',
-          'Spin triggered {direction} at {pos}. Keep up if you can.',
-        ],
-        specialFlip: [
-          'Flip {axis} from {pos}. Panic now.',
-          'Mirrored chaos {axis} from {pos}. I told you.',
-        ],
-        win: [
-          'You survived {size}? Even my minions are stunned.',
-          'Fine, {size} cleared. I’ll be back.',
-        ],
-        loss: [
-          'Mine at {pos} just ate you. Delicious.',
-          'You walked into {pos} and paid the price.',
-        ],
-      },
-    },
+    friendly: { icon: '🤖' },
+    evil: { icon: '😈' },
   };
   let currentAvatarPersona = loadAvatarPersona();
 
@@ -175,6 +107,8 @@ let activePreset = null;
 
   let avatarPulseTimer = null;
   const avatarPulseDuration = 1400;
+  let avatarHistory = [];
+  const avatarHistoryLimit = 5;
 
   configForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -675,6 +609,7 @@ let activePreset = null;
   function triggerSpecial(special, cell) {
     if (!special || special.triggered) return;
     special.triggered = true;
+    speakAvatar('specialHit', { pos });
     if (special.type === 'rotation') {
       rotationTriggers += 1;
       if (specialsEnabled) {
@@ -1004,11 +939,19 @@ let activePreset = null;
   }
 
   function getAvatarLines(key) {
-    return (
-      avatarPersonas[currentAvatarPersona]?.lines?.[key] ||
-      avatarPersonas.friendly.lines?.[key] ||
-      []
-    );
+    const personaLines =
+      TRANSLATIONS[currentLocale]?.avatar?.personas?.[currentAvatarPersona]?.[key];
+    if (Array.isArray(personaLines) && personaLines.length) {
+      return personaLines;
+    }
+    const fallbackPersonaLines =
+      TRANSLATIONS.en?.avatar?.personas?.[currentAvatarPersona]?.[key];
+    if (Array.isArray(fallbackPersonaLines) && fallbackPersonaLines.length) {
+      return fallbackPersonaLines;
+    }
+    const friendlyFallback =
+      TRANSLATIONS.en?.avatar?.personas?.friendly?.[key];
+    return Array.isArray(friendlyFallback) ? friendlyFallback : [];
   }
 
   function resolveAvatarLine(key, replacements = {}) {
@@ -1027,6 +970,7 @@ let activePreset = null;
     if (!avatarCommentEl) return;
     if (!message) return;
     avatarCommentEl.textContent = message;
+    appendAvatarHistory(message);
     if (!avatarWindowEl) return;
     avatarWindowEl.classList.add('avatar-window--active');
     if (avatarPulseTimer) {
@@ -1040,6 +984,17 @@ let activePreset = null;
   function speakAvatar(key, replacements = {}, options = {}) {
     const message = resolveAvatarLine(key, replacements);
     setAvatarComment(message, options);
+  }
+
+  function appendAvatarHistory(message) {
+    if (!avatarHistoryListEl) return;
+    avatarHistory.unshift(message);
+    if (avatarHistory.length > avatarHistoryLimit) {
+      avatarHistory = avatarHistory.slice(0, avatarHistoryLimit);
+    }
+    avatarHistoryListEl.innerHTML = avatarHistory
+      .map((line) => `<li>${line}</li>`)
+      .join('');
   }
 
   function commentOnReveal(cell) {
