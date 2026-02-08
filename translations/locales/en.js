@@ -185,6 +185,110 @@
             ],
 
           },
+          cute: {
+            ready: [
+              'Kyaa! The {size} board sparkles just for us!',
+              'Let’s sprinkle some luck across every tile.',
+              'Keep the sparkle high—we’ve got mines to chase!',
+            ],
+            zero: [
+              'Nothing but love at {pos}! No mines nearby.',
+              'So calm there—perfect spot to breathe and smile.',
+              'The board is giving you a break, sweetie.',
+            ],
+            neighbor: [
+              '{count} nearby looks scary, but you’ve got this!',
+              'Careful at {pos}, cutie—those {count} neighbors are watching!',
+              'A little patience and that {pos} will be safe, promise!',
+            ],
+            flagOn: [
+              'Flagged beautifully at {pos}. Nice work, champ!',
+              'You marked {pos}? So smart, love that energy.',
+              'Perfect flag etiquette—mines can’t stand it.',
+            ],
+            flagOff: [
+              'Flag lifted at {pos}. Maybe it was just a ghost.',
+              'Let them hide again—it’s okay to change your mind.',
+              'Undoing is part of the dance, darling.',
+            ],
+            specialRotation: [
+              'Rotation at {pos}? Whee! Let’s twirl with it.',
+              'Spin on, cutie—your reflexes are dazzling.',
+              'That {direction} flip is just extra drama for you.',
+            ],
+            specialFlip: [
+              'Flip {axis}? Mirror magic activated!',
+              'Mirror move {axis} from {pos}—you shine anyway.',
+              'Such flair! This flip just matched your style.',
+            ],
+            win: [
+              'Victory sparkles! {size} cleared like a champion!',
+              'You did it, gorgeous! Time for confetti.',
+              'Yatta! Every safe cell is smiling with you!',
+            ],
+            loss: [
+              'Oops! Mine at {pos} loves stealing hearts.',
+              'A little stumble, but you’re still dazzling.',
+              'The board bit back—let’s cuddle and try again.',
+            ],
+            specialHit: [
+              'Special tile {pos} squealed—so dramatic!',
+              'Yikes, {pos} woke up! Stay fabulous.',
+              'That tile’s tantrum is just seasoning for your run.',
+            ],
+          },
+          teasing: {
+            ready: [
+              'Hehe, the board can’t wait to see you slip up.',
+              'Fresh {size}, and I’m already picking favorites—maybe you?',
+              'Let’s see how dramatic those mines can get.',
+            ],
+            zero: [
+              'No mines here? Suspicious. Keep looking, cutie.',
+              'Calm {pos}? That’s just teasing you, watch out.',
+              'Nothing yet—just the lull before a juicy trap.',
+            ],
+            neighbor: [
+              '{count} neighbors near {pos}? Ooh, spicy.',
+              'Pretty sure those {count} neighbors are gossiping about you.',
+              'They’re whispering from {pos}. Are you listening?',
+            ],
+            flagOn: [
+              'You flag at {pos}? Bold move. I’m watching closely.',
+              'Cute little flag, but will it save you?',
+              'Flag looks adorable… until it’s wrong.',
+            ],
+            flagOff: [
+              'Flag off? Might be a trap, but I do love a plot twist.',
+              'Removing the flag? Risky, but thrilling.',
+              'I knew you were trouble when you walked in.',
+            ],
+            specialRotation: [
+              'Rotation at {pos}? I’d spin too if I were you.',
+              'Watch that {direction} twist—so dramatic, just like you.',
+              'I’m dizzy just watching your board, darling.',
+            ],
+            specialFlip: [
+              'Flip {axis}? Mirror, mirror, don’t break.',
+              'That {pos} just flipped everything, *swoon*.',
+              'Mirror move looks good on you.',
+            ],
+            win: [
+              'Hmph, victory? I’ll let you feel smug for a minute.',
+              'Not bad… keep the flattery coming.',
+              'You won, so consider me impressed (a little).',
+            ],
+            loss: [
+              'Mine got you? Perfect, I needed more drama.',
+              'Burned again? Honestly, cute.',
+              'You fall down, I clap. Keep it coming.',
+            ],
+            specialHit: [
+              'Special tile {pos} just screamed—so embarrassing.',
+              'OMG {pos} woke up? Classic.',
+              'That tantrum got me low-key cheering.',
+            ],
+          },
         },
       },
     };

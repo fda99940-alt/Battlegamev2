@@ -60,6 +60,8 @@ let activePreset = null;
   const avatarPersonas = {
     friendly: { icon: '🤖' },
     evil: { icon: '😈' },
+    cute: { icon: '🐰' },
+    teasing: { icon: '😜' },
   };
   const avatarPersonaOrder = Object.keys(avatarPersonas);
   let currentAvatarPersona = loadAvatarPersona();

@@ -26,7 +26,7 @@ Open `index.html` in a modern browser. No build step or server is required—the
 8. **Persistence**: LocalStorage keeps runs (`mindsweeperRuns`), the active theme (`mindsweeperTheme`), locale, and history panel collapse state so your setup survives reloads.
 9. **Localization-ready**: Every UI string routes through the `TRANSLATIONS` map; the dropdown shows flag + name, and selecting a new locale rewrites hero text, labels, hints, and status messages (including playful dialects like Klingon, Pirate, LOLcat, and Braille).
 10. **Hero personas**: Multilingual hero text changes tone per locale, covering canonical translations plus fantasy/dialect voices (Yoda, Elvish, Melodia, Angry mode, etc.).
-11. **Commentary avatar**: An above-board avatar narrates each move, keeps a rolling five-line conversation history, lets you switch between the polite guide and an evil heckler, and tapping the portrait briefly reveals the dropdown so you can change personas without adding extra chrome.
+11. **Commentary avatar**: An above-board avatar narrates each move, keeps a rolling five-line conversation history, lets you choose between the polite guide, the evil heckler, the anime-inspired “cute” bunny, or the teasing anime girl, and tapping the portrait briefly reveals the dropdown so you can change voices without adding extra chrome.
 12. **Win/loss polish**: Winning reveals every mine before declaring victory, matching the loss behavior so the board state is obvious either way.
 
 ## Future improvements
