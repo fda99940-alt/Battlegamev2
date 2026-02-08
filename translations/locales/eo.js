@@ -1,0 +1,99 @@
+(() => {
+  window.MindsweeperTranslations = window.MindsweeperTranslations || {};
+  window.MindsweeperTranslations.TRANSLATIONS = window.MindsweeperTranslations.TRANSLATIONS || {};
+  window.MindsweeperTranslations.TRANSLATIONS['eo'] = {
+      hero: {
+        eyebrow: 'Retumilo unue',
+        title: 'Mindsweeper',
+        greeting: 'Bonvenon al la ludo, elektito.',
+        lede: 'Neona Minesweeper kie rotacioj, faldoj kaj daŭraj replikoj faras ĉiun ludon neatendita.',
+        meta: {
+          keyboard: 'Klavigebla amika',
+          history: 'Konservita historio',
+          replay: 'Re-ludo kun efikoj',
+        },
+      },
+      label: {
+        minesRemaining: 'Restantaj minoj',
+        cellsRevealed: 'Malkaŝitaj ĉeloj',
+        rotationTriggers: 'Rotacioj',
+        flipTriggers: 'Faldiĝoj',
+        rows: 'Linioj',
+        cols: 'Kolumnoj',
+        mines: 'Minoj',
+        rotationSpecials: 'Rotaciaj specialoj',
+        flipSpecials: 'Faldaj specialoj',
+        themes: 'Temoj',
+        difficulty: 'Malpezeco',
+        language: 'Lingvo',
+        on: 'ŝaltita',
+        off: 'malŝaltita',
+      },
+      theme: {
+        neon: 'Neono',
+        dusk: 'Krepusko',
+        sunrise: 'Sunleviĝo',
+        midnight: 'Noktomezo',
+        verdant: 'Verdira',
+        ember: 'Braz',
+      },
+      panel: {
+        boardTitle: 'Tabulo kaj specialoj',
+        boardSubtitle: 'Agordu antaŭ nova rondo.',
+      },
+      section: {
+        history: {
+          title: 'Historio',
+          desc: 'Re-ludu aŭ forigu antaŭajn rondojn.',
+        },
+      },
+      button: {
+        applyLayout: 'Apliki',
+        specials: 'Specialoj: {state}',
+        showMines: 'Montri minojn',
+        hideMines: 'Kaŝi minojn',
+        clearHistory: 'Purigi historion',
+        hideHistory: 'Kaŝi historion',
+        showHistory: 'Montri historion',
+        joinRoom: 'Eniri ĉambron',
+        copyRoom: 'Kopii kodon',
+        replay: 'Re-ludi',
+        delete: 'Forigi',
+        preset: {
+          easy: 'Facila',
+          medium: 'Meza',
+          hard: 'Malfacila',
+        },
+      },
+      placeholder: {
+        roomCode: 'Algluu ĉambran kodon',
+      },
+      history: {
+        metaStats: '{timestamp} • {duration}s • {steps} paŝoj',
+        metaSpecials: 'Rotacioj {rotations}, faldoj {flips}',
+        roomCode: 'Ĉambro {code}',
+        roomPending: 'Kodo atendanta',
+        empty: 'Neniu ludo ankoraŭ.',
+      },
+      status: {
+        start: 'Alklaku ĉelon por komenci.',
+        newBoard: 'Nova tabulo preta. Uzu muson aŭ klavaron.',
+        specialEffects: 'Specialaj efikoj {state}.',
+        cheatEnabled: 'Trompovido aktivigita.',
+        cheatDisabled: 'Trompovido malaktivigita.',
+        replayInit: 'Re-ludante de {timestamp}',
+        replayProgress: 'Re-ludante ({step}/{total}) de {timestamp}',
+        replayComplete: 'Re-ludo finiĝis. Apliki novan agordon.',
+        loss: 'Boom! Vi frapis minon kaj ĉiuj minoj nun grakas, montrante kiom vi malbone pensas.',
+        win: 'Venko! Ĉeloj malkovritaj.',
+        enterRoom: 'Unue enigu kodon.',
+        roomNotFound: 'Ĉambro {code} ne trovita.',
+        joiningRoom: 'Aliĝas al ĉambro {code}...',
+        copySuccess: 'Ĉambro {code} kopiiĝis.',
+        copyFallback: 'Kodo {code}',
+      },
+      hint: {
+        keyboard: 'Sagonoj movas, En/Spaco malkaŝas, F flagas.',
+      },
+    };
+})();

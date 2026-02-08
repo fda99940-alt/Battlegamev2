@@ -1,0 +1,99 @@
+(() => {
+  window.MindsweeperTranslations = window.MindsweeperTranslations || {};
+  window.MindsweeperTranslations.TRANSLATIONS = window.MindsweeperTranslations.TRANSLATIONS || {};
+  window.MindsweeperTranslations.TRANSLATIONS['es'] = {
+      hero: {
+        eyebrow: 'Diseñado para el navegador',
+        title: 'Mindsweeper',
+        greeting: 'Bienvenido al juego, elegido.',
+        lede: 'Una versión neón de Minesweeper con rotaciones, volteos y replays persistentes para mantener cada partida impredecible.',
+        meta: {
+          keyboard: 'Amigable con teclado',
+          history: 'Historial persistente',
+          replay: 'Repetición con efectos',
+        },
+      },
+      label: {
+        minesRemaining: 'Minas restantes',
+        cellsRevealed: 'Casillas reveladas',
+        rotationTriggers: 'Rotaciones',
+        flipTriggers: 'Volteos',
+        rows: 'Filas',
+        cols: 'Columnas',
+        mines: 'Minas',
+        rotationSpecials: 'Especiales de rotación',
+        flipSpecials: 'Especiales de volteo',
+        themes: 'Temas',
+        difficulty: 'Dificultad',
+        language: 'Idioma',
+        on: 'on',
+        off: 'off',
+      },
+      theme: {
+        neon: 'Neón',
+        dusk: 'Crepúsculo',
+        sunrise: 'Amanecer',
+        midnight: 'Medianoche',
+        verdant: 'Verde',
+        ember: 'Ascua',
+      },
+      panel: {
+        boardTitle: 'Tablero y especiales',
+        boardSubtitle: 'Ajusta el tamaño antes de cada partida.',
+      },
+      section: {
+        history: {
+          title: 'Historial',
+          desc: 'Reproduce, borra o limpia intentos anteriores.',
+        },
+      },
+      button: {
+        applyLayout: 'Aplicar',
+        specials: 'Especiales: {state}',
+        showMines: 'Mostrar minas',
+        hideMines: 'Ocultar minas',
+        clearHistory: 'Limpiar historial',
+        hideHistory: 'Ocultar historial',
+        showHistory: 'Mostrar historial',
+        joinRoom: 'Unirse',
+        copyRoom: 'Copiar código',
+        replay: 'Repetir',
+        delete: 'Eliminar',
+        preset: {
+          easy: 'Fácil',
+          medium: 'Medio',
+          hard: 'Difícil',
+        },
+      },
+      placeholder: {
+        roomCode: 'Pega el código de sala',
+      },
+      history: {
+        metaStats: '{timestamp} • {duration}s • {steps} pasos',
+        metaSpecials: 'Rotaciones {rotations}, volteos {flips}',
+        roomCode: 'Sala {code}',
+        roomPending: 'Código pendiente',
+        empty: 'Aún no hay partidas.',
+      },
+      status: {
+        start: 'Haz clic en una casilla para comenzar.',
+        newBoard: 'Tablero listo. Usa el mouse o el teclado para explorar.',
+        specialEffects: 'Efectos especiales {state}.',
+        cheatEnabled: 'Vista de trampas activada.',
+        cheatDisabled: 'Vista de trampas desactivada.',
+        replayInit: 'Reproduciendo partida del {timestamp}',
+        replayProgress: 'Reproduciendo partida del {timestamp} ({step}/{total})',
+        replayComplete: 'Reproducción finalizada. Aplica un nuevo diseño.',
+        loss: '¡Boom! Las minas se burlan mientras se revelan todas tú errores.',
+        win: '¡Victoria! Todas las casillas seguras fueron descubiertas.',
+        enterRoom: 'Introduce un código de sala primero.',
+        roomNotFound: 'Sala {code} no encontrada.',
+        joiningRoom: 'Uniéndote a la sala {code}...',
+        copySuccess: 'Sala {code} copiada al portapapeles.',
+        copyFallback: 'Código de sala {code}',
+      },
+      hint: {
+        keyboard: 'Flechas para mover el foco, Enter/Espacio para descubrir y F para marcar.',
+      },
+    };
+})();

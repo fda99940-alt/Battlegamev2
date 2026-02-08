@@ -6,7 +6,8 @@
 
 - `index.html`: bootstrapper that wires `styles.css`, `translations.js`, and `script.js`. The markup scopes every UI region—board, status, controls, theme toggles, difficulty presets, language dropdown (flags included), history panel, seed copy/join tools, and room-code tracker.
 - `styles.css`: visual system that defines six palettes (Neon, Dusk, Sunrise, Midnight, Verdant, Ember), a zero-gap grid layout, and responsive helpers so the board and controls stay tidy.
-- `translations.js`: exports `LANGUAGE_OPTIONS` and `TRANSLATIONS`, covering the full roster of locales (en, es, sw, zh, ja, hi, fr, pt, de, ru, tlh, pir, lol, eo, sv, ar, elv, yoda, mus, ang, bra) plus their hero/button/label/hint copy. The file also generates Braille output based on the English bundle and augments theme names in locales that need custom palettes.
+- `translations/locales/*.js`: each language lives in its own file that registers its localized strings on `window.MindsweeperTranslations.TRANSLATIONS`.
+- `translations.js`: aggregates the `LANGUAGE_OPTIONS` list, loads the per-locale registrations, augments theme names, and derives Braille output from English before exposing the bundle to the app.
 - `script.js`: controller that manages input validation, board generation, mine placement, neighbor counting, specials, replay recording/playback, history rendering, localization wiring, and persistence of user-selected themes/locales/presets.
 
 ## Running

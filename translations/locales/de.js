@@ -1,0 +1,99 @@
+(() => {
+  window.MindsweeperTranslations = window.MindsweeperTranslations || {};
+  window.MindsweeperTranslations.TRANSLATIONS = window.MindsweeperTranslations.TRANSLATIONS || {};
+  window.MindsweeperTranslations.TRANSLATIONS['de'] = {
+      hero: {
+        eyebrow: 'Browser zuerst',
+        title: 'Mindsweeper',
+        greeting: 'Willkommen im Spiel, Auserwählter.',
+        lede: 'Ein neonfarbenes Minesweeper, in dem Drehfelder, Flip-Kacheln und gespeicherte Replays jede Runde unvorhersehbar machen.',
+        meta: {
+          keyboard: 'Tastaturfreundlich',
+          history: 'Persistente Historie',
+          replay: 'Replay + Effekte',
+        },
+      },
+      label: {
+        minesRemaining: 'Verbleibende Minen',
+        cellsRevealed: 'Geöffnete Zellen',
+        rotationTriggers: 'Rotationen',
+        flipTriggers: 'Flipps',
+        rows: 'Reihen',
+        cols: 'Spalten',
+        mines: 'Minen',
+        rotationSpecials: 'Rotations-Spezial',
+        flipSpecials: 'Flip-Spezial',
+        themes: 'Themen',
+        difficulty: 'Schwierigkeit',
+        language: 'Sprache',
+        on: 'an',
+        off: 'aus',
+      },
+      theme: {
+        neon: 'Neon',
+        dusk: 'Dämmerung',
+        sunrise: 'Sonnenaufgang',
+        midnight: 'Mitternacht',
+        verdant: 'Grün',
+        ember: 'Glut',
+      },
+      panel: {
+        boardTitle: 'Spielfeld & Specials',
+        boardSubtitle: 'Einstellungen vor dem Start anpassen.',
+      },
+      section: {
+        history: {
+          title: 'Verlauf',
+          desc: 'Frühere Runden wiederholen oder löschen.',
+        },
+      },
+      button: {
+        applyLayout: 'Anwenden',
+        specials: 'Specials: {state}',
+        showMines: 'Minen zeigen',
+        hideMines: 'Minen verstecken',
+        clearHistory: 'Verlauf löschen',
+        hideHistory: 'Verlauf verstecken',
+        showHistory: 'Verlauf anzeigen',
+        joinRoom: 'Raum beitreten',
+        copyRoom: 'Code kopieren',
+        replay: 'Replay',
+        delete: 'Löschen',
+        preset: {
+          easy: 'Einfach',
+          medium: 'Mittel',
+          hard: 'Hart',
+        },
+      },
+      placeholder: {
+        roomCode: 'Raumcode einfügen',
+      },
+      history: {
+        metaStats: '{timestamp} • {duration}s • {steps} Schritte',
+        metaSpecials: 'Rotationen {rotations}, Flips {flips}',
+        roomCode: 'Raum {code}',
+        roomPending: 'Code ausstehend',
+        empty: 'Noch keine Runden.',
+      },
+      status: {
+        start: 'Klicke eine Zelle zum Einstieg.',
+        newBoard: 'Neues Spielfeld bereit. Nutze Maus oder Tastatur.',
+        specialEffects: 'Special-Effekte {state}.',
+        cheatEnabled: 'Cheat-Modus aktiviert.',
+        cheatDisabled: 'Cheat-Modus deaktiviert.',
+        replayInit: 'Replay der Runde von {timestamp}',
+        replayProgress: 'Replay ({step}/{total}) von {timestamp}',
+        replayComplete: 'Replay beendet. Neues Layout anwenden.',
+        loss: 'Verloren! Du hast eine Mine erwischt, und alle anderen Minen johlen über dein Scheitern.',
+        win: 'Gewonnen! Alle sicheren Felder offen.',
+        enterRoom: 'Zuerst Code eingeben.',
+        roomNotFound: 'Raum {code} nicht gefunden.',
+        joiningRoom: 'Trete Raum {code} bei…',
+        copySuccess: 'Raum {code} kopiert.',
+        copyFallback: 'Raumcode {code}',
+      },
+      hint: {
+        keyboard: 'Pfeile bewegen, Enter/Space öffnen, F markieren.',
+      },
+    };
+})();

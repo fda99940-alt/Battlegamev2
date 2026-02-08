@@ -1,0 +1,99 @@
+(() => {
+  window.MindsweeperTranslations = window.MindsweeperTranslations || {};
+  window.MindsweeperTranslations.TRANSLATIONS = window.MindsweeperTranslations.TRANSLATIONS || {};
+  window.MindsweeperTranslations.TRANSLATIONS['ang'] = {
+      hero: {
+        eyebrow: 'Browser, but faster',
+        title: 'Mindsweeper',
+        greeting: 'You dare play? Good. I hope you enjoy failing.',
+        lede: 'This Minesweeper slaps old conventions; rotations, flips, and history are here to punish laziness.',
+        meta: {
+          keyboard: 'Keyboard only, like a boss',
+          history: 'Runs that remember how badly you died',
+          replay: 'Replays so you can witness your mistakes',
+        },
+      },
+      label: {
+        minesRemaining: 'Mines left',
+        cellsRevealed: 'Cells exposed',
+        rotationTriggers: 'Rotation hits',
+        flipTriggers: 'Flip hits',
+        rows: 'Rows',
+        cols: 'Columns',
+        mines: 'Mines',
+        rotationSpecials: 'Rotation specials',
+        flipSpecials: 'Flip specials',
+        themes: 'Themes',
+        difficulty: 'Difficulty',
+        language: 'Language',
+        on: 'on',
+        off: 'off',
+      },
+      theme: {
+        neon: 'Neon',
+        dusk: 'Dusk',
+        sunrise: 'Sunrise',
+        midnight: 'Midnight',
+        verdant: 'Verdant',
+        ember: 'Ember',
+      },
+      panel: {
+        boardTitle: 'Board & specials',
+        boardSubtitle: 'Tune the pain before starting.',
+      },
+      section: {
+        history: {
+          title: 'History',
+          desc: 'Replay or delete your shame.',
+        },
+      },
+      button: {
+        applyLayout: 'Apply layout',
+        specials: 'Specials: {state}',
+        showMines: 'Show mines',
+        hideMines: 'Hide mines',
+        clearHistory: 'Clear history',
+        hideHistory: 'Hide history',
+        showHistory: 'Show history',
+        joinRoom: 'Join room',
+        copyRoom: 'Copy code',
+        replay: 'Replay',
+        delete: 'Delete',
+        preset: {
+          easy: 'Easy',
+          medium: 'Medium',
+          hard: 'Hard',
+        },
+      },
+      placeholder: {
+        roomCode: 'Paste room code',
+      },
+      history: {
+        metaStats: '{timestamp} • {duration}s • {steps} steps',
+        metaSpecials: 'Rotations {rotations}, flips {flips}',
+        roomCode: 'Room {code}',
+        roomPending: 'Room code pending',
+        empty: 'No runs yet. Go ruin one.',
+      },
+      status: {
+        start: 'Start hitting tiles and stop whining.',
+        newBoard: 'New board ready. No excuses.',
+        specialEffects: 'Special effects {state}.',
+        cheatEnabled: 'Cheat view enabled. You still suck.',
+        cheatDisabled: 'Cheat view disabled. Still terrible.',
+        replayInit: 'Replaying your pathetic run from {timestamp}',
+        replayProgress: 'Replaying ({step}/{total}) from {timestamp}. Keep up, maybe?',
+        replayComplete: 'Replay complete. Try not to trigger the same mine.',
+        loss: 'You just hit a mine. The mines are celebrating your incompetence.',
+        win: 'Victory. Bold move for once.',
+        enterRoom: 'Enter a room code, if you even have one.',
+        roomNotFound: 'Room {code} not found. Shocker.',
+        joiningRoom: 'Joining room {code}... don’t mess it up.',
+        copySuccess: 'Room {code} copied. Share that embarrassment.',
+        copyFallback: 'Room code {code}.',
+      },
+      hint: {
+        keyboard: 'Arrow keys move, Enter/Space reveal, F flag.',
+      },
+    };
+})();

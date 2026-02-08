@@ -1,0 +1,99 @@
+(() => {
+  window.MindsweeperTranslations = window.MindsweeperTranslations || {};
+  window.MindsweeperTranslations.TRANSLATIONS = window.MindsweeperTranslations.TRANSLATIONS || {};
+  window.MindsweeperTranslations.TRANSLATIONS['pir'] = {
+      hero: {
+        eyebrow: 'Browser ahoy',
+        title: 'Mindsweeper',
+        greeting: 'Welcome aboard the game, chosen matey.',
+        lede: 'A neon treasure map o’ Minesweeper with spinny seas, flip tiles, and replays etched in the log.',
+        meta: {
+          keyboard: 'Keyboard savvy',
+          history: 'Logbook stays',
+          replay: 'Replay with flare',
+        },
+      },
+      label: {
+        minesRemaining: 'Mines aboard',
+        cellsRevealed: 'Decks opened',
+        rotationTriggers: 'Rotations',
+        flipTriggers: 'Flips',
+        rows: 'Rigging',
+        cols: 'Masts',
+        mines: 'Mines',
+        rotationSpecials: 'Rot specials',
+        flipSpecials: 'Flip specials',
+        themes: 'Skins',
+        difficulty: 'Brass',
+        language: 'Tongue',
+        on: 'hoist',
+        off: 'lowered',
+      },
+      theme: {
+        neon: 'Neon',
+        dusk: 'Twilight',
+        sunrise: 'Dawn',
+        midnight: 'Midnight',
+        verdant: 'Verdant',
+        ember: 'Ember',
+      },
+      panel: {
+        boardTitle: 'Deck & tricks',
+        boardSubtitle: 'Set the rigging before weighing anchor.',
+      },
+      section: {
+        history: {
+          title: 'Logbook',
+          desc: 'Replay runs or swab the deck.',
+        },
+      },
+      button: {
+        applyLayout: 'Set sail',
+        specials: 'Tricks: {state}',
+        showMines: 'Show mines',
+        hideMines: 'Hide mines',
+        clearHistory: 'Clear log',
+        hideHistory: 'Hide log',
+        showHistory: 'Show log',
+        joinRoom: 'Join crew',
+        copyRoom: 'Copy code',
+        replay: 'Replay',
+        delete: 'Scuttle',
+        preset: {
+          easy: 'Easy',
+          medium: 'Medium',
+          hard: 'Hard',
+        },
+      },
+      placeholder: {
+        roomCode: 'Paste the code',
+      },
+      history: {
+        metaStats: '{timestamp} • {duration}s • {steps} moves',
+        metaSpecials: 'Rotations {rotations}, flips {flips}',
+        roomCode: 'Room {code}',
+        roomPending: 'Code incoming',
+        empty: 'No voyages logged.',
+      },
+      status: {
+        start: 'Click a tile to start the voyage.',
+        newBoard: 'Fresh deck ready. Sail with mouse or keys.',
+        specialEffects: 'Specials are {state}.',
+        cheatEnabled: 'Cheat view on deck.',
+        cheatDisabled: 'Cheat view battened.',
+        replayInit: 'Replaying run from {timestamp}',
+        replayProgress: 'Replaying ({step}/{total}) from {timestamp}',
+        replayComplete: 'Replay done. Reset the rig.',
+        loss: 'Boom! A mine exploded and the crew be cackling about yer lack of sea sense.',
+        win: 'Victory! All safe tiles found.',
+        enterRoom: 'Enter a room code first.',
+        roomNotFound: 'Room {code} not found.',
+        joiningRoom: 'Joining room {code}…',
+        copySuccess: 'Room {code} copied.',
+        copyFallback: 'Code {code}',
+      },
+      hint: {
+        keyboard: 'Arrow keys sail, Enter/Space reveal, F flag.',
+      },
+    };
+})();

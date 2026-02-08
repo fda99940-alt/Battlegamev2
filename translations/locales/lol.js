@@ -1,0 +1,99 @@
+(() => {
+  window.MindsweeperTranslations = window.MindsweeperTranslations || {};
+  window.MindsweeperTranslations.TRANSLATIONS = window.MindsweeperTranslations.TRANSLATIONS || {};
+  window.MindsweeperTranslations.TRANSLATIONS['lol'] = {
+      hero: {
+        eyebrow: 'Browser fursst',
+        title: 'Mindsweeper',
+        greeting: 'Welcome te da game, chosen buddy.',
+        lede: 'Neon Minesweeper wif spinny fields, flippy tiles, and replays dat stayz.',
+        meta: {
+          keyboard: 'Keyboard-friendly',
+          history: 'Persisted runz',
+          replay: 'Replay + sparkles',
+        },
+      },
+      label: {
+        minesRemaining: 'Mines lefties',
+        cellsRevealed: 'Cells opened',
+        rotationTriggers: 'Spinny triggers',
+        flipTriggers: 'Flip-flops',
+        rows: 'Rowz',
+        cols: 'Columnz',
+        mines: 'Minez',
+        rotationSpecials: 'Spin specials',
+        flipSpecials: 'Flip specials',
+        themes: 'Colors',
+        difficulty: 'Hardness',
+        language: 'Tongue',
+        on: 'on',
+        off: 'off',
+      },
+      theme: {
+        neon: 'Neon',
+        dusk: 'Dusk',
+        sunrise: 'Sunrise',
+        midnight: 'Midnight',
+        verdant: 'Verdant',
+        ember: 'Ember',
+      },
+      panel: {
+        boardTitle: 'Board + specials',
+        boardSubtitle: 'Make it ready before u play.',
+      },
+      section: {
+        history: {
+          title: 'History',
+          desc: 'Replay or clean up ur runs.',
+        },
+      },
+      button: {
+        applyLayout: 'Apply',
+        specials: 'Specials: {state}',
+        showMines: 'Show mines',
+        hideMines: 'Hide mines',
+        clearHistory: 'Clear history',
+        hideHistory: 'Hide history',
+        showHistory: 'Show history',
+        joinRoom: 'Join room',
+        copyRoom: 'Copy code',
+        replay: 'Replay',
+        delete: 'Delete',
+        preset: {
+          easy: 'Easy',
+          medium: 'Medium',
+          hard: 'Hard',
+        },
+      },
+      placeholder: {
+        roomCode: 'Paste room code',
+      },
+      history: {
+        metaStats: '{timestamp} • {duration}s • {steps} steps',
+        metaSpecials: 'Rotations {rotations}, flips {flips}',
+        roomCode: 'Room {code}',
+        roomPending: 'Room code pending',
+        empty: 'No runz yet.',
+      },
+      status: {
+        start: 'Click any cell to begin.',
+        newBoard: 'Fresh board ready. Click or keyboard it up.',
+        specialEffects: 'Special effects {state}.',
+        cheatEnabled: 'Cheat mode on.',
+        cheatDisabled: 'Cheat mode off.',
+        replayInit: 'Replay from {timestamp}',
+        replayProgress: 'Replay ({step}/{total}) from {timestamp}',
+        replayComplete: 'Replay done. Apply new layout.',
+        loss: 'O noes! Mine exploded and all da other mines is laughing at ur foibles.',
+        win: 'Yay! All safe cells found.',
+        enterRoom: 'Enter a room code first.',
+        roomNotFound: 'Room {code} not found.',
+        joiningRoom: 'Joining room {code}…',
+        copySuccess: 'Room {code} copied.',
+        copyFallback: 'Code {code}',
+      },
+      hint: {
+        keyboard: 'Arrows move, Enter/Space reveal, F flag.',
+      },
+    };
+})();

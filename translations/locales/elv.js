@@ -1,0 +1,99 @@
+(() => {
+  window.MindsweeperTranslations = window.MindsweeperTranslations || {};
+  window.MindsweeperTranslations.TRANSLATIONS = window.MindsweeperTranslations.TRANSLATIONS || {};
+  window.MindsweeperTranslations.TRANSLATIONS['elv'] = {
+      hero: {
+        eyebrow: 'Carnilossë arda',
+        title: 'Mindsweeper',
+        greeting: 'Mennin i hlarë, arda órenya.',
+        lede: 'A sinome-lengë Minesweeper, miquë ninquë nurta, lómelindi lemna, ar alcaro nísë rámar úvë rómenna.',
+        meta: {
+          keyboard: 'Klavon rómenna',
+          history: 'Hlarë úmë cala',
+          replay: 'Alcar hilda',
+        },
+      },
+      label: {
+        minesRemaining: 'Nólë minion',
+        cellsRevealed: 'Mennë cána',
+        rotationTriggers: 'Lómelindë',
+        flipTriggers: 'Árira lúmë',
+        rows: 'Rimar',
+        cols: 'Nórë',
+        mines: 'Minion',
+        rotationSpecials: 'Lómelindë quertë',
+        flipSpecials: 'Liril quertë',
+        themes: 'Túli',
+        difficulty: 'Átaltë',
+        language: 'Lamba',
+        on: 'yalta',
+        off: 'yúlta',
+      },
+      theme: {
+        neon: 'Elenya',
+        dusk: 'Lómelindë',
+        sunrise: 'Anarórë',
+        midnight: 'Alcaro',
+        verdant: 'Vëaná',
+        ember: 'Urëra',
+      },
+      panel: {
+        boardTitle: 'Móru ar alcaro',
+        boardSubtitle: 'Hlarë sanda ar lindë mi le',
+      },
+      section: {
+        history: {
+          title: 'Námar',
+          desc: 'Úva menel omenta ná, alca ya nárë.',
+        },
+      },
+      button: {
+        applyLayout: 'Aicanë',
+        specials: 'Alcaro: {state}',
+        showMines: 'Cenda minion',
+        hideMines: 'Tanca minion',
+        clearHistory: 'Hlarë quén',
+        hideHistory: 'Tanca hlarë',
+        showHistory: 'Cenda hlarë',
+        joinRoom: 'Enta cemen',
+        copyRoom: 'Láta ecca',
+        replay: 'Nyarna',
+        delete: 'Nalta',
+        preset: {
+          easy: 'Calima',
+          medium: 'Lohtë',
+          hard: 'Nális',
+        },
+      },
+      placeholder: {
+        roomCode: 'Hlarë ecca vórë',
+      },
+      history: {
+        metaStats: '{timestamp} • {duration}s • {steps} vëa',
+        metaSpecials: 'Lómë {rotations}, ári {flips}',
+        roomCode: 'Cemen {code}',
+        roomPending: 'Ecca útúvë',
+        empty: 'Úrë ilyë nári.',
+      },
+      status: {
+        start: 'Láta ná parma nahtië.',
+        newBoard: 'Móru nórienna, lindë ar klava vëa na.',
+        specialEffects: 'Alcaro {state}.',
+        cheatEnabled: 'Marta mata yéva.',
+        cheatDisabled: 'Marta mata ná yulda.',
+        replayInit: 'Nyarna nári atar {timestamp}',
+        replayProgress: 'Nyarna ({step}/{total}) atar {timestamp}',
+        replayComplete: 'Nyarna ná caure. Áicanë i nórë.',
+        loss: 'Mina hosta! Ilqua minion úva, ar órenyallo lómi nótë rúcina.',
+        win: 'Alcar! Ilqua órenyallo omenta.',
+        enterRoom: 'Anta ecca vórë.',
+        roomNotFound: 'Cemen {code} úvë hlarë.',
+        joiningRoom: 'Eleni cemen {code}…',
+        copySuccess: 'Cemen {code} lína.',
+        copyFallback: 'Ecca {code}',
+      },
+      hint: {
+        keyboard: 'Lamban linnar, Enter/Space cennan, F halya.',
+      },
+    };
+})();

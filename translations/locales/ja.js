@@ -1,0 +1,99 @@
+(() => {
+  window.MindsweeperTranslations = window.MindsweeperTranslations || {};
+  window.MindsweeperTranslations.TRANSLATIONS = window.MindsweeperTranslations.TRANSLATIONS || {};
+  window.MindsweeperTranslations.TRANSLATIONS['ja'] = {
+      hero: {
+        eyebrow: 'ブラウザ重視',
+        title: 'Mindsweeper',
+        greeting: '選ばれし者よ、ゲームへようこそ。',
+        lede: '回転・反転・リプレイが毎回暴走する、ネオン世界のマインスイーパー。',
+        meta: {
+          keyboard: 'キーボード対応',
+          history: '履歴保持',
+          replay: '特殊効果リプレイ',
+        },
+      },
+      label: {
+        minesRemaining: '残りの地雷',
+        cellsRevealed: '開いたマス',
+        rotationTriggers: '回転トリガー',
+        flipTriggers: '反転トリガー',
+        rows: '行',
+        cols: '列',
+        mines: '地雷',
+        rotationSpecials: '回転スペシャル',
+        flipSpecials: '反転スペシャル',
+        themes: 'テーマ',
+        difficulty: '難易度',
+        language: '言語',
+        on: 'オン',
+        off: 'オフ',
+      },
+      theme: {
+        neon: 'ネオン',
+        dusk: '夕暮れ',
+        sunrise: '朝日',
+        midnight: '真夜中',
+        verdant: '緑影',
+        ember: '余火',
+      },
+      panel: {
+        boardTitle: '盤面と特殊効果',
+        boardSubtitle: '新しいラウンド前にレイアウトを調整できます。',
+      },
+      section: {
+        history: {
+          title: '履歴',
+          desc: '過去のプレイをリプレイしたり削除できます。',
+        },
+      },
+      button: {
+        applyLayout: '適用',
+        specials: 'スペシャル：{state}',
+        showMines: '地雷表示',
+        hideMines: '地雷非表示',
+        clearHistory: '履歴を消去',
+        hideHistory: '履歴を隠す',
+        showHistory: '履歴を表示',
+        joinRoom: 'ルーム参加',
+        copyRoom: 'コードをコピー',
+        replay: 'リプレイ',
+        delete: '削除',
+        preset: {
+          easy: 'イージー',
+          medium: 'ミディアム',
+          hard: 'ハード',
+        },
+      },
+      placeholder: {
+        roomCode: 'ルームコードを貼り付け',
+      },
+      history: {
+        metaStats: '{timestamp} • {duration}s • {steps}ステップ',
+        metaSpecials: '回転 {rotations} 回、反転 {flips} 回',
+        roomCode: 'ルーム {code}',
+        roomPending: 'コード準備中',
+        empty: 'まだプレイ記録がありません。',
+      },
+      status: {
+        start: '任意のマスをクリックして開始。',
+        newBoard: '新しい盤面の準備ができました。セルまたはキーボードで探索しましょう。',
+        specialEffects: '特殊効果は{state}です。',
+        cheatEnabled: 'チート表示を有効にしました。',
+        cheatDisabled: 'チート表示を無効にしました。',
+        replayInit: '{timestamp} のプレイを回放しています',
+        replayProgress: '{timestamp} のプレイを回放中 ({step}/{total})',
+        replayComplete: 'リプレイ完了。新しいレイアウトを設定してください。',
+        loss: '地雷を踏みました！地雷たち全員が「ほらね」と笑って飛び出しています。',
+        win: '勝利！安全なセルはすべて発見されました。',
+        enterRoom: 'まずルームコードを入力してください。',
+        roomNotFound: 'ルーム {code} は見つかりませんでした。',
+        joiningRoom: 'ルーム {code} に接続中…',
+        copySuccess: 'ルーム {code} をクリップボードにコピーしました。',
+        copyFallback: 'ルームコード {code}',
+      },
+      hint: {
+        keyboard: '矢印キーで移動、Enter/Spaceで開く、Fで旗を立てる。',
+      },
+    };
+})();
