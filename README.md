@@ -46,3 +46,4 @@ Open `index.html` in a modern browser. No build step or server is required—the
 ## Notes
 
 - Built with help from an AI coding assistant (Codex, GPT-5) under human supervision, following the author’s guidance to shape the experience.
+- Some translations are machine-generated; the author may not fully verify every language so take those localized strings with a grain of salt.
