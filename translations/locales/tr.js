@@ -1,0 +1,115 @@
+(() => {
+  window.MindsweeperTranslations = window.MindsweeperTranslations || {};
+  window.MindsweeperTranslations.TRANSLATIONS = window.MindsweeperTranslations.TRANSLATIONS || {};
+  window.MindsweeperTranslations.TRANSLATIONS['tr'] = {
+    hero: {
+      eyebrow: 'Önce tarayıcı',
+      title: 'Mindsweeper',
+      greeting: 'Oyuna cesaretin var mı? İyi. Hatalarını izle.',
+      lede: 'Rotasyonlar, ters çeviriler ve tekrarlarla bu Minesweeper her turda seni teste tabi tutuyor.',
+      meta: {
+        keyboard: 'Sadece klavye, ustaca',
+        history: 'Geçmiş oyunlar unutulmaz',
+        replay: 'Hatalarını tekrar izleme',
+      },
+    },
+    label: {
+      minesRemaining: 'Kalan mayın',
+      cellsRevealed: 'Açılan hücre',
+      rotationTriggers: 'Rotasyon tetiklemeleri',
+      flipTriggers: 'Çevirme tetiklemeleri',
+      rows: 'Satırlar',
+      cols: 'Sütunlar',
+      mines: 'Mayınlar',
+      rotationSpecials: 'Rotasyon özelikleri',
+      flipSpecials: 'Çevirme özelikleri',
+      themes: 'Temalar',
+      difficulty: 'Zorluk',
+      language: 'Dil',
+      on: 'açık',
+      off: 'kapalı',
+      seed: 'Seed',
+    },
+    theme: {
+      neon: 'Neon',
+      dusk: 'Alacakaranlık',
+      sunrise: 'Gün doğumu',
+      midnight: 'Gece yarısı',
+      verdant: 'Yeşil',
+      ember: 'Kor',
+    },
+    panel: {
+      boardTitle: 'Tahta & özelikler',
+      boardSubtitle: 'Başlamadan önce acıyı ayarla.',
+    },
+    section: {
+      history: {
+        title: 'Geçmiş',
+        desc: 'Utancını tekrar izle ya da temizle.',
+      },
+    },
+    button: {
+      applyLayout: 'Diziyi uygula',
+      specials: 'Özelikler: {state}',
+      showMines: 'Mayınları göster',
+      hideMines: 'Mayınları gizle',
+      clearHistory: 'Geçmişi temizle',
+      hideHistory: 'Geçmişi gizle',
+      showHistory: 'Geçmişi göster',
+      joinRoom: 'Seed yükle',
+      copyRoom: 'Seed kopyala',
+      replay: 'Tekrar oynat',
+      delete: 'Sil',
+      preset: {
+        easy: 'Kolay',
+        medium: 'Orta',
+        hard: 'Zor',
+      },
+    },
+    placeholder: {
+      roomCode: 'Seed yapıştır',
+    },
+    history: {
+      metaStats: '{timestamp} • {duration}s • {steps} hamle',
+      metaSpecials: 'Rotasyonlar {rotations}, çeviriler {flips}',
+      roomCode: 'Seed {code}',
+      roomPending: 'Seed bekleniyor',
+      empty: 'Henüz hiçbir tur yok. Gidin biraz mahvedin.',
+    },
+    status: {
+      start: 'Başlamak için herhangi bir hücreye tıkla.',
+      newBoard: 'Yeni tahta hazır. Bahaneleri unut.',
+      specialEffects: 'Özel efektler {state}.',
+      cheatEnabled: 'Hile görünümü aktif. Hala kötüsün.',
+      cheatDisabled: 'Hile görünümü kapalı. Yine de kötü.',
+      replayInit: '{timestamp} tarihli oyunun tekrar oynatılıyor',
+      replayProgress: '{timestamp} tarihli oyunun ({step}/{total}) tekrar oynatılıyor. Takip et.',
+      replayComplete: 'Tekrar tamamlandı. Aynı mayına basma.',
+      loss: 'Mayına bastın. Mayınlar senin acını kutluyor.',
+      win: 'Zafer. Nadir bir cesaret hareketi.',
+      enterRoom: 'Bir seed gir, ya da en azından dene.',
+      roomNotFound: 'Seed {code} bulunamadı. Şaşırtıcı değil.',
+      joiningRoom: '{code} seed’i yükleniyor... bozmadan devam et.',
+      copySuccess: 'Seed {code} kopyalandı. Paylaş.',
+      copyFallback: 'Seed {code}.',
+    },
+    hint: {
+      keyboard: 'Ok tuşları hareket, Enter/Boşluk açma, F bayrak.'
+    },
+  };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['tr'] = {
+    seedLabel: 'Seed',
+    copySeed: 'Seed kopyala',
+    joinRoom: 'Seed yükle',
+    copyRoom: 'Seed kopyala',
+    placeholder: 'Seed yapıştır',
+    historyCode: 'Seed {code}',
+    historyPending: 'Seed bekleniyor',
+    enterRoom: 'Bir seed gir, ya da en azından dene.',
+    roomNotFound: 'Seed {code} bulunamadı.',
+    joiningRoom: '{code} seed’i yükleniyor...',
+    copySuccess: 'Seed {code} kopyalandı.',
+    copyFallback: 'Seed {code}',
+  };
+})();

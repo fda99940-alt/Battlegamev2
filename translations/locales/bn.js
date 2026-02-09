@@ -1,0 +1,116 @@
+(() => {
+  window.MindsweeperTranslations = window.MindsweeperTranslations || {};
+  window.MindsweeperTranslations.TRANSLATIONS = window.MindsweeperTranslations.TRANSLATIONS || {};
+  window.MindsweeperTranslations.TRANSLATIONS['bn'] = {
+    hero: {
+      eyebrow: 'ব্রাউজার প্রথম, আরও দ্রুত',
+      title: 'Mindsweeper',
+      greeting: 'খেলতে সাহস আছে? ভালো। ব্যর্থতার স্বাদ নাও।',
+      lede: 'রোটেশন, ফ্লিপ আর ইতিহাসের রেপ্লে নিয়ে এই Minesweeper পুরনো নিয়ম ভেঙে দেয়।',
+      meta: {
+        keyboard: 'শুধু কী-বোর্ড, দক্ষতার মতো',
+        history: 'যেসব রান তোমার হার স্মরণ রাখে',
+        replay: 'ভূলগুলো আবার দেখার জন্য রেপ্লে',
+      },
+    },
+    label: {
+      minesRemaining: 'বাকি মাইন',
+      cellsRevealed: 'খোলা সেল',
+      rotationTriggers: 'রোটেশন ট্রিগার',
+      flipTriggers: 'ফ্লিপ ট্রিগার',
+      rows: 'সারি',
+      cols: 'কলাম',
+      mines: 'মাইন',
+      rotationSpecials: 'রোটেশন স্পেশাল',
+      flipSpecials: 'ফ্লিপ স্পেশাল',
+      themes: 'থিম',
+      difficulty: 'কঠিনতা',
+      language: 'ভাষা',
+      on: 'চালু',
+      off: 'বন্ধ',
+      seed: 'সিড',
+    },
+    theme: {
+      neon: 'নিয়ন',
+      dusk: 'বেণুজ্বালা',
+      sunrise: 'সূর্যোদয়',
+      midnight: 'অর্ধরাত্রি',
+      verdant: 'সবুজ',
+      ember: 'জ্বলন্ত কোণা',
+    },
+    panel: {
+      boardTitle: 'বোর্ড ও স্পেশাল',
+      boardSubtitle: 'শুরু করার আগে কষ্টের মাত্রা ঠিক করো।',
+    },
+    section: {
+      history: {
+        title: 'ইতিহাস',
+        desc: 'তোমার শেইম রিপ্লে বা মুছে ফেলো।',
+      },
+    },
+    button: {
+      size: 'মাপ',
+      applyLayout: 'লেআউট প্রয়োগ কর',
+      specials: 'স্পেশাল: {state}',
+      showMines: 'মাইন দেখাও',
+      hideMines: 'মাইন লুকাও',
+      clearHistory: 'ইতিহাস মুছো',
+      hideHistory: 'ইতিহাস লুকাও',
+      showHistory: 'ইতিহাস দেখাও',
+      joinRoom: 'সিড লোড কর',
+      copyRoom: 'সিড কপি কর',
+      replay: 'রিপ্লে',
+      delete: 'মুছো',
+      preset: {
+        easy: 'সহজ',
+        medium: 'মাঝারি',
+        hard: 'কঠিন',
+      },
+    },
+    placeholder: {
+      roomCode: 'সিড পেস্ট কর',
+    },
+    history: {
+      metaStats: '{timestamp} • {duration}s • {steps} স্টেপ',
+      metaSpecials: 'রোটেশন {rotations}, ফ্লিপ {flips}',
+      roomCode: 'সিড {code}',
+      roomPending: 'সিড অপেক্ষায়',
+      empty: 'এখনো কোনো রান নেই. একটু ধ্বংস করো।',
+    },
+    status: {
+      start: 'শুরু করতে যেকোনো সেল ক্লিক করো।',
+      newBoard: 'নতুন বোর্ড তৈরি. অজুহাত নয়।',
+      specialEffects: 'স্পেশাল ইফেক্ট {state}.',
+      cheatEnabled: 'চিট মোড চালু. তবু তুমি দুর্বল।',
+      cheatDisabled: 'চিট মোড বন্ধ. তবু তুমি খারাপ।',
+      replayInit: '{timestamp} রানের পুনরাবৃত্তি হচ্ছে',
+      replayProgress: '{timestamp} রানের ({step}/{total}) পুনরাবৃত্তি চলছে. খেয়াল রাখো.',
+      replayComplete: 'রিপ্লে শেষ. একই মাইন এড়াও.',
+      loss: 'মাইন লাগল. মাইনগুলো তোমার ব্যর্থতা উদযাপন করছে।',
+      win: 'বিজয়! এই বার্তা খুব সাহসী।',
+      enterRoom: 'একটা সিড দাও, যদি থাকে।',
+      roomNotFound: 'সিড {code} পাওয়া যায়নি. অচমকাকার নয়।',
+      joiningRoom: '{code} সিড লোড করা হচ্ছে... সব নষ্ট করো না।',
+      copySuccess: 'সিড {code} কপি হয়েছে. শেয়ার করো.',
+      copyFallback: 'সিড {code}.',
+    },
+    hint: {
+      keyboard: 'নির্দেশ তীর দিয়ে চলাচল, Enter/Space দিয়ে খুলে দাও, F দিয়ে পতাকা দাও।',
+    },
+  };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['bn'] = {
+    seedLabel: 'সিড',
+    copySeed: 'সিড কপি কর',
+    joinRoom: 'সিড লোড কর',
+    copyRoom: 'সিড কপি কর',
+    placeholder: 'সিড পেস্ট কর',
+    historyCode: 'সিড {code}',
+    historyPending: 'সিড অপেক্ষায়',
+    enterRoom: 'একটা সিড দাও, যদি থাকে।',
+    roomNotFound: 'সিড {code} পাওয়া যায়নি।',
+    joiningRoom: '{code} সিড লোড করা হচ্ছে...',
+    copySuccess: 'সিড {code} কপি হয়েছে।',
+    copyFallback: 'সিড {code}',
+  };
+})();

@@ -1,7 +1,10 @@
 (() => {
     const LANGUAGE_OPTIONS = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'bn', name: 'বাংলা', flag: '🇧🇩' },
+    { code: 'it', name: 'Italiano', flag: '🇮🇹' },
     { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
     { code: 'sw', name: 'Kiswahili', flag: '🇰🇪' },
     { code: 'zh', name: '中文', flag: '🇨🇳' },
     { code: 'ja', name: '日本語', flag: '🇯🇵' },
@@ -159,8 +162,11 @@
     sv: ['Neon', 'Skymning', 'Soluppgång', 'Midnatt', 'Grön', 'Glöd'],
     ar: ['نيون', 'الغسق', 'الشروق', 'منتصف الليل', 'أخضر', 'جمرة'],
     elv: ['Elenya', 'Lómelindë', 'Anarórë', 'Alcaro', 'Vëaná', 'Urëra'],
+    it: ['Neon', 'Crepuscolo', 'Alba', 'Mezzanotte', 'Verdeggiante', 'Brace'],
+    tr: ['Neon', 'Alacakaranlık', 'Gün doğumu', 'Gece yarısı', 'Yeşil', 'Kor'],
     yoda: ['Neon', 'Dusk', 'Sunrise', 'Midnight', 'Verdant', 'Ember'],
-    mus: ['♪ Neon', '♪ Dusk', '♪ Sunrise', '♪ Midnight', '♪ Verdant', '♪ Ember'],
+    bn: ['নিয়ন', 'বেণুজ্বালা', 'সূর্যোদয়', 'অর্ধরাত্রি', 'সবুজ', 'জ্বলন্ত কোণা'],
+    mus: ['♪ Neon', '♪ Dusk', '♪ Sunrise', '♪ Midnight', 'Verdant', '♪ Ember'],
   };
     Object.keys(EXTRA_THEME_NAMES).forEach((code) => {
     if (TRANSLATIONS[code]) return;

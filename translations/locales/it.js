@@ -1,0 +1,116 @@
+(() => {
+  window.MindsweeperTranslations = window.MindsweeperTranslations || {};
+  window.MindsweeperTranslations.TRANSLATIONS = window.MindsweeperTranslations.TRANSLATIONS || {};
+  window.MindsweeperTranslations.TRANSLATIONS['it'] = {
+    hero: {
+      eyebrow: 'Browser prima di tutto',
+      title: 'Mindsweeper',
+      greeting: 'Hai il coraggio di giocare? Bene. Goditi le disfatte.',
+      lede: 'Questo Minesweeper ribalta le regole: rotazioni, capovolgimenti e replay ti puniranno senza pietà.',
+      meta: {
+        keyboard: 'Solo tastiera, come un pro',
+        history: 'Run che ricordano ogni caduta',
+        replay: 'Replay per rivedere gli errori',
+      },
+    },
+    label: {
+      minesRemaining: 'Mine rimaste',
+      cellsRevealed: 'Celle scoperte',
+      rotationTriggers: 'Attivazioni rotazione',
+      flipTriggers: 'Attivazioni ribaltamento',
+      rows: 'Righe',
+      cols: 'Colonne',
+      mines: 'Mine',
+      rotationSpecials: 'Speciali rotazione',
+      flipSpecials: 'Speciali ribaltamento',
+      themes: 'Temi',
+      difficulty: 'Difficoltà',
+      language: 'Lingua',
+      on: 'attivo',
+      off: 'spento',
+      seed: 'Seed',
+    },
+    theme: {
+      neon: 'Neon',
+      dusk: 'Crepuscolo',
+      sunrise: 'Alba',
+      midnight: 'Mezzanotte',
+      verdant: 'Verdeggiante',
+      ember: 'Brace',
+    },
+    panel: {
+      boardTitle: 'Griglia & speciali',
+      boardSubtitle: 'Imposta il dolore prima di iniziare.',
+    },
+    section: {
+      history: {
+        title: 'Storia',
+        desc: 'Ripeti o cancella la vergogna.',
+      },
+    },
+    button: {
+      size: 'Dimensione',
+      applyLayout: 'Applica layout',
+      specials: 'Speciali: {state}',
+      showMines: 'Mostra mine',
+      hideMines: 'Nascondi mine',
+      clearHistory: 'Pulisci storia',
+      hideHistory: 'Nascondi storia',
+      showHistory: 'Mostra storia',
+      joinRoom: 'Carica seed',
+      copyRoom: 'Copia seed',
+      replay: 'Replay',
+      delete: 'Elimina',
+      preset: {
+        easy: 'Facile',
+        medium: 'Medio',
+        hard: 'Difficile',
+      },
+    },
+    placeholder: {
+      roomCode: 'Incolla il seed',
+    },
+    history: {
+      metaStats: '{timestamp} • {duration}s • {steps} mosse',
+      metaSpecials: 'Rotazioni {rotations}, ribaltamenti {flips}',
+      roomCode: 'Seed {code}',
+      roomPending: 'Seed in attesa',
+      empty: 'Nessuna run ancora. Vai a sbagliare.',
+    },
+    status: {
+      start: 'Clicca una cella per iniziare.',
+      newBoard: 'Nuova griglia pronta. Nessuna scusa.',
+      specialEffects: 'Effetti speciali {state}.',
+      cheatEnabled: 'Visuale cheat attiva. Sei ancora scarso.',
+      cheatDisabled: 'Visuale cheat disattivata. Stai comunque sbagliando.',
+      replayInit: 'Riproduzione del tuo run da {timestamp}',
+      replayProgress: 'Replay ({step}/{total}) da {timestamp}. Tieni il ritmo.',
+      replayComplete: 'Replay completato. Evita la stessa mina.',
+      loss: 'Hai appena colpito una mina. Le mine brindano alla tua incompetenza.',
+      win: 'Vittoria. Una mossa audace per una volta.',
+      enterRoom: 'Inserisci un seed, se ne hai uno.',
+      roomNotFound: 'Seed {code} non trovato. Che sorpresa.',
+      joiningRoom: 'Caricamento seed {code}... non rovinare tutto.',
+      copySuccess: 'Seed {code} copiato. Condividi l’imbarazzo.',
+      copyFallback: 'Seed {code}.',
+    },
+    hint: {
+      keyboard: 'Freccie per muovere, Invio/Spazio per scoprire, F per bandierare.',
+    },
+  };
+  window.MindsweeperTranslations.SEED_TERMS = window.MindsweeperTranslations.SEED_TERMS || {};
+  window.MindsweeperTranslations.SEED_TERMS['it'] = {
+    seedLabel: 'Seed',
+    copySeed: 'Copia seed',
+    joinRoom: 'Carica seed',
+    copyRoom: 'Copia seed',
+    placeholder: 'Incolla il seed',
+    historyCode: 'Seed {code}',
+    historyPending: 'Seed in attesa',
+    enterRoom: 'Inserisci un seed, se ne hai uno.',
+    roomNotFound: 'Seed {code} non trovato.',
+    joiningRoom: 'Caricamento seed {code}...',
+    copySuccess: 'Seed {code} copiato.',
+    copyFallback: 'Seed {code}',
+  };
+})();
