@@ -15,6 +15,8 @@
   --highlight: #39f0ff;
   --highlight-strong: #abf7ff;
   --accent: #5af2c7;
+  --toast-bg: var(--accent);
+  --toast-text: #04050c;
   --danger: #ff6b6b;
   --radial-one: rgba(57, 240, 255, 0.15);
   --radial-two: rgba(0, 255, 219, 0.12);
@@ -40,6 +42,8 @@
   --highlight: #c084fc;
   --highlight-strong: #efc0ff;
   --accent: #f472b6;
+  --toast-bg: var(--accent);
+  --toast-text: #130014;
   --danger: #f87171;
   --radial-one: rgba(192, 132, 252, 0.2);
   --radial-two: rgba(59, 130, 246, 0.15);
@@ -65,6 +69,10 @@
   --highlight: #f97316;
   --highlight-strong: #fb923c;
   --accent: #facc15;
+  --toast-bg: var(--accent);
+  --toast-text: #351400;
+  --toast-bg: var(--accent);
+  --toast-text: #1b1b1b;
   --danger: #dc2626;
   --radial-one: rgba(248, 113, 113, 0.15);
   --radial-two: rgba(251, 191, 36, 0.16);
@@ -90,6 +98,8 @@
   --highlight: #7dd3fc;
   --highlight-strong: #38bdf8;
   --accent: #22d3ee;
+  --toast-bg: var(--accent);
+  --toast-text: #050a16;
   --danger: #93c5fd;
   --radial-one: rgba(77, 209, 255, 0.2);
   --radial-two: rgba(59, 130, 246, 0.18);
@@ -115,6 +125,8 @@
   --highlight: #4ade80;
   --highlight-strong: #bef264;
   --accent: #a3e635;
+  --toast-bg: var(--accent);
+  --toast-text: #052a0f;
   --danger: #4d7c0f;
   --radial-one: rgba(74, 222, 128, 0.17);
   --radial-two: rgba(16, 185, 129, 0.18);
@@ -226,6 +238,49 @@ body {
   border-radius: 1rem;
   padding: 1.25rem;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+}
+
+.status-toast {
+  margin: 0 auto 1rem;
+  max-width: 320px;
+  padding: 0.85rem 1rem;
+  background: var(--toast-bg, var(--accent));
+  color: var(--toast-text, #fff);
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+  text-align: center;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.status-toast.toast--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.guardian-indicator {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.7rem;
+  display: flex;
+  gap: 0.2rem;
+  font-size: 1rem;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  padding: 0.25rem 0.45rem;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transform: translateY(-10%);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.guardian-indicator--visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .avatar-panel {
@@ -386,6 +441,7 @@ body {
   flex-direction: column;
   gap: 0.5rem;
   overflow: hidden;
+  position: relative;
 }
 
 .seed-banner {
@@ -517,6 +573,23 @@ body {
 }
 
 .cell[data-show-cheat="true"].cell--special-dog::after {
+  opacity: 0.9;
+}
+
+.cell--special-guardian::after {
+  content: "🛡";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.cell[data-show-cheat="true"].cell--special-guardian::after {
   opacity: 0.9;
 }
 

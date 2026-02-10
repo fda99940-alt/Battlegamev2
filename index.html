@@ -68,8 +68,13 @@
             <span class="label" data-i18n-key="label.dogTriggers">Dog triggers</span>
             <strong id="dogCount">0</strong>
           </div>
+          <div class="status-card">
+            <span class="label" data-i18n-key="label.guardianTriggers">Guardian triggers</span>
+            <strong id="guardianCount">0</strong>
+          </div>
         </div>
       </section>
+      <div id="guardianToast" class="status-toast" role="status" aria-live="polite"></div>
 
       <section class="panel avatar-panel" aria-live="polite" aria-label="Avatar commentator">
         <div class="avatar-window">
@@ -86,6 +91,7 @@
                 <option value="cute">Cute</option>
                 <option value="teasing">Teasing</option>
                 <option value="megumin">Megumin</option>
+                <option value="friren">Friren</option>
               </select>
             </label>
           </div>
@@ -96,6 +102,7 @@
       </section>
 
       <section class="board-wrapper">
+        <div class="guardian-indicator" id="guardianIndicator" aria-live="polite" aria-atomic="true"></div>
         <div class="seed-banner">
           <span class="seed-banner__label" data-i18n-key="label.seed">Seed</span>
           <span class="seed-banner__code" id="seedCode">—</span>
@@ -141,6 +148,10 @@
           <label>
             <span data-i18n-key="label.dogSpecials">Dog specials</span>
             <input type="number" id="dogInput" min="0" max="8" value="1" />
+          </label>
+          <label>
+            <span data-i18n-key="label.guardianSpecials">Guardian specials</span>
+            <input type="number" id="guardianInput" min="0" max="8" value="1" />
           </label>
           <button type="submit" class="primary" data-i18n-key="button.applyLayout">Apply layout</button>
         </form>

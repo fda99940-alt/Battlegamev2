@@ -19,12 +19,14 @@
       rotationTriggers: 'Rotation triggers',
       flipTriggers: 'Flip triggers',
       dogTriggers: 'Dog triggers',
+      guardianTriggers: 'Guardian triggers',
       rows: 'Rows',
       cols: 'Columns',
       mines: 'Mines',
       rotationSpecials: 'Rotation specials',
       flipSpecials: 'Flip specials',
       dogSpecials: 'Dog specials',
+      guardianSpecials: 'Guardian specials',
       themes: 'Themes',
       difficulty: 'Difficulty',
       language: 'Language',
@@ -73,7 +75,7 @@
     },
     history: {
       metaStats: '{timestamp} • {duration}s • {steps} steps',
-      metaSpecials: 'Rotation triggers {rotations}, flips {flips}, dogs {dogs}',
+      metaSpecials: 'Rotation triggers {rotations}, flips {flips}, dogs {dogs}, guardians {guardians}',
       roomCode: 'Seed {code}',
       roomPending: 'Seed pending',
       empty: 'No runs yet.',
@@ -82,6 +84,8 @@
       start: 'Click any cell to begin.',
       newBoard: 'New board ready. Click or use the keyboard to explore.',
       specialEffects: 'Special effects {state}.',
+      guardianReady: 'Guardian shield ready ({shields}) for the next mine.',
+      guardianSaved: 'Guardian shield flagged that mine—stay sharp.',
       cheatEnabled: 'Cheat view enabled.',
       cheatDisabled: 'Cheat view disabled.',
       replayInit: 'Replaying run from {timestamp}',
@@ -158,6 +162,16 @@
             'Doggo sniffs out a mine at {pos} and flags it for you.',
             'Woof! That {pos} mine is now safely marked.',
             'Dog special activated—consider {pos} taken care of.',
+          ],
+          specialGuardian: [
+            'Guardian tile at {pos} just armed your shield.',
+            'That guardian is watching {pos}. Easy now.',
+            'You triggered a guardian! The next mine will be gentle.',
+          ],
+          specialGuardianSave: [
+            'Shield flagged the mine at {pos}. Keep breathing.',
+            'Guardian shield kept {pos} safe—carry on.',
+            'Phew! That guardian took the hit at {pos}.',
           ],
           win: [
             'Victory! The {size} grid bows to you.',
@@ -244,6 +258,16 @@
             'The mutt flagged {pos}? Fine, I’ll pretend that helps you.',
             'Even that hound can smell a mine near {pos}. Consider it marked.',
             'My dog just marked a mine—try not to mess it up.',
+          ],
+          specialGuardian: [
+            'Guardian at {pos}? I’ll let it slide this time.',
+            'You triggered a guard tile—sprite says the next mine can wait.',
+            'That guardian sparkled at {pos}. Don’t squander it.',
+          ],
+          specialGuardianSave: [
+            'Shield flagged the mine at {pos}. Don’t get cocky.',
+            'Guardian shield just ate {pos}. I’ll remember this favor.',
+            'You survive because {pos} got flagged automatically. Try not to waste it.',
           ],
           win: [
             'You survived {size}? Even my minions are stunned.',
@@ -334,6 +358,16 @@
             'Paws up! Doggo marked {pos} with a cute little flag.',
             'Doggo loves you—especially when it flags a mine.',
           ],
+          specialGuardian: [
+            'Guardian sparkle at {pos}? That’s a protective hug.',
+            'A guardian tile shields you—so gentle.',
+            'That little guardian promises the next mine will be kind.',
+          ],
+          specialGuardianSave: [
+            'Shield turned {pos} into a fluff pillow—no ouch.',
+            'Guardian kept {pos} safe! Keep shining.',
+            'That shield is a cuddle for your nerves.',
+          ],
           win: [
             'Victory sparkles! {size} cleared like a champion!',
             'You did it, gorgeous! Time for confetti.',
@@ -413,6 +447,16 @@
             'A calm hound flagged {pos} so you can breathe easier.',
             'That gentle dog found a mine—let its wag guide you.',
             'The pooch did the thinking for {pos}. Breathe in, breathe out.',
+          ],
+          specialGuardian: [
+            'A guardian tile stands watch at {pos}. Continue with steady steps.',
+            'That guardian calming {pos} feels like a quiet breeze.',
+            'You and the guardian share a gentle nod—keep moving.',
+          ],
+          specialGuardianSave: [
+            'Shield soothed the mine at {pos}. Breathe slowly now.',
+            'The guardian took the fall—let the air settle.',
+            'I felt that shield hug {pos}. Carry on softly.',
           ],
           win: [
             'Victory feels like a calm dawn—well played.',
@@ -516,6 +560,16 @@
             "Doggo’s sniffed out {pos}. You owe it a treat.",
             "You vs dog flagged {pos}? I call that teamwork.",
             "That bratty dog just rescued you at {pos}. Don’t get cocky."
+          ],
+          "specialGuardian": [
+            "Guardian just leaned into {pos}? I love seeing you pretend you’re not terrified.",
+            "You triggered a guardian tile—someone’s got a safety net now.",
+            "That little guardian is keeping {pos} from exploding—for now."
+          ],
+          "specialGuardianSave": [
+            "Shield grabbed {pos} before it could scream. You're welcome.",
+            "Guardian saved that mine—don’t make me regret it.",
+            "That mine at {pos} got flagged without you breaking a sweat. Keep the show going."
           ],
           "win": [
             "Ohhh, you won? That's so cute when you're all smug like that... but don't get too confident, okay? *giggles*",
@@ -628,6 +682,16 @@
             "Doggos are adorable—especially when they flag {pos}.",
             "Our pet just marked a mine at {pos}. Praise the explosion!",
             "Doggo saved the day at {pos}, now let the war begin!"
+          ],
+          "specialGuardian": [
+            "Guardian tile at {pos}? Good. Keep it away from the big blast for now.",
+            "That guardian is prepping you for something even bigger later.",
+            "Guardian watch over {pos}—we’ll need that shield for the next boom."
+          ],
+          "specialGuardianSave": [
+            "Shield absorbed the mine at {pos}, so you can save your explosion.",
+            "Guardian shield turned that {pos} blast into a harmless ember.",
+            "Now that the shield handled {pos}, it’s time for a real explosion!"
           ],
           "win": [
             "Ohhh, you won? That’s so cute when you’re all smug like that… but don’t get too confident, okay? *giggles* **...ohhh, the explosion is coming for you! Wahahahahaha! My name is Megumin, the number one mage of Axel!**",

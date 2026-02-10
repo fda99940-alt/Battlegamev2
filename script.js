@@ -14,6 +14,9 @@ const revealedCountEl = document.getElementById('revealedCount');
 const rotationCountEl = document.getElementById('rotationCount');
 const flipCountEl = document.getElementById('flipCount');
 const dogCountEl = document.getElementById('dogCount');
+const guardianCountEl = document.getElementById('guardianCount');
+const guardianToastEl = document.getElementById('guardianToast');
+const guardianIndicatorEl = document.getElementById('guardianIndicator');
 const configForm = document.getElementById('configForm');
 const rowsInput = document.getElementById('rowsInput');
 const colsInput = document.getElementById('colsInput');
@@ -21,6 +24,7 @@ const minesInput = document.getElementById('minesInput');
 const rotationInput = document.getElementById('rotationInput');
 const flipInput = document.getElementById('flipInput');
 const dogInput = document.getElementById('dogInput');
+const guardianInput = document.getElementById('guardianInput');
 const toggleSpecialsBtn = document.getElementById('toggleSpecials');
 const showMinesBtn = document.getElementById('showMinesHandle');
 const clearHistoryBtn = document.getElementById('clearHistory');
@@ -33,14 +37,38 @@ const availableThemes = ['neon', 'dusk', 'sunrise', 'midnight', 'verdant', 'embe
 const defaultTheme = availableThemes[0];
 const presetButtons = document.querySelectorAll('[data-preset]');
 const difficultyPresets = {
-  easy: { rows: 8, cols: 8, mines: 10, rotationSpecials: 1, flipSpecials: 1, dogSpecials: 1 },
-  medium: { rows: 10, cols: 10, mines: 18, rotationSpecials: 2, flipSpecials: 2, dogSpecials: 1 },
-  hard: { rows: 16, cols: 16, mines: 36, rotationSpecials: 3, flipSpecials: 3, dogSpecials: 1 },
+  easy: {
+    rows: 8,
+    cols: 8,
+    mines: 10,
+    rotationSpecials: 1,
+    flipSpecials: 1,
+    dogSpecials: 1,
+    guardianSpecials: 1,
+  },
+  medium: {
+    rows: 10,
+    cols: 10,
+    mines: 18,
+    rotationSpecials: 2,
+    flipSpecials: 2,
+    dogSpecials: 1,
+    guardianSpecials: 1,
+  },
+  hard: {
+    rows: 16,
+    cols: 16,
+    mines: 36,
+    rotationSpecials: 3,
+    flipSpecials: 3,
+    dogSpecials: 1,
+    guardianSpecials: 1,
+  },
 };
 let activePreset = null;
   const ROOM_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   const ROOM_CODE_RANDOM_SEGMENT_LENGTH = 4;
-  const ROOM_CONFIG_SEGMENT_LENGTH = 12;
+  const ROOM_CONFIG_SEGMENT_LENGTH = 14;
   const toggleHistoryBtn = document.getElementById('toggleHistory');
   const historyCollapsedKey = 'mindsweeperHistoryCollapsed';
   const roomCodeInput = document.getElementById('roomCodeInput');
@@ -80,6 +108,7 @@ let activePreset = null;
     rotationSpecials: 2,
     flipSpecials: 2,
     dogSpecials: 1,
+    guardianSpecials: 1,
   };
 
   let grid = [];
@@ -94,6 +123,9 @@ let activePreset = null;
   let rotationTriggers = 0;
   let flipTriggers = 0;
   let dogTriggers = 0;
+  let guardianTriggers = 0;
+  let guardianShields = 0;
+  let guardianToastTimer = null;
   let flaggedCount = 0;
   let revealedCount = 0;
   let isReplaying = false;
@@ -352,6 +384,7 @@ let activePreset = null;
       rotationSpecials: record.rotationSpecials,
       flipSpecials: record.flipSpecials,
       dogSpecials: record.dogSpecials,
+      guardianSpecials: record.guardianSpecials,
     });
   }
 
@@ -399,6 +432,15 @@ let activePreset = null;
         };
       }
     });
+    (payload.guardianSpecials || []).forEach((special) => {
+      const cell = getCell(special.row, special.col);
+      if (cell) {
+        cell.special = {
+          type: 'guardian',
+          triggered: false,
+        };
+      }
+    });
   }
 
   /**
@@ -410,6 +452,7 @@ let activePreset = null;
       rotationSpecials: getSpecialsByType('rotation'),
       flipSpecials: getSpecialsByType('flip'),
       dogSpecials: getSpecialsByType('dog'),
+      guardianSpecials: getSpecialsByType('guardian'),
     };
   }
 
@@ -434,9 +477,30 @@ let activePreset = null;
       0,
       Math.max(safeCells - rotationSpecials - flipSpecials, 0)
     );
+    const guardianSpecials = clamp(
+      Number(guardianInput.value) || config.guardianSpecials,
+      0,
+      Math.max(safeCells - rotationSpecials - flipSpecials - dogSpecials, 0)
+    );
 
-    applyConfigToInputs({ rows, cols, mines, rotationSpecials, flipSpecials, dogSpecials });
-    return { rows, cols, mines, rotationSpecials, flipSpecials, dogSpecials };
+    applyConfigToInputs({
+      rows,
+      cols,
+      mines,
+      rotationSpecials,
+      flipSpecials,
+      dogSpecials,
+      guardianSpecials,
+    });
+    return {
+      rows,
+      cols,
+      mines,
+      rotationSpecials,
+      flipSpecials,
+      dogSpecials,
+      guardianSpecials,
+    };
   }
 
   /**
@@ -450,7 +514,10 @@ let activePreset = null;
     rotationInput.value = values.rotationSpecials;
     flipInput.value = values.flipSpecials;
     if (dogInput) {
-      dogInput.value = values.dogSpecials;
+      dogInput.value = values.dogSpecials ?? 0;
+    }
+    if (guardianInput) {
+      guardianInput.value = values.guardianSpecials ?? 0;
     }
   }
 
@@ -523,9 +590,17 @@ let activePreset = null;
       };
     });
     const dogCells = available.slice(0, config.dogSpecials);
+    available = available.slice(config.dogSpecials);
     dogCells.forEach((cell) => {
       cell.special = {
         type: 'dog',
+        triggered: false,
+      };
+    });
+    const guardianCells = available.slice(0, config.guardianSpecials);
+    guardianCells.forEach((cell) => {
+      cell.special = {
+        type: 'guardian',
         triggered: false,
       };
     });
@@ -563,6 +638,9 @@ let activePreset = null;
       if (cell.special?.type === 'dog') {
         cellEl.classList.add('cell--special-dog');
       }
+      if (cell.special?.type === 'guardian') {
+        cellEl.classList.add('cell--special-guardian');
+      }
       cell.element = cellEl;
       boardEl.appendChild(cellEl);
     });
@@ -576,6 +654,16 @@ let activePreset = null;
     if (!gameActive && !options.replay) return;
     if (!cell || cell.revealed || cell.flagged) return;
     const { recordAction = true, replay = false, checkVictory = true, userAction = true } = options;
+    const pos = describeCellPosition(cell);
+    if (!replay && cell.isMine && guardianShields > 0) {
+      guardianShields -= 1;
+      speakAvatar('specialGuardianSave', { pos });
+      showStatusMessage('status.guardianSaved');
+      showGuardianToast('status.guardianSaved');
+      applyFlag(cell, true, { recordAction, replay: false, userAction: false });
+      updateStatus();
+      return;
+    }
     cell.revealed = true;
     const cellEl = cell.element;
     if (!cellEl) return;
@@ -668,6 +756,11 @@ let activePreset = null;
     } else if (special.type === 'dog') {
       dogTriggers += 1;
       flagRandomMine();
+    } else if (special.type === 'guardian') {
+      guardianTriggers += 1;
+      guardianShields += 1;
+      showStatusMessage('status.guardianReady', { shields: guardianShields });
+      showGuardianToast('status.guardianReady', { shields: guardianShields });
     }
     applyTransform();
     updateStatus();
@@ -723,6 +816,10 @@ let activePreset = null;
     if (dogCountEl) {
       dogCountEl.textContent = dogTriggers;
     }
+    if (guardianCountEl) {
+      guardianCountEl.textContent = guardianTriggers;
+    }
+    updateGuardianIndicator();
   }
 
   /**
@@ -799,11 +896,13 @@ let activePreset = null;
       rotationTriggers,
       flipTriggers,
       dogTriggers,
+      guardianTriggers,
       totalCells: config.rows * config.cols,
       minePositions: layoutPayload.minePositions,
       rotationSpecials: layoutPayload.rotationSpecials,
       flipSpecials: layoutPayload.flipSpecials,
       dogSpecials: layoutPayload.dogSpecials,
+      guardianSpecials: layoutPayload.guardianSpecials,
       layout: layoutPayload,
       seed: currentRoomSeed,
       actions: runActions.slice(),
@@ -846,6 +945,8 @@ let activePreset = null;
           list.push({ row: cell.row, col: cell.col, axis: cell.special.axis });
         } else if (type === 'dog') {
           list.push({ row: cell.row, col: cell.col });
+        } else if (type === 'guardian') {
+          list.push({ row: cell.row, col: cell.col });
         }
       }
     });
@@ -881,6 +982,7 @@ let activePreset = null;
         rotations: run.rotationTriggers,
         flips: run.flipTriggers,
         dogs: run.dogTriggers,
+        guardians: run.guardianTriggers ?? 0,
       });
       wrapper.appendChild(specials);
       const roomCodeRow = document.createElement('div');
@@ -959,6 +1061,32 @@ let activePreset = null;
    */
   function showStatusMessage(key, replacements = {}) {
     setStatus(t(key, replacements));
+  }
+
+  function showGuardianToast(key, replacements = {}) {
+    if (!guardianToastEl) return;
+    const text = t(key, replacements);
+    if (!text) return;
+    guardianToastEl.textContent = text;
+    guardianToastEl.classList.add('toast--visible');
+    if (guardianToastTimer) {
+      clearTimeout(guardianToastTimer);
+    }
+    guardianToastTimer = setTimeout(() => {
+      guardianToastEl.classList.remove('toast--visible');
+    }, 3200);
+  }
+
+  function updateGuardianIndicator() {
+    if (!guardianIndicatorEl) return;
+    if (guardianShields <= 0) {
+      guardianIndicatorEl.classList.remove('guardian-indicator--visible');
+      guardianIndicatorEl.textContent = '';
+      return;
+    }
+    const icons = '🛡'.repeat(Math.min(guardianShields, 5));
+    guardianIndicatorEl.textContent = icons;
+    guardianIndicatorEl.classList.add('guardian-indicator--visible');
   }
 
   function describeCellPosition(cell) {
@@ -1101,6 +1229,8 @@ let activePreset = null;
       speakAvatar('specialFlip', { pos, axis }, { duration: 1700 });
     } else if (special.type === 'dog') {
       speakAvatar('specialDog', { pos }, { duration: 1700 });
+    } else if (special.type === 'guardian') {
+      speakAvatar('specialGuardian', { pos }, { duration: 1700 });
     }
   }
 
@@ -1274,6 +1404,7 @@ let activePreset = null;
       config.rotationSpecials ?? 0,
       config.flipSpecials ?? 0,
       config.dogSpecials ?? 0,
+      config.guardianSpecials ?? 0,
     ];
     return values
       .map((value) => clamp(value, 0, 35).toString(36).toUpperCase().padStart(2, '0'))
@@ -1295,7 +1426,11 @@ let activePreset = null;
     if (!configSegment || !seedSegment) {
       return null;
     }
-    const validLengths = [ROOM_CONFIG_SEGMENT_LENGTH, ROOM_CONFIG_SEGMENT_LENGTH - 2];
+    const validLengths = [
+      ROOM_CONFIG_SEGMENT_LENGTH,
+      ROOM_CONFIG_SEGMENT_LENGTH - 2,
+      ROOM_CONFIG_SEGMENT_LENGTH - 4,
+    ];
     if (!validLengths.includes(configSegment.length)) {
       return null;
     }
@@ -1308,7 +1443,15 @@ let activePreset = null;
       }
       values.push(parsed);
     }
-    const [rows, cols, mines, rotationSpecials, flipSpecials, dogSpecials = 0] = values;
+    const [
+      rows,
+      cols,
+      mines,
+      rotationSpecials,
+      flipSpecials,
+      dogSpecials = 0,
+      guardianSpecials = 0,
+    ] = values;
     return {
       config: {
         rows,
@@ -1317,6 +1460,7 @@ let activePreset = null;
         rotationSpecials,
         flipSpecials,
         dogSpecials,
+        guardianSpecials,
       },
       seed: seedSegment,
     };
@@ -1333,6 +1477,8 @@ let activePreset = null;
     rotationTriggers = 0;
     flipTriggers = 0;
     dogTriggers = 0;
+    guardianTriggers = 0;
+    guardianShields = 0;
     flaggedCount = 0;
     revealedCount = 0;
     focusCell = { row: 0, col: 0 };
@@ -1474,6 +1620,7 @@ let activePreset = null;
       rotationSpecials: preset.rotationSpecials,
       flipSpecials: preset.flipSpecials,
       dogSpecials: preset.dogSpecials ?? 0,
+      guardianSpecials: preset.guardianSpecials ?? 0,
     });
     setActivePreset(name);
     startNewGame();
