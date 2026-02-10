@@ -20,6 +20,7 @@ Open `index.html` in a modern browser. No build step or server is required—the
 2. **Configurable specials**: Rows, columns, mine count, rotation specials, and flip specials are clamp-safeguarded so you can experiment while keeping the logic valid.
 3. **Difficulty presets**: Easy/Medium/Hard buttons seed the recommended inputs and immediately restart with that setup while highlighting the active preset.
 4. **Rotation & flip fields**: Reveal specials to rotate the board 90° clockwise/counter-clockwise or mirror it horizontally/vertically, and optionally disable the animations with “Specials: on/off”.
+5. **Dog special tile**: Discovering a Dog tile flags a random unmarked mine automatically, so every good sniff buys you a little safety without touching the mine count input or flagging manually.
 5. **Cheat view**: “Show mines” temporarily highlights raw mine locations and special tiles for inspection before you commit to a move.
 6. **History + replay**: Runs capture timestamps, configurations, layouts, mine positions, special trigger counts, and action sequences; the panel lets you replay, delete, or clear them. Each entry also exposes a copyable room code plus a join form for instant replays.
 7. **Seed sharing**: A deterministic seed string above the board encodes configuration plus RNG state so the same board/special placement can be recreated by copying/pasting the seed (even into prompts).

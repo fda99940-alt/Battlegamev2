@@ -13,12 +13,14 @@ const remainingMinesEl = document.getElementById('remainingMines');
 const revealedCountEl = document.getElementById('revealedCount');
 const rotationCountEl = document.getElementById('rotationCount');
 const flipCountEl = document.getElementById('flipCount');
+const dogCountEl = document.getElementById('dogCount');
 const configForm = document.getElementById('configForm');
 const rowsInput = document.getElementById('rowsInput');
 const colsInput = document.getElementById('colsInput');
 const minesInput = document.getElementById('minesInput');
 const rotationInput = document.getElementById('rotationInput');
 const flipInput = document.getElementById('flipInput');
+const dogInput = document.getElementById('dogInput');
 const toggleSpecialsBtn = document.getElementById('toggleSpecials');
 const showMinesBtn = document.getElementById('showMinesHandle');
 const clearHistoryBtn = document.getElementById('clearHistory');
@@ -31,14 +33,14 @@ const availableThemes = ['neon', 'dusk', 'sunrise', 'midnight', 'verdant', 'embe
 const defaultTheme = availableThemes[0];
 const presetButtons = document.querySelectorAll('[data-preset]');
 const difficultyPresets = {
-  easy: { rows: 8, cols: 8, mines: 10, rotationSpecials: 1, flipSpecials: 1 },
-  medium: { rows: 10, cols: 10, mines: 18, rotationSpecials: 2, flipSpecials: 2 },
-  hard: { rows: 16, cols: 16, mines: 36, rotationSpecials: 3, flipSpecials: 3 },
+  easy: { rows: 8, cols: 8, mines: 10, rotationSpecials: 1, flipSpecials: 1, dogSpecials: 1 },
+  medium: { rows: 10, cols: 10, mines: 18, rotationSpecials: 2, flipSpecials: 2, dogSpecials: 1 },
+  hard: { rows: 16, cols: 16, mines: 36, rotationSpecials: 3, flipSpecials: 3, dogSpecials: 1 },
 };
 let activePreset = null;
   const ROOM_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   const ROOM_CODE_RANDOM_SEGMENT_LENGTH = 4;
-  const ROOM_CONFIG_SEGMENT_LENGTH = 10;
+  const ROOM_CONFIG_SEGMENT_LENGTH = 12;
   const toggleHistoryBtn = document.getElementById('toggleHistory');
   const historyCollapsedKey = 'mindsweeperHistoryCollapsed';
   const roomCodeInput = document.getElementById('roomCodeInput');
@@ -77,6 +79,7 @@ let activePreset = null;
     mines: 18,
     rotationSpecials: 2,
     flipSpecials: 2,
+    dogSpecials: 1,
   };
 
   let grid = [];
@@ -90,6 +93,7 @@ let activePreset = null;
   let flipVertical = false;
   let rotationTriggers = 0;
   let flipTriggers = 0;
+  let dogTriggers = 0;
   let flaggedCount = 0;
   let revealedCount = 0;
   let isReplaying = false;
@@ -347,6 +351,7 @@ let activePreset = null;
       minePositions: record.minePositions,
       rotationSpecials: record.rotationSpecials,
       flipSpecials: record.flipSpecials,
+      dogSpecials: record.dogSpecials,
     });
   }
 
@@ -385,6 +390,15 @@ let activePreset = null;
         };
       }
     });
+    (payload.dogSpecials || []).forEach((special) => {
+      const cell = getCell(special.row, special.col);
+      if (cell) {
+        cell.special = {
+          type: 'dog',
+          triggered: false,
+        };
+      }
+    });
   }
 
   /**
@@ -395,6 +409,7 @@ let activePreset = null;
       minePositions: getMinePositions(),
       rotationSpecials: getSpecialsByType('rotation'),
       flipSpecials: getSpecialsByType('flip'),
+      dogSpecials: getSpecialsByType('dog'),
     };
   }
 
@@ -414,9 +429,14 @@ let activePreset = null;
       0,
       Math.max(safeCells - rotationSpecials, 0)
     );
+    const dogSpecials = clamp(
+      Number(dogInput.value) || config.dogSpecials,
+      0,
+      Math.max(safeCells - rotationSpecials - flipSpecials, 0)
+    );
 
-    applyConfigToInputs({ rows, cols, mines, rotationSpecials, flipSpecials });
-    return { rows, cols, mines, rotationSpecials, flipSpecials };
+    applyConfigToInputs({ rows, cols, mines, rotationSpecials, flipSpecials, dogSpecials });
+    return { rows, cols, mines, rotationSpecials, flipSpecials, dogSpecials };
   }
 
   /**
@@ -429,6 +449,9 @@ let activePreset = null;
     minesInput.value = values.mines;
     rotationInput.value = values.rotationSpecials;
     flipInput.value = values.flipSpecials;
+    if (dogInput) {
+      dogInput.value = values.dogSpecials;
+    }
   }
 
   /**
@@ -491,10 +514,18 @@ let activePreset = null;
       };
     });
     const flipCells = available.slice(0, config.flipSpecials);
+    available = available.slice(config.flipSpecials);
     flipCells.forEach((cell) => {
       cell.special = {
         type: 'flip',
         axis: pick(['horizontal', 'vertical'], rng),
+        triggered: false,
+      };
+    });
+    const dogCells = available.slice(0, config.dogSpecials);
+    dogCells.forEach((cell) => {
+      cell.special = {
+        type: 'dog',
         triggered: false,
       };
     });
@@ -528,6 +559,9 @@ let activePreset = null;
       }
       if (cell.special?.type === 'flip') {
         cellEl.classList.add('cell--special-flip');
+      }
+      if (cell.special?.type === 'dog') {
+        cellEl.classList.add('cell--special-dog');
       }
       cell.element = cellEl;
       boardEl.appendChild(cellEl);
@@ -631,10 +665,27 @@ let activePreset = null;
           flipVertical = !flipVertical;
         }
       }
+    } else if (special.type === 'dog') {
+      dogTriggers += 1;
+      flagRandomMine();
     }
     applyTransform();
     updateStatus();
     commentOnSpecial(special, cell);
+  }
+
+  function flagRandomMine(options = {}) {
+    const { recordAction = true } = options;
+    const candidates = [];
+    forEachCell((cell) => {
+      if (cell.isMine && !cell.flagged) {
+        candidates.push(cell);
+      }
+    });
+    if (!candidates.length) return null;
+    const target = pick(candidates);
+    applyFlag(target, true, { recordAction, replay: false, userAction: false });
+    return target;
   }
 
   /**
@@ -669,6 +720,9 @@ let activePreset = null;
     revealedCountEl.textContent = revealedCount;
     rotationCountEl.textContent = rotationTriggers;
     flipCountEl.textContent = flipTriggers;
+    if (dogCountEl) {
+      dogCountEl.textContent = dogTriggers;
+    }
   }
 
   /**
@@ -744,10 +798,12 @@ let activePreset = null;
       flagged: flaggedCount,
       rotationTriggers,
       flipTriggers,
+      dogTriggers,
       totalCells: config.rows * config.cols,
       minePositions: layoutPayload.minePositions,
       rotationSpecials: layoutPayload.rotationSpecials,
       flipSpecials: layoutPayload.flipSpecials,
+      dogSpecials: layoutPayload.dogSpecials,
       layout: layoutPayload,
       seed: currentRoomSeed,
       actions: runActions.slice(),
@@ -788,6 +844,8 @@ let activePreset = null;
           list.push({ row: cell.row, col: cell.col, direction: cell.special.direction });
         } else if (type === 'flip') {
           list.push({ row: cell.row, col: cell.col, axis: cell.special.axis });
+        } else if (type === 'dog') {
+          list.push({ row: cell.row, col: cell.col });
         }
       }
     });
@@ -822,6 +880,7 @@ let activePreset = null;
       specials.textContent = t('history.metaSpecials', {
         rotations: run.rotationTriggers,
         flips: run.flipTriggers,
+        dogs: run.dogTriggers,
       });
       wrapper.appendChild(specials);
       const roomCodeRow = document.createElement('div');
@@ -1040,6 +1099,8 @@ let activePreset = null;
     } else if (special.type === 'flip') {
       const axis = special.axis === 'horizontal' ? 'horizontally' : 'vertically';
       speakAvatar('specialFlip', { pos, axis }, { duration: 1700 });
+    } else if (special.type === 'dog') {
+      speakAvatar('specialDog', { pos }, { duration: 1700 });
     }
   }
 
@@ -1125,16 +1186,24 @@ let activePreset = null;
    * Fetches a translation string for the current locale and applies replacements.
    * @param {string} key Dot-notated translation identifier.
    */
-  function t(key, replacements = {}) {
+  function resolveTranslation(locale, key) {
     const segments = key.split('.');
-    let node = TRANSLATIONS[currentLocale];
+    let node = TRANSLATIONS[locale];
     for (const segment of segments) {
       if (!node || !(segment in node)) {
-        return key;
+        return null;
       }
       node = node[segment];
     }
-    let text = node;
+    return node;
+  }
+
+  function t(key, replacements = {}) {
+    let text = resolveTranslation(currentLocale, key);
+    if (text == null && currentLocale !== defaultLocale) {
+      text = resolveTranslation(defaultLocale, key);
+    }
+    if (text == null) return key;
     Object.entries(replacements).forEach(([k, v]) => {
       text = text.replace(new RegExp(`\\{${k}\\}`, 'g'), v);
     });
@@ -1204,6 +1273,7 @@ let activePreset = null;
       config.mines ?? 0,
       config.rotationSpecials ?? 0,
       config.flipSpecials ?? 0,
+      config.dogSpecials ?? 0,
     ];
     return values
       .map((value) => clamp(value, 0, 35).toString(36).toUpperCase().padStart(2, '0'))
@@ -1222,7 +1292,11 @@ let activePreset = null;
   function decodeRoomCode(code) {
     if (!code) return null;
     const [configSegment, seedSegment] = code.split('-');
-    if (!configSegment || configSegment.length !== ROOM_CONFIG_SEGMENT_LENGTH || !seedSegment) {
+    if (!configSegment || !seedSegment) {
+      return null;
+    }
+    const validLengths = [ROOM_CONFIG_SEGMENT_LENGTH, ROOM_CONFIG_SEGMENT_LENGTH - 2];
+    if (!validLengths.includes(configSegment.length)) {
       return null;
     }
     const values = [];
@@ -1234,7 +1308,7 @@ let activePreset = null;
       }
       values.push(parsed);
     }
-    const [rows, cols, mines, rotationSpecials, flipSpecials] = values;
+    const [rows, cols, mines, rotationSpecials, flipSpecials, dogSpecials = 0] = values;
     return {
       config: {
         rows,
@@ -1242,6 +1316,7 @@ let activePreset = null;
         mines,
         rotationSpecials,
         flipSpecials,
+        dogSpecials,
       },
       seed: seedSegment,
     };
@@ -1257,6 +1332,7 @@ let activePreset = null;
     flipVertical = false;
     rotationTriggers = 0;
     flipTriggers = 0;
+    dogTriggers = 0;
     flaggedCount = 0;
     revealedCount = 0;
     focusCell = { row: 0, col: 0 };
@@ -1397,6 +1473,7 @@ let activePreset = null;
       mines: preset.mines,
       rotationSpecials: preset.rotationSpecials,
       flipSpecials: preset.flipSpecials,
+      dogSpecials: preset.dogSpecials ?? 0,
     });
     setActivePreset(name);
     startNewGame();

@@ -18,11 +18,13 @@
       cellsRevealed: 'Cells revealed',
       rotationTriggers: 'Rotation triggers',
       flipTriggers: 'Flip triggers',
+      dogTriggers: 'Dog triggers',
       rows: 'Rows',
       cols: 'Columns',
       mines: 'Mines',
       rotationSpecials: 'Rotation specials',
       flipSpecials: 'Flip specials',
+      dogSpecials: 'Dog specials',
       themes: 'Themes',
       difficulty: 'Difficulty',
       language: 'Language',
@@ -71,7 +73,7 @@
     },
     history: {
       metaStats: '{timestamp} • {duration}s • {steps} steps',
-      metaSpecials: 'Rotation triggers {rotations}, flips {flips}',
+      metaSpecials: 'Rotation triggers {rotations}, flips {flips}, dogs {dogs}',
       roomCode: 'Seed {code}',
       roomPending: 'Seed pending',
       empty: 'No runs yet.',
@@ -151,6 +153,11 @@
             'You’re turning surprises into opportunities.',
             'That mirror effect is just a pep talk for your focus.',
             'Keep embracing the unexpected—your calm wins.',
+          ],
+          specialDog: [
+            'Doggo sniffs out a mine at {pos} and flags it for you.',
+            'Woof! That {pos} mine is now safely marked.',
+            'Dog special activated—consider {pos} taken care of.',
           ],
           win: [
             'Victory! The {size} grid bows to you.',
@@ -232,6 +239,11 @@
             'Flips expose every betrayal—watch yours shine.',
             '{pos} just turned the board into a funhouse of traps.',
             'Your reflection wobbles with each mine-hug.',
+          ],
+          specialDog: [
+            'The mutt flagged {pos}? Fine, I’ll pretend that helps you.',
+            'Even that hound can smell a mine near {pos}. Consider it marked.',
+            'My dog just marked a mine—try not to mess it up.',
           ],
           win: [
             'You survived {size}? Even my minions are stunned.',
@@ -317,6 +329,11 @@
             'Flip hi-five to the board—it’s cheering you on.',
             'You turn chaos into sparkle every single time.',
           ],
+          specialDog: [
+            'Pupper did a great job! That {pos} mine is now flagged.',
+            'Paws up! Doggo marked {pos} with a cute little flag.',
+            'Doggo loves you—especially when it flags a mine.',
+          ],
           win: [
             'Victory sparkles! {size} cleared like a champion!',
             'You did it, gorgeous! Time for confetti.',
@@ -391,6 +408,11 @@
             'Observe the reflection; it may teach you a quieter tactic.',
             'This flip is gentle, yet potent—just like your resolve.',
             'Every mirrored board is another place I can watch over.',
+          ],
+          specialDog: [
+            'A calm hound flagged {pos} so you can breathe easier.',
+            'That gentle dog found a mine—let its wag guide you.',
+            'The pooch did the thinking for {pos}. Breathe in, breathe out.',
           ],
           win: [
             'Victory feels like a calm dawn—well played.',
@@ -489,6 +511,11 @@
             "You handle twisted perspectives so well... I'm amazed!",
             "Ohhh, flipping that {axis} looks so confident! I love how you take charge... it's so hot~ *blushes*",
             "That flip was so smooth... just like when you're all charming and playful!"
+          ],
+          "specialDog": [
+            "Doggo’s sniffed out {pos}. You owe it a treat.",
+            "You vs dog flagged {pos}? I call that teamwork.",
+            "That bratty dog just rescued you at {pos}. Don’t get cocky."
           ],
           "win": [
             "Ohhh, you won? That's so cute when you're all smug like that... but don't get too confident, okay? *giggles*",
@@ -596,6 +623,11 @@
             "**You handle twisted perspectives so well… I’m amazed! ...and now for chaos! Bakuen no Inmā! EX-PLO~SION~!**",
             "Ohhh, flipping that {axis} looks so confident! I love how you take charge… it’s so hot~ *blushes* **...ohhh, the explosion is inevitable! Explosion!**",
             "**That flip was so smooth… just like when you’re all charming and playful! ...and now for the big one! EX-PLO~SION~!**"
+          ],
+          "specialDog": [
+            "Doggos are adorable—especially when they flag {pos}.",
+            "Our pet just marked a mine at {pos}. Praise the explosion!",
+            "Doggo saved the day at {pos}, now let the war begin!"
           ],
           "win": [
             "Ohhh, you won? That’s so cute when you’re all smug like that… but don’t get too confident, okay? *giggles* **...ohhh, the explosion is coming for you! Wahahahahaha! My name is Megumin, the number one mage of Axel!**",

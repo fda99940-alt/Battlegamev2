@@ -504,6 +504,22 @@ body {
   opacity: 0.7;
 }
 
+.cell--special-dog::after {
+  content: "🐶";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.cell[data-show-cheat="true"].cell--special-dog::after {
+  opacity: 0.9;
+}
+
 .cell--special-rotation::after {
   border-top-color: transparent;
 }
