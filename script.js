@@ -731,10 +731,11 @@ let activePreset = null;
   }
 
   /**
-   * Activates a discovered special cell, adjusting rotation or flip state if specials are enabled.
+   * Activates a discovered special cell when special effects are enabled.
    */
   function triggerSpecial(special, cell) {
     if (!special || special.triggered) return;
+    if (!specialsEnabled) return;
     special.triggered = true;
     const pos = describeCellPosition(cell);
     speakAvatar('specialHit', { pos });
@@ -787,21 +788,20 @@ let activePreset = null;
   function applyTransform() {
     if (!specialsEnabled) {
       boardEl.style.transform = 'none';
-      updateWrapperSpacing();
+      updateWrapperSpacing(false);
       return;
     }
     const scaleX = flipHorizontal ? -1 : 1;
     const scaleY = flipVertical ? -1 : 1;
     boardEl.style.transform = `rotate(${rotationAngle}deg) scale(${scaleX}, ${scaleY})`;
-    updateWrapperSpacing();
+    updateWrapperSpacing(rotationAngle % 180 !== 0);
   }
 
   /**
    * Adjusts wrapper classes based on rotation to preserve layout spacing.
    */
-  function updateWrapperSpacing() {
+  function updateWrapperSpacing(rotated = rotationAngle % 180 !== 0) {
     if (!boardWrapper) return;
-    const rotated = rotationAngle % 180 !== 0;
     boardWrapper.classList.toggle('board-wrapper--expanded', rotated);
   }
 
