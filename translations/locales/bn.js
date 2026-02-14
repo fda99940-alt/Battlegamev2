@@ -76,6 +76,18 @@
       roomCode: 'সিড {code}',
       roomPending: 'সিড অপেক্ষায়',
       empty: 'এখনো কোনো রান নেই. একটু ধ্বংস করো।',
+      filteredEmpty: 'Bartoman filter er sathe mile emon kono run nei.',
+      filterResult: 'Folafol',
+      filterTime: 'Somoy',
+      filterAll: 'Shob',
+      filterWins: 'Joy',
+      filterLosses: 'Porajoy',
+      filterAllTime: 'Shob somoy',
+      filter24h: 'Shesh 24 ghonta',
+      filter7d: 'Shesh 7 din',
+      filter30d: 'Shesh 30 din',
+      showMoreDefault: 'Aro dekhun',
+      showMore: 'Aro {count} dekhun ({remaining} baki)',
     },
     status: {
       start: 'শুরু করতে যেকোনো সেল ক্লিক করো।',
@@ -93,6 +105,11 @@
       joiningRoom: '{code} সিড লোড করা হচ্ছে... সব নষ্ট করো না।',
       copySuccess: 'সিড {code} কপি হয়েছে. শেয়ার করো.',
       copyFallback: 'সিড {code}.',
+    },
+    config: {
+      scaleInfoPlaceholder: 'Gonona protiti facer jonno, ebong sokriyo facer shonkha diye gun kora hoy.',
+      scaleInfo:
+        'Face proti gonona × {faces} face. Mot -> mine {mines}, rotation {rotations}, flip {flips}, dog {dogs}, guardian {guardians}.',
     },
     hint: {
       keyboard: 'নির্দেশ তীর দিয়ে চলাচল, Enter/Space দিয়ে খুলে দাও, F দিয়ে পতাকা দাও।',

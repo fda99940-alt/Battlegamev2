@@ -74,6 +74,18 @@
         roomCode: 'Ĉambro {code}',
         roomPending: 'Kodo atendanta',
         empty: 'Neniu ludo ankoraŭ.',
+      filteredEmpty: 'Neniuj partioj kongruas kun la nunaj filtriloj.',
+      filterResult: 'Rezulto',
+      filterTime: 'Tempo',
+      filterAll: 'Cio',
+      filterWins: 'Venkoj',
+      filterLosses: 'Malvenkoj',
+      filterAllTime: 'Tuta tempo',
+      filter24h: 'Lasta 24 h',
+      filter7d: 'Lasta 7 tagoj',
+      filter30d: 'Lasta 30 tagoj',
+      showMoreDefault: 'Montri pli',
+      showMore: 'Montri pliajn {count} ({remaining} restas)',
       },
       status: {
         start: 'Alklaku ĉelon por komenci.',
@@ -92,6 +104,11 @@
         copySuccess: 'Ĉambro {code} kopiiĝis.',
         copyFallback: 'Kodo {code}',
       },
+    config: {
+      scaleInfoPlaceholder: 'Kalkuloj estas po faco kaj estas multiplikataj per la nombro de aktivaj facoj.',
+      scaleInfo:
+        'Po-facaj kalkuloj × {faces} facoj. Sumoj -> minoj {mines}, rotacio {rotations}, flip {flips}, hundo {dogs}, gardanto {guardians}.',
+    },
       hint: {
         keyboard: 'Sagonoj movas, En/Spaco malkaŝas, F flagas.',
       },

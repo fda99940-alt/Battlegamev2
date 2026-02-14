@@ -75,6 +75,18 @@
       roomCode: 'Seed {code}',
       roomPending: 'Seed bekleniyor',
       empty: 'Henüz hiçbir tur yok. Gidin biraz mahvedin.',
+      filteredEmpty: 'Gecerli filtrelerle eslesen kayit yok.',
+      filterResult: 'Sonuc',
+      filterTime: 'Zaman',
+      filterAll: 'Tum',
+      filterWins: 'Galibiyet',
+      filterLosses: 'Maglubiyet',
+      filterAllTime: 'Tum zamanlar',
+      filter24h: 'Son 24 saat',
+      filter7d: 'Son 7 gun',
+      filter30d: 'Son 30 gun',
+      showMoreDefault: 'Daha fazla goster',
+      showMore: '{count} daha goster ({remaining} kaldi)',
     },
     status: {
       start: 'Başlamak için herhangi bir hücreye tıkla.',
@@ -92,6 +104,11 @@
       joiningRoom: '{code} seed’i yükleniyor... bozmadan devam et.',
       copySuccess: 'Seed {code} kopyalandı. Paylaş.',
       copyFallback: 'Seed {code}.',
+    },
+    config: {
+      scaleInfoPlaceholder: 'Degerler yuz basina girilir ve etkin yuz sayisi ile carpilir.',
+      scaleInfo:
+        'Yuz basi deger × {faces} yuz. Toplam -> mayin {mines}, donus {rotations}, cevirme {flips}, kopek {dogs}, muhafiz {guardians}.',
     },
     hint: {
       keyboard: 'Ok tuşları hareket, Enter/Boşluk açma, F bayrak.'

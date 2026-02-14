@@ -823,6 +823,12 @@ body {
   color: var(--text-faint);
 }
 
+.config-scale-note {
+  margin: 0.7rem 0 0;
+  font-size: 0.82rem;
+  color: var(--text-faint);
+}
+
 input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;

@@ -156,7 +156,7 @@
           </label>
           <label>
             <span data-i18n-key="label.mines">Mines</span>
-            <input type="number" id="minesInput" min="5" max="3750" value="108" />
+            <input type="number" id="minesInput" min="1" max="625" value="18" />
           </label>
           <label>
             <span data-i18n-key="label.rotationSpecials">Rotation specials</span>
@@ -176,6 +176,9 @@
           </label>
           <button type="submit" class="primary" data-i18n-key="button.applyLayout">Apply layout</button>
         </form>
+        <p class="config-scale-note" id="configScaleInfo" data-i18n-key="config.scaleInfoPlaceholder">
+          Counts are per face and multiplied by active faces.
+        </p>
         <div class="actions">
           <button type="button" class="ghost" id="toggleBoardMode">
             Board: Cube
@@ -243,23 +246,23 @@
         </div>
         <div class="history-toolbar">
           <label>
-            <span>Result</span>
+            <span data-i18n-key="history.filterResult">Result</span>
             <select id="historyResultFilter">
-              <option value="all">All</option>
-              <option value="win">Wins</option>
-              <option value="loss">Losses</option>
+              <option value="all" data-i18n-key="history.filterAll">All</option>
+              <option value="win" data-i18n-key="history.filterWins">Wins</option>
+              <option value="loss" data-i18n-key="history.filterLosses">Losses</option>
             </select>
           </label>
           <label>
-            <span>Time</span>
+            <span data-i18n-key="history.filterTime">Time</span>
             <select id="historyDateFilter">
-              <option value="all">All time</option>
-              <option value="24h">Last 24h</option>
-              <option value="7d">Last 7 days</option>
-              <option value="30d">Last 30 days</option>
+              <option value="all" data-i18n-key="history.filterAllTime">All time</option>
+              <option value="24h" data-i18n-key="history.filter24h">Last 24h</option>
+              <option value="7d" data-i18n-key="history.filter7d">Last 7 days</option>
+              <option value="30d" data-i18n-key="history.filter30d">Last 30 days</option>
             </select>
           </label>
-          <button type="button" class="ghost history-more" id="historyShowMore">
+          <button type="button" class="ghost history-more" id="historyShowMore" data-i18n-key="history.showMoreDefault">
             Show 20 more
           </button>
         </div>

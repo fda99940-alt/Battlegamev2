@@ -74,6 +74,18 @@
         roomCode: 'Room {code}',
         roomPending: 'Code incoming',
         empty: 'No voyages logged.',
+      filteredEmpty: 'No voyages match yer current filters.',
+      filterResult: 'Result',
+      filterTime: 'Time',
+      filterAll: 'All',
+      filterWins: 'Wins',
+      filterLosses: 'Losses',
+      filterAllTime: 'All time',
+      filter24h: 'Last 24h',
+      filter7d: 'Last 7 days',
+      filter30d: 'Last 30 days',
+      showMoreDefault: 'Show more',
+      showMore: 'Show {count} more ({remaining} left)',
       },
       status: {
         start: 'Click a tile to start the voyage.',
@@ -92,6 +104,11 @@
         copySuccess: 'Room {code} copied.',
         copyFallback: 'Code {code}',
       },
+    config: {
+      scaleInfoPlaceholder: 'Counts be per face and multiplied by active faces, matey.',
+      scaleInfo:
+        'Per-face counts × {faces} faces. Totals -> mines {mines}, rotation {rotations}, flip {flips}, dog {dogs}, guardian {guardians}.',
+    },
       hint: {
         keyboard: 'Arrow keys sail, Enter/Space reveal, F flag.',
       },

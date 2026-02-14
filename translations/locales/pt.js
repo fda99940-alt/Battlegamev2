@@ -74,6 +74,18 @@
         roomCode: 'Sala {code}',
         roomPending: 'Código pendente',
         empty: 'Nenhuma partida salva.',
+      filteredEmpty: 'Nenhuma partida corresponde aos filtros atuais.',
+      filterResult: 'Resultado',
+      filterTime: 'Periodo',
+      filterAll: 'Todas',
+      filterWins: 'Vitorias',
+      filterLosses: 'Derrotas',
+      filterAllTime: 'Todo o periodo',
+      filter24h: 'Ultimas 24 h',
+      filter7d: 'Ultimos 7 dias',
+      filter30d: 'Ultimos 30 dias',
+      showMoreDefault: 'Mostrar mais',
+      showMore: 'Mostrar mais {count} ({remaining} restantes)',
       },
       status: {
         start: 'Clique em qualquer célula para começar.',
@@ -92,6 +104,11 @@
         copySuccess: 'Sala {code} copiada.',
         copyFallback: 'Código {code}',
       },
+    config: {
+      scaleInfoPlaceholder: 'As contagens sao por face e multiplicadas pelo numero de faces ativas.',
+      scaleInfo:
+        'Contagens por face × {faces} faces. Totais -> minas {mines}, rotacao {rotations}, flip {flips}, cachorro {dogs}, guardiao {guardians}.',
+    },
       hint: {
         keyboard: 'Setas para mover, Enter/Espaço para revelar, F para sinalizar.',
       },

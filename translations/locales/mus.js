@@ -74,6 +74,18 @@
         roomCode: 'Room {code}',
         roomPending: 'Room code pending',
         empty: 'No runs yet.',
+      filteredEmpty: 'No melodies match the current filters.',
+      filterResult: 'Result',
+      filterTime: 'Time',
+      filterAll: 'All',
+      filterWins: 'Wins',
+      filterLosses: 'Losses',
+      filterAllTime: 'All time',
+      filter24h: 'Last 24h',
+      filter7d: 'Last 7 days',
+      filter30d: 'Last 30 days',
+      showMoreDefault: 'Show more',
+      showMore: 'Show {count} more ({remaining} left)',
       },
       status: {
         start: '♫♫♫',
@@ -92,6 +104,11 @@
         copySuccess: '♬{code}',
         copyFallback: '{code}',
       },
+    config: {
+      scaleInfoPlaceholder: 'Melody counts are per face and multiplied by active faces.',
+      scaleInfo:
+        'Per-face counts × {faces} faces. Totals -> mines {mines}, rotation {rotations}, flip {flips}, dog {dogs}, guardian {guardians}.',
+    },
       hint: {
         keyboard: '♩♩♩',
       },

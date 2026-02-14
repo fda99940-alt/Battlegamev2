@@ -76,6 +76,18 @@
       roomCode: 'Seed {code}',
       roomPending: 'Seed in attesa',
       empty: 'Nessuna run ancora. Vai a sbagliare.',
+      filteredEmpty: 'Nessuna partita corrisponde ai filtri correnti.',
+      filterResult: 'Risultato',
+      filterTime: 'Periodo',
+      filterAll: 'Tutte',
+      filterWins: 'Vittorie',
+      filterLosses: 'Sconfitte',
+      filterAllTime: 'Sempre',
+      filter24h: 'Ultime 24 h',
+      filter7d: 'Ultimi 7 giorni',
+      filter30d: 'Ultimi 30 giorni',
+      showMoreDefault: 'Mostra altro',
+      showMore: 'Mostra altri {count} ({remaining} rimanenti)',
     },
     status: {
       start: 'Clicca una cella per iniziare.',
@@ -93,6 +105,11 @@
       joiningRoom: 'Caricamento seed {code}... non rovinare tutto.',
       copySuccess: 'Seed {code} copiato. Condividi l’imbarazzo.',
       copyFallback: 'Seed {code}.',
+    },
+    config: {
+      scaleInfoPlaceholder: 'I conteggi sono per faccia e vengono moltiplicati per le facce attive.',
+      scaleInfo:
+        'Conteggi per faccia × {faces} facce. Totali -> mine {mines}, rotazione {rotations}, flip {flips}, cane {dogs}, guardiano {guardians}.',
     },
     hint: {
       keyboard: 'Freccie per muovere, Invio/Spazio per scoprire, F per bandierare.',

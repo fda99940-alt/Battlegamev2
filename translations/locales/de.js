@@ -74,6 +74,18 @@
         roomCode: 'Raum {code}',
         roomPending: 'Code ausstehend',
         empty: 'Noch keine Runden.',
+      filteredEmpty: 'Keine Runden entsprechen den aktuellen Filtern.',
+      filterResult: 'Ergebnis',
+      filterTime: 'Zeitraum',
+      filterAll: 'Alle',
+      filterWins: 'Siege',
+      filterLosses: 'Niederlagen',
+      filterAllTime: 'Gesamter Zeitraum',
+      filter24h: 'Letzte 24 Std',
+      filter7d: 'Letzte 7 Tage',
+      filter30d: 'Letzte 30 Tage',
+      showMoreDefault: 'Mehr anzeigen',
+      showMore: 'Zeige {count} mehr ({remaining} uebrig)',
       },
       status: {
         start: 'Klicke eine Zelle zum Einstieg.',
@@ -92,6 +104,11 @@
         copySuccess: 'Raum {code} kopiert.',
         copyFallback: 'Raumcode {code}',
       },
+    config: {
+      scaleInfoPlaceholder: 'Die Werte gelten pro Seite und werden mit der Anzahl aktiver Seiten multipliziert.',
+      scaleInfo:
+        'Werte pro Seite × {faces} Seiten. Summen -> Minen {mines}, Rotation {rotations}, Flip {flips}, Hund {dogs}, Waechter {guardians}.',
+    },
       hint: {
         keyboard: 'Pfeile bewegen, Enter/Space öffnen, F markieren.',
       },

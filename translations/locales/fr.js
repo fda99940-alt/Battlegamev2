@@ -74,6 +74,18 @@
         roomCode: 'Salle {code}',
         roomPending: 'Code en attente',
         empty: 'Aucune partie enregistrée.',
+      filteredEmpty: 'Aucune partie ne correspond aux filtres actuels.',
+      filterResult: 'Resultat',
+      filterTime: 'Periode',
+      filterAll: 'Toutes',
+      filterWins: 'Victoires',
+      filterLosses: 'Defaites',
+      filterAllTime: 'Depuis le debut',
+      filter24h: 'Dernieres 24 h',
+      filter7d: 'Derniers 7 jours',
+      filter30d: 'Derniers 30 jours',
+      showMoreDefault: 'Afficher plus',
+      showMore: 'Afficher {count} de plus ({remaining} restantes)',
       },
       status: {
         start: 'Cliquez sur une case pour débuter.',
@@ -92,6 +104,11 @@
         copySuccess: 'Salle {code} copiée.',
         copyFallback: 'Code de salle {code}',
       },
+    config: {
+      scaleInfoPlaceholder: 'Les valeurs sont par face et multipliees par le nombre de faces actives.',
+      scaleInfo:
+        'Valeurs par face × {faces} faces. Totaux -> mines {mines}, rotation {rotations}, flip {flips}, chien {dogs}, gardien {guardians}.',
+    },
       hint: {
         keyboard: 'Flèches pour bouger, Entrée/Espace pour révéler, F pour marquer.',
       },

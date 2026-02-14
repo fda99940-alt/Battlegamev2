@@ -33,6 +33,7 @@ const rotationInput = document.getElementById('rotationInput');
 const flipInput = document.getElementById('flipInput');
 const dogInput = document.getElementById('dogInput');
 const guardianInput = document.getElementById('guardianInput');
+const configScaleInfoEl = document.getElementById('configScaleInfo');
 const toggleSpecialsBtn = document.getElementById('toggleSpecials');
 const toggleBoardModeBtn = document.getElementById('toggleBoardMode');
 const showMinesBtn = document.getElementById('showMinesHandle');
@@ -53,7 +54,7 @@ const difficultyPresets = {
   easy: {
     rows: 8,
     cols: 8,
-    mines: 60,
+    mines: 10,
     rotationSpecials: 1,
     flipSpecials: 1,
     dogSpecials: 1,
@@ -62,7 +63,7 @@ const difficultyPresets = {
   medium: {
     rows: 10,
     cols: 10,
-    mines: 108,
+    mines: 18,
     rotationSpecials: 2,
     flipSpecials: 2,
     dogSpecials: 1,
@@ -71,7 +72,7 @@ const difficultyPresets = {
   hard: {
     rows: 16,
     cols: 16,
-    mines: 216,
+    mines: 36,
     rotationSpecials: 3,
     flipSpecials: 3,
     dogSpecials: 1,
@@ -122,10 +123,10 @@ let activePreset = null;
     rows: 10,
     cols: 10,
     mines: 108,
-    rotationSpecials: 2,
-    flipSpecials: 2,
-    dogSpecials: 1,
-    guardianSpecials: 1,
+    rotationSpecials: 12,
+    flipSpecials: 12,
+    dogSpecials: 6,
+    guardianSpecials: 6,
   };
 
   let grid = [];
@@ -597,26 +598,45 @@ let activePreset = null;
   function applyConfigFromForm() {
     const rows = clamp(Number(rowsInput.value) || config.rows, 5, 25);
     const cols = clamp(Number(colsInput.value) || config.cols, 5, 25);
-    const totalCells = rows * cols * getActiveFaces().length;
-    const maxMines = Math.max(totalCells - 1, 1);
-    const mines = clamp(Number(minesInput.value) || config.mines, 1, maxMines);
-    const safeCells = Math.max(totalCells - mines, 0);
-    const rotationSpecials = clamp(Number(rotationInput.value) || config.rotationSpecials, 0, safeCells);
-    const flipSpecials = clamp(
-      Number(flipInput.value) || config.flipSpecials,
+    const faceCount = getFaceCount();
+    const totalCells = rows * cols * faceCount;
+    const maxMinesPerFace = Math.max(Math.floor((totalCells - 1) / faceCount), 1);
+    const minesPerFace = clamp(Number(minesInput.value) || toPerFaceCount(config.mines), 1, maxMinesPerFace);
+    const mines = minesPerFace * faceCount;
+    const safeCellsTotal = Math.max(totalCells - mines, 0);
+    const maxRotationPerFace = Math.floor(safeCellsTotal / faceCount);
+    const rotationPerFace = clamp(
+      Number(rotationInput.value) || toPerFaceCount(config.rotationSpecials),
       0,
-      Math.max(safeCells - rotationSpecials, 0)
+      maxRotationPerFace
     );
-    const dogSpecials = clamp(
-      Number(dogInput.value) || config.dogSpecials,
+    const rotationSpecials = rotationPerFace * faceCount;
+
+    const maxFlipPerFace = Math.floor(Math.max(safeCellsTotal - rotationSpecials, 0) / faceCount);
+    const flipPerFace = clamp(
+      Number(flipInput.value) || toPerFaceCount(config.flipSpecials),
       0,
-      Math.max(safeCells - rotationSpecials - flipSpecials, 0)
+      maxFlipPerFace
     );
-    const guardianSpecials = clamp(
-      Number(guardianInput.value) || config.guardianSpecials,
+    const flipSpecials = flipPerFace * faceCount;
+
+    const maxDogPerFace = Math.floor(Math.max(safeCellsTotal - rotationSpecials - flipSpecials, 0) / faceCount);
+    const dogPerFace = clamp(
+      Number(dogInput.value) || toPerFaceCount(config.dogSpecials),
       0,
-      Math.max(safeCells - rotationSpecials - flipSpecials - dogSpecials, 0)
+      maxDogPerFace
     );
+    const dogSpecials = dogPerFace * faceCount;
+
+    const maxGuardianPerFace = Math.floor(
+      Math.max(safeCellsTotal - rotationSpecials - flipSpecials - dogSpecials, 0) / faceCount
+    );
+    const guardianPerFace = clamp(
+      Number(guardianInput.value) || toPerFaceCount(config.guardianSpecials),
+      0,
+      maxGuardianPerFace
+    );
+    const guardianSpecials = guardianPerFace * faceCount;
 
     applyConfigToInputs({
       rows,
@@ -627,6 +647,7 @@ let activePreset = null;
       dogSpecials,
       guardianSpecials,
     });
+    updateConfigScalingNote();
     return {
       rows,
       cols,
@@ -645,15 +666,16 @@ let activePreset = null;
   function applyConfigToInputs(values) {
     rowsInput.value = values.rows;
     colsInput.value = values.cols;
-    minesInput.value = values.mines;
-    rotationInput.value = values.rotationSpecials;
-    flipInput.value = values.flipSpecials;
+    minesInput.value = toPerFaceCount(values.mines);
+    rotationInput.value = toPerFaceCount(values.rotationSpecials);
+    flipInput.value = toPerFaceCount(values.flipSpecials);
     if (dogInput) {
-      dogInput.value = values.dogSpecials ?? 0;
+      dogInput.value = toPerFaceCount(values.dogSpecials ?? 0);
     }
     if (guardianInput) {
-      guardianInput.value = values.guardianSpecials ?? 0;
+      guardianInput.value = toPerFaceCount(values.guardianSpecials ?? 0);
     }
+    updateConfigScalingNote();
   }
 
   /**
@@ -1126,7 +1148,7 @@ let activePreset = null;
       return;
     }
     if (!filteredRuns.length) {
-      historyList.innerHTML = '<p class="history-empty">No runs match current filters.</p>';
+      historyList.innerHTML = `<p class="history-empty">${t('history.filteredEmpty')}</p>`;
       updateHistoryShowMoreButton(0);
       return;
     }
@@ -1224,7 +1246,7 @@ let activePreset = null;
     historyShowMoreBtn.hidden = false;
     historyShowMoreBtn.disabled = false;
     const step = Math.min(historyPageSize, remaining);
-    historyShowMoreBtn.textContent = `Show ${step} more (${remaining} left)`;
+    historyShowMoreBtn.textContent = t('history.showMore', { count: step, remaining });
   }
 
   function syncHistoryFiltersUI() {
@@ -1575,6 +1597,7 @@ let activePreset = null;
       applyStaticTranslations();
       updateSpecialsButton();
       updateShowMinesButton();
+      updateConfigScalingNote();
       updateLanguageLabel();
       renderHistory();
     });
@@ -1767,8 +1790,11 @@ let activePreset = null;
     presetButtons.forEach((button) => {
       button.addEventListener('click', () => applyPreset(button.dataset.preset));
     });
-    [rowsInput, colsInput, minesInput, rotationInput, flipInput].forEach((input) => {
+    [rowsInput, colsInput, minesInput, rotationInput, flipInput, dogInput, guardianInput]
+      .filter(Boolean)
+      .forEach((input) => {
       input.addEventListener('input', () => setActivePreset(null));
+      input.addEventListener('input', () => updateConfigScalingNote());
     });
   }
 
@@ -1832,14 +1858,15 @@ let activePreset = null;
   function applyPreset(name) {
     const preset = difficultyPresets[name];
     if (!preset) return;
+    const faceCount = getFaceCount();
     applyConfigToInputs({
       rows: preset.rows,
       cols: preset.cols,
-      mines: preset.mines,
-      rotationSpecials: preset.rotationSpecials,
-      flipSpecials: preset.flipSpecials,
-      dogSpecials: preset.dogSpecials ?? 0,
-      guardianSpecials: preset.guardianSpecials ?? 0,
+      mines: preset.mines * faceCount,
+      rotationSpecials: preset.rotationSpecials * faceCount,
+      flipSpecials: preset.flipSpecials * faceCount,
+      dogSpecials: (preset.dogSpecials ?? 0) * faceCount,
+      guardianSpecials: (preset.guardianSpecials ?? 0) * faceCount,
     });
     setActivePreset(name);
     startNewGame();
@@ -2020,6 +2047,34 @@ let activePreset = null;
     showMinesBtn.textContent = cheatMode ? t('button.hideMines') : t('button.showMines');
   }
 
+  function getFaceCount() {
+    return boardMode === '2d' ? 1 : FACE_ORDER.length;
+  }
+
+  function toPerFaceCount(total) {
+    const faceCount = Math.max(getFaceCount(), 1);
+    const numeric = Number(total) || 0;
+    return Math.max(0, Math.round(numeric / faceCount));
+  }
+
+  function updateConfigScalingNote() {
+    if (!configScaleInfoEl) return;
+    const faceCount = getFaceCount();
+    const minesPerFace = clamp(Number(minesInput.value) || 0, 0, 9999);
+    const rotationPerFace = clamp(Number(rotationInput.value) || 0, 0, 9999);
+    const flipPerFace = clamp(Number(flipInput.value) || 0, 0, 9999);
+    const dogPerFace = clamp(Number(dogInput?.value) || 0, 0, 9999);
+    const guardianPerFace = clamp(Number(guardianInput?.value) || 0, 0, 9999);
+    configScaleInfoEl.textContent = t('config.scaleInfo', {
+      faces: faceCount,
+      mines: minesPerFace * faceCount,
+      rotations: rotationPerFace * faceCount,
+      flips: flipPerFace * faceCount,
+      dogs: dogPerFace * faceCount,
+      guardians: guardianPerFace * faceCount,
+    });
+  }
+
   function getActiveFaces() {
     return boardMode === '2d' ? ['front'] : FACE_ORDER;
   }
@@ -2034,6 +2089,7 @@ let activePreset = null;
     boardMode = mode === '2d' ? '2d' : 'cube';
     boardWrapper?.setAttribute('data-board-mode', boardMode);
     updateBoardModeButton();
+    updateConfigScalingNote();
     if (persist) {
       safeSetItem(boardModeStorageKey, boardMode);
     }

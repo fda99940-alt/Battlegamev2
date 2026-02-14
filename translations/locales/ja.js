@@ -74,6 +74,18 @@
         roomCode: 'ルーム {code}',
         roomPending: 'コード準備中',
         empty: 'まだプレイ記録がありません。',
+      filteredEmpty: 'Genzai no firuta ni icchi suru kiroku ga arimasen.',
+      filterResult: 'Kekka',
+      filterTime: 'Kikan',
+      filterAll: 'Subete',
+      filterWins: 'Shori',
+      filterLosses: 'Haiboku',
+      filterAllTime: 'Zen kikan',
+      filter24h: 'Saikin 24 jikan',
+      filter7d: 'Saikin 7 nichi',
+      filter30d: 'Saikin 30 nichi',
+      showMoreDefault: 'Motto hyouji',
+      showMore: '{count} ken motto hyouji (nokori {remaining})',
       },
       status: {
         start: '任意のマスをクリックして開始。',
@@ -92,6 +104,11 @@
         copySuccess: 'ルーム {code} をクリップボードにコピーしました。',
         copyFallback: 'ルームコード {code}',
       },
+    config: {
+      scaleInfoPlaceholder: 'Kakusuu wa men goto ni nyuryoku shi, yuko na men suu de baibai saremasu.',
+      scaleInfo:
+        'Men goto no suuchi × {faces} men. Goukei -> jirai {mines}, kaiten {rotations}, hanten {flips}, inu {dogs}, gaadian {guardians}.',
+    },
       hint: {
         keyboard: '矢印キーで移動、Enter/Spaceで開く、Fで旗を立てる。',
       },

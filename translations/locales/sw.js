@@ -74,6 +74,18 @@
         roomCode: 'Chumba {code}',
         roomPending: 'Msimbo ukisubiri',
         empty: 'Hakuna michezo bado.',
+      filteredEmpty: 'Hakuna michezo inayolingana na vichujio vya sasa.',
+      filterResult: 'Matokeo',
+      filterTime: 'Muda',
+      filterAll: 'Zote',
+      filterWins: 'Ushindi',
+      filterLosses: 'Hasara',
+      filterAllTime: 'Muda wote',
+      filter24h: 'Masaa 24 yaliyopita',
+      filter7d: 'Siku 7 zilizopita',
+      filter30d: 'Siku 30 zilizopita',
+      showMoreDefault: 'Onyesha zaidi',
+      showMore: 'Onyesha zaidi {count} ({remaining} zimebaki)',
       },
       status: {
         start: 'Bonyeza selimu yoyote kuanza.',
@@ -92,6 +104,11 @@
         copySuccess: 'Chumba {code} kimnakiliwa kwenye kibodi.',
         copyFallback: 'Msimbo wa chumba {code}',
       },
+    config: {
+      scaleInfoPlaceholder: 'Hesabu ni kwa kila uso na huzidishwa kwa idadi ya nyuso hai.',
+      scaleInfo:
+        'Hesabu kwa uso × nyuso {faces}. Jumla -> mabomu {mines}, mizunguko {rotations}, geuza {flips}, mbwa {dogs}, mlinzi {guardians}.',
+    },
       hint: {
         keyboard: 'Mishale kuchukua umakini, Enter/Eneo kufichua, F kumaliza.',
       },

@@ -74,6 +74,18 @@
         roomCode: 'Cemen {code}',
         roomPending: 'Ecca útúvë',
         empty: 'Úrë ilyë nári.',
+      filteredEmpty: 'No runs match the current filters.',
+      filterResult: 'Result',
+      filterTime: 'Time',
+      filterAll: 'All',
+      filterWins: 'Wins',
+      filterLosses: 'Losses',
+      filterAllTime: 'All time',
+      filter24h: 'Last 24h',
+      filter7d: 'Last 7 days',
+      filter30d: 'Last 30 days',
+      showMoreDefault: 'Show more',
+      showMore: 'Show {count} more ({remaining} left)',
       },
       status: {
         start: 'Láta ná parma nahtië.',
@@ -92,6 +104,11 @@
         copySuccess: 'Cemen {code} lína.',
         copyFallback: 'Ecca {code}',
       },
+    config: {
+      scaleInfoPlaceholder: 'Niveri na i cene, ar i niver ia bedh erthad na i ceni vires.',
+      scaleInfo:
+        'Per-face niveri × {faces} ceni. Samad -> mines {mines}, rotation {rotations}, flip {flips}, hound {dogs}, guardian {guardians}.',
+    },
       hint: {
         keyboard: 'Lamban linnar, Enter/Space cennan, F halya.',
       },

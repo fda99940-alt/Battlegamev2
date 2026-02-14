@@ -74,6 +74,18 @@
         roomCode: 'Room {code}, ready it is',
         roomPending: 'Room code pending, patience',
         empty: 'No runs yet, empty this is',
+      filteredEmpty: 'With current filters, no runs match.',
+      filterResult: 'Result',
+      filterTime: 'Time',
+      filterAll: 'All',
+      filterWins: 'Wins',
+      filterLosses: 'Losses',
+      filterAllTime: 'All time',
+      filter24h: 'Last 24h',
+      filter7d: 'Last 7 days',
+      filter30d: 'Last 30 days',
+      showMoreDefault: 'Show more',
+      showMore: 'Show {count} more ({remaining} left)',
       },
       status: {
         start: 'Click any cell to begin, yes',
@@ -92,6 +104,11 @@
         copySuccess: 'Room {code} copied to clipboard, share you will',
         copyFallback: 'Room code {code}, remember it',
       },
+    config: {
+      scaleInfoPlaceholder: 'Per face, counts are; by active faces, multiplied they are.',
+      scaleInfo:
+        'Per-face counts × {faces} faces. Totals -> mines {mines}, rotation {rotations}, flip {flips}, dog {dogs}, guardian {guardians}.',
+    },
       hint: {
         keyboard: 'Arrow keys move focus, Enter/Space reveal, F to flag, hmm',
       },

@@ -74,6 +74,18 @@
         roomCode: '房间 {code}',
         roomPending: '等待房间代码',
         empty: '尚未记录任何对局。',
+      filteredEmpty: 'Meiyou pipei dangqian shaixuan de jilu.',
+      filterResult: 'Jieguo',
+      filterTime: 'Shijian',
+      filterAll: 'Quanbu',
+      filterWins: 'Shengli',
+      filterLosses: 'Shibai',
+      filterAllTime: 'Quan shijian',
+      filter24h: 'Zuijin 24 xiaoshi',
+      filter7d: 'Zuijin 7 tian',
+      filter30d: 'Zuijin 30 tian',
+      showMoreDefault: 'Xianshi geng duo',
+      showMore: 'Xianshi zai duo {count} tiao (hai sheng {remaining})',
       },
       status: {
         start: '点击任意格子开始。',
@@ -92,6 +104,11 @@
         copySuccess: '房间 {code} 已复制到剪贴板。',
         copyFallback: '房间代码 {code}',
       },
+    config: {
+      scaleInfoPlaceholder: 'Shu zhi an mei ge mian she zhi, bing cheng yi dang qian mian shu.',
+      scaleInfo:
+        'Mei mian shu liang × {faces} ge mian. Zong ji -> di lei {mines}, xuan zhuan {rotations}, fan zhuan {flips}, gou {dogs}, shou hu {guardians}.',
+    },
       hint: {
         keyboard: '方向键移动焦点，回车/空格翻开，F 标记。',
       },

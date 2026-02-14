@@ -74,6 +74,18 @@
         roomCode: 'Rum {code}',
         roomPending: 'Kod väntar',
         empty: 'Inga rundor ännu.',
+      filteredEmpty: 'Inga spel matchar aktuella filter.',
+      filterResult: 'Resultat',
+      filterTime: 'Tid',
+      filterAll: 'Alla',
+      filterWins: 'Vinster',
+      filterLosses: 'Forluster',
+      filterAllTime: 'Hela tiden',
+      filter24h: 'Senaste 24 h',
+      filter7d: 'Senaste 7 dagarna',
+      filter30d: 'Senaste 30 dagarna',
+      showMoreDefault: 'Visa fler',
+      showMore: 'Visa {count} till ({remaining} kvar)',
       },
       status: {
         start: 'Klicka en cell för att börja.',
@@ -92,6 +104,11 @@
         copySuccess: 'Rum {code} kopierat.',
         copyFallback: 'Kod {code}',
       },
+    config: {
+      scaleInfoPlaceholder: 'Varden anges per sida och multipliceras med antal aktiva sidor.',
+      scaleInfo:
+        'Per-sida varden × {faces} sidor. Totalt -> minor {mines}, rotation {rotations}, flip {flips}, hund {dogs}, vaxtare {guardians}.',
+    },
       hint: {
         keyboard: 'Pilar flyttar, Enter/Space avslöjar, F flaggar.',
       },

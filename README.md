@@ -18,7 +18,7 @@ Open `index.html` in a modern browser. No build step or server is required—the
 
 1. **Keyboard-focused controls**: Arrow keys move focus, Enter/Space reveal, and F flags—every action works without a mouse.
 2. **Board mode switch**: Toggle between `Board: Cube` (true six-face board) and `Board: 2D` (single front-face plane). Switching mode starts a fresh board with mode-appropriate cell/mine limits.
-3. **Configurable specials**: Rows, columns, mine count, rotation specials, flip specials, dog specials, and guardian specials are clamp-safeguarded so you can experiment while keeping the logic valid.
+3. **Per-face configuration scaling**: Mine and special inputs are entered per face, then multiplied by active face count (1 in `2D`, 6 in `Cube`) when generating a run. The settings panel shows a live multiplier/total summary so the final counts are explicit before applying.
 4. **Difficulty presets**: Easy/Medium/Hard buttons seed the recommended inputs and immediately restart with that setup while highlighting the active preset.
 5. **Rotation & flip fields**: Reveal specials to rotate the board or mirror it horizontally/vertically, and optionally disable these effects with “Specials: on/off”.
 6. **Dog special tile**: Discovering a Dog tile flags a random unmarked mine automatically, so every good sniff buys you a little safety without touching the mine count input or flagging manually.

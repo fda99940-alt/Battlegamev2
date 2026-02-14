@@ -79,6 +79,18 @@
       roomCode: 'Seed {code}',
       roomPending: 'Seed pending',
       empty: 'No runs yet.',
+      filteredEmpty: 'No runs match current filters.',
+      filterResult: 'Result',
+      filterTime: 'Time',
+      filterAll: 'All',
+      filterWins: 'Wins',
+      filterLosses: 'Losses',
+      filterAllTime: 'All time',
+      filter24h: 'Last 24h',
+      filter7d: 'Last 7 days',
+      filter30d: 'Last 30 days',
+      showMoreDefault: 'Show more',
+      showMore: 'Show {count} more ({remaining} left)',
     },
     status: {
       start: 'Click any cell to begin.',
@@ -101,6 +113,11 @@
     },
     hint: {
       keyboard: 'Arrow keys to move focus, Enter/Space to reveal, F to flag.',
+    },
+    config: {
+      scaleInfoPlaceholder: 'Counts are per face and multiplied by active faces.',
+      scaleInfo:
+        'Per-face counts × {faces} faces. Totals -> mines {mines}, rotation {rotations}, flip {flips}, dog {dogs}, guardian {guardians}.',
     },
     avatar: {
       personas: {

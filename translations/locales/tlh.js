@@ -74,6 +74,18 @@
         roomCode: 'lux {code}',
         roomPending: 'code Qoy',
         empty: 'History lurgh.',
+      filteredEmpty: 'Current filters with no runs match.',
+      filterResult: 'Qap',
+      filterTime: 'poH',
+      filterAll: 'Hoch',
+      filterWins: 'Qapta',
+      filterLosses: 'lujta',
+      filterAllTime: 'reH',
+      filter24h: '24 rep',
+      filter7d: '7 jaj',
+      filter30d: '30 jaj',
+      showMoreDefault: 'chaH law',
+      showMore: 'chaH {count} law ({remaining} ratlh)',
       },
       status: {
         start: 'mIp yItlh.',
@@ -92,6 +104,11 @@
         copySuccess: '{code} qIj.',
         copyFallback: 'code {code}',
       },
+    config: {
+      scaleInfoPlaceholder: 'Dabmeyvam ghaytan nagh bej per face, je active faces moq law.',
+      scaleInfo:
+        'Per-face counts × {faces} faces. Totals -> mines {mines}, rotation {rotations}, flip {flips}, dog {dogs}, guardian {guardians}.',
+    },
       hint: {
         keyboard: 'So\'wI\' QIv, Enter/Space choq, F flag.',
       },

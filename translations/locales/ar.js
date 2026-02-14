@@ -74,6 +74,18 @@
         roomCode: 'غرفة {code}',
         roomPending: 'الكود قيد الانتظار',
         empty: 'لا توجد جولات بعد.',
+      filteredEmpty: 'La runat tutabiq alfiltrat alhaliya.',
+      filterResult: 'Natija',
+      filterTime: 'Waqt',
+      filterAll: 'Alkul',
+      filterWins: 'Intisarat',
+      filterLosses: 'Hazaem',
+      filterAllTime: 'Kul alwaqt',
+      filter24h: 'Akher 24 saah',
+      filter7d: 'Akher 7 ayam',
+      filter30d: 'Akher 30 yawm',
+      showMoreDefault: 'Ard akthar',
+      showMore: 'Ard {count} akthar ({remaining} mutabaqi)',
       },
       status: {
         start: 'اضغط خلية لبدء اللعب.',
@@ -92,6 +104,11 @@
         copySuccess: 'الغرفة {code} نُسخت.',
         copyFallback: 'كود {code}',
       },
+    config: {
+      scaleInfoPlaceholder: 'Alqiyam lilwajh alwahid watudrab fi adad alwujuh alnaaashita.',
+      scaleInfo:
+        'Qiyam kul wajh × {faces} wujuh. Almajmuu -> algham {mines}, dawran {rotations}, qalb {flips}, kalb {dogs}, haris {guardians}.',
+    },
       hint: {
         keyboard: 'أسهم الحركة، Enter/Space للتأكيد، F لعلم.',
       },

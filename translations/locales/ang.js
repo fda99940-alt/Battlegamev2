@@ -74,6 +74,18 @@
         roomCode: 'Room {code}',
         roomPending: 'Room code pending',
         empty: 'No runs yet. Go ruin one.',
+      filteredEmpty: 'Nane runa samod mid tha andweardan filtran.',
+      filterResult: 'Result',
+      filterTime: 'Tid',
+      filterAll: 'Eall',
+      filterWins: 'Gewin',
+      filterLosses: 'Forlos',
+      filterAllTime: 'Ealne tid',
+      filter24h: 'Last 24h',
+      filter7d: 'Last 7 dagas',
+      filter30d: 'Last 30 dagas',
+      showMoreDefault: 'Yt gesewen',
+      showMore: 'Gesew {count} ma ({remaining} lafe)',
       },
       status: {
         start: 'Start hitting tiles and stop whining.',
@@ -92,6 +104,11 @@
         copySuccess: 'Room {code} copied. Share that embarrassment.',
         copyFallback: 'Room code {code}.',
       },
+    config: {
+      scaleInfoPlaceholder: 'Talu beon on gehwilcre sidan and bieth gemenigfaldod be tham andwerdum sidan.',
+      scaleInfo:
+        'Per-face talu × {faces} sidan. Samod -> mines {mines}, hweorfung {rotations}, flip {flips}, hund {dogs}, weard {guardians}.',
+    },
       hint: {
         keyboard: 'Arrow keys move, Enter/Space reveal, F flag.',
       },

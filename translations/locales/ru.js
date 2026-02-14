@@ -74,6 +74,18 @@
         roomCode: 'Комната {code}',
         roomPending: 'Код ждёт',
         empty: 'Записей пока нет.',
+      filteredEmpty: 'Net zapisey sootvetstvuyushchih tekushchim filtram.',
+      filterResult: 'Rezultat',
+      filterTime: 'Period',
+      filterAll: 'Vse',
+      filterWins: 'Pobedy',
+      filterLosses: 'Porazheniya',
+      filterAllTime: 'Za vse vremya',
+      filter24h: 'Poslednie 24 ch',
+      filter7d: 'Poslednie 7 dney',
+      filter30d: 'Poslednie 30 dney',
+      showMoreDefault: 'Pokazat eshche',
+      showMore: 'Pokazat eshche {count} ({remaining} ostalos)',
       },
       status: {
         start: 'Кликните клетку, чтобы начать.',
@@ -92,6 +104,11 @@
         copySuccess: 'Комната {code} скопирована.',
         copyFallback: 'Код {code}',
       },
+    config: {
+      scaleInfoPlaceholder: 'Znachenija ukazany dlya kazhdoi grani i umnozhayutsya na chislo aktivnyh granei.',
+      scaleInfo:
+        'Znachenija na gran = {faces}. Itogi -> miny {mines}, povoroty {rotations}, otrazheniya {flips}, sobaka {dogs}, strazh {guardians}.',
+    },
       hint: {
         keyboard: 'Стрелки перемещают, Enter/Space открывает, F флаг.',
       },

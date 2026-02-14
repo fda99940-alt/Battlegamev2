@@ -74,6 +74,18 @@
         roomCode: 'Room {code}',
         roomPending: 'Room code pending',
         empty: 'No runz yet.',
+      filteredEmpty: 'No runz match ur current filterz.',
+      filterResult: 'Resultz',
+      filterTime: 'Timez',
+      filterAll: 'All',
+      filterWins: 'Winz',
+      filterLosses: 'Loses',
+      filterAllTime: 'All time',
+      filter24h: 'Last 24h',
+      filter7d: 'Last 7 dayz',
+      filter30d: 'Last 30 dayz',
+      showMoreDefault: 'Show moar',
+      showMore: 'Show {count} moar ({remaining} left)',
       },
       status: {
         start: 'Click any cell to begin.',
@@ -92,6 +104,11 @@
         copySuccess: 'Room {code} copied.',
         copyFallback: 'Code {code}',
       },
+    config: {
+      scaleInfoPlaceholder: 'Countz r per face an multiplied by active facez.',
+      scaleInfo:
+        'Per-face countz × {faces} facez. Totalz -> minez {mines}, rotatez {rotations}, flipz {flips}, doggo {dogs}, guardz {guardians}.',
+    },
       hint: {
         keyboard: 'Arrows move, Enter/Space reveal, F flag.',
       },

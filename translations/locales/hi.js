@@ -74,6 +74,18 @@
         roomCode: 'रूम {code}',
         roomPending: 'कोड प्रतीक्षारत है',
         empty: 'अभी तक कोई रन नहीं है।',
+      filteredEmpty: 'Maujuda filter se milne wali koi run nahin mili.',
+      filterResult: 'Parinam',
+      filterTime: 'Samay',
+      filterAll: 'Sab',
+      filterWins: 'Jeet',
+      filterLosses: 'Haar',
+      filterAllTime: 'Pure samay',
+      filter24h: 'Pichhle 24 ghante',
+      filter7d: 'Pichhle 7 din',
+      filter30d: 'Pichhle 30 din',
+      showMoreDefault: 'Aur dikhaye',
+      showMore: 'Aur {count} dikhaye ({remaining} baki)',
       },
       status: {
         start: 'किसी कोशिका पर क्लिक करके शुरुआत करें।',
@@ -92,6 +104,11 @@
         copySuccess: 'रूम {code} क्लिपबोर्ड पर कॉपी हो गया।',
         copyFallback: 'रूम कोड {code}',
       },
+    config: {
+      scaleInfoPlaceholder: 'Ganati har face ke hisab se hoti hai aur sakriya faces se guna hoti hai.',
+      scaleInfo:
+        'Per-face ganati × {faces} faces. Kul -> mines {mines}, rotation {rotations}, flip {flips}, dog {dogs}, guardian {guardians}.',
+    },
       hint: {
         keyboard: 'फोकस के लिए एरो, खोलने के लिए Enter/Space, F से ध्वज लगाएँ।',
       },
