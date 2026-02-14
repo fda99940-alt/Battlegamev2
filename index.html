@@ -115,7 +115,28 @@
             Copy seed
           </button>
         </div>
-        <div id="board" class="board" role="grid" aria-label="Mindsweeper board"></div>
+        <div class="cube-scene" id="cubeScene">
+          <div class="cube" id="cube" aria-label="Mindsweeper cube">
+            <div class="cube-face cube-face--front">
+              <div class="board" data-face-board="front" role="grid" aria-label="Front face"></div>
+            </div>
+            <div class="cube-face cube-face--back">
+              <div class="board" data-face-board="back" role="grid" aria-label="Back face"></div>
+            </div>
+            <div class="cube-face cube-face--right">
+              <div class="board" data-face-board="right" role="grid" aria-label="Right face"></div>
+            </div>
+            <div class="cube-face cube-face--left">
+              <div class="board" data-face-board="left" role="grid" aria-label="Left face"></div>
+            </div>
+            <div class="cube-face cube-face--top">
+              <div class="board" data-face-board="top" role="grid" aria-label="Top face"></div>
+            </div>
+            <div class="cube-face cube-face--bottom">
+              <div class="board" data-face-board="bottom" role="grid" aria-label="Bottom face"></div>
+            </div>
+          </div>
+        </div>
         <p class="keyboard-hint" data-i18n-key="hint.keyboard">Arrow keys to move focus, Enter/Space to reveal, F to flag.</p>
       </section>
 
@@ -135,7 +156,7 @@
           </label>
           <label>
             <span data-i18n-key="label.mines">Mines</span>
-            <input type="number" id="minesInput" min="5" max="99" value="18" />
+            <input type="number" id="minesInput" min="5" max="3750" value="108" />
           </label>
           <label>
             <span data-i18n-key="label.rotationSpecials">Rotation specials</span>
@@ -156,6 +177,9 @@
           <button type="submit" class="primary" data-i18n-key="button.applyLayout">Apply layout</button>
         </form>
         <div class="actions">
+          <button type="button" class="ghost" id="toggleBoardMode">
+            Board: Cube
+          </button>
           <button type="button" class="ghost" id="toggleSpecials">
             Specials: on
           </button>

@@ -534,6 +534,56 @@ body {
   position: relative;
 }
 
+.cube-scene {
+  display: grid;
+  place-items: center;
+  perspective: 1400px;
+  perspective-origin: center center;
+  min-height: clamp(320px, 72vw, 620px);
+}
+
+.cube {
+  --cube-size: min(74vw, 620px);
+  --cube-half: calc(var(--cube-size) * 0.5);
+  position: relative;
+  width: var(--cube-size);
+  height: var(--cube-size);
+  transform-style: preserve-3d;
+  transform: rotateX(-28deg) rotateY(36deg);
+  transition: transform 0.45s ease;
+}
+
+.cube-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 0;
+  backface-visibility: hidden;
+}
+
+.cube-face--front {
+  transform: translateZ(var(--cube-half));
+}
+
+.cube-face--back {
+  transform: rotateY(180deg) translateZ(var(--cube-half));
+}
+
+.cube-face--right {
+  transform: rotateY(90deg) translateZ(var(--cube-half));
+}
+
+.cube-face--left {
+  transform: rotateY(-90deg) translateZ(var(--cube-half));
+}
+
+.cube-face--top {
+  transform: rotateX(90deg) translateZ(var(--cube-half));
+}
+
+.cube-face--bottom {
+  transform: rotateX(-90deg) translateZ(var(--cube-half));
+}
+
 .seed-banner {
   align-self: flex-end;
   display: flex;
@@ -572,6 +622,41 @@ body {
   transition: transform 0.5s ease;
   transform-origin: center center;
   min-height: 320px;
+}
+
+.cube-face > .board {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  border-radius: 0;
+}
+
+.board-wrapper[data-board-mode="2d"] .cube-scene {
+  perspective: none;
+  min-height: 0;
+}
+
+.board-wrapper[data-board-mode="2d"] .cube {
+  width: min(100%, 760px);
+  height: auto;
+  transform: none !important;
+}
+
+.board-wrapper[data-board-mode="2d"] .cube-face {
+  position: static;
+  transform: none !important;
+  display: none;
+}
+
+.board-wrapper[data-board-mode="2d"] .cube-face--front {
+  display: block;
+}
+
+.board-wrapper[data-board-mode="2d"] .cube-face--front > .board {
+  min-height: 320px;
+  padding: 0.25rem;
+  border-radius: 0.85rem;
 }
 
 .cell {
@@ -994,5 +1079,10 @@ button.ghost {
 
   .status-grid {
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  .cube {
+    --cube-size: min(92vw, 480px);
+    transform: rotateX(-24deg) rotateY(30deg);
   }
 }

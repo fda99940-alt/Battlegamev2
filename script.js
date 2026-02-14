@@ -7,7 +7,15 @@ const TRANSLATIONS = translationBundle.TRANSLATIONS || {};
  */
 (() => {
 const historyKey = 'mindsweeperRuns';
-const boardEl = document.getElementById('board');
+const cubeEl = document.getElementById('cube');
+const faceBoards = Array.from(document.querySelectorAll('[data-face-board]'));
+const boardByFace = faceBoards.reduce((acc, board) => {
+  const face = board.dataset.faceBoard;
+  if (face) {
+    acc[face] = board;
+  }
+  return acc;
+}, {});
 const statusMessage = document.getElementById('statusMessage');
 const remainingMinesEl = document.getElementById('remainingMines');
 const revealedCountEl = document.getElementById('revealedCount');
@@ -26,6 +34,7 @@ const flipInput = document.getElementById('flipInput');
 const dogInput = document.getElementById('dogInput');
 const guardianInput = document.getElementById('guardianInput');
 const toggleSpecialsBtn = document.getElementById('toggleSpecials');
+const toggleBoardModeBtn = document.getElementById('toggleBoardMode');
 const showMinesBtn = document.getElementById('showMinesHandle');
 const clearHistoryBtn = document.getElementById('clearHistory');
 const historyList = document.getElementById('historyList');
@@ -33,6 +42,7 @@ const historyPanel = document.querySelector('.panel.history');
 const boardWrapper = document.querySelector('.board-wrapper');
 const themeButtons = document.querySelectorAll('[data-theme-option]');
 const themeStorageKey = 'mindsweeperTheme';
+const boardModeStorageKey = 'mindsweeperBoardMode';
 const availableThemes = ['neon', 'dusk', 'sunrise', 'midnight', 'verdant', 'ember'];
 const defaultTheme = availableThemes[0];
 const presetButtons = document.querySelectorAll('[data-preset]');
@@ -40,7 +50,7 @@ const difficultyPresets = {
   easy: {
     rows: 8,
     cols: 8,
-    mines: 10,
+    mines: 60,
     rotationSpecials: 1,
     flipSpecials: 1,
     dogSpecials: 1,
@@ -49,7 +59,7 @@ const difficultyPresets = {
   medium: {
     rows: 10,
     cols: 10,
-    mines: 18,
+    mines: 108,
     rotationSpecials: 2,
     flipSpecials: 2,
     dogSpecials: 1,
@@ -58,7 +68,7 @@ const difficultyPresets = {
   hard: {
     rows: 16,
     cols: 16,
-    mines: 36,
+    mines: 216,
     rotationSpecials: 3,
     flipSpecials: 3,
     dogSpecials: 1,
@@ -104,7 +114,7 @@ let activePreset = null;
   let config = {
     rows: 10,
     cols: 10,
-    mines: 18,
+    mines: 108,
     rotationSpecials: 2,
     flipSpecials: 2,
     dogSpecials: 1,
@@ -115,9 +125,12 @@ let activePreset = null;
   let runActions = [];
   let runs = loadRuns();
   let gameActive = false;
+  let boardMode = loadBoardMode();
   let specialsEnabled = true;
   let cheatMode = false;
   let rotationAngle = 0;
+  let cubeYaw = 36;
+  let cubePitch = -28;
   let flipHorizontal = false;
   let flipVertical = false;
   let rotationTriggers = 0;
@@ -130,10 +143,12 @@ let activePreset = null;
   let revealedCount = 0;
   let isReplaying = false;
   let replayTimer = null;
-  let focusCell = { row: 0, col: 0 };
+  let focusCell = { face: 'front', row: 0, col: 0 };
   let runStartTime = Date.now();
   let currentRoomCode = null;
   let currentRoomSeed = null;
+  let cubeDrag = null;
+  let suppressNextReveal = false;
 
   const NEIGHBORS = [
     [-1, -1],
@@ -145,6 +160,39 @@ let activePreset = null;
     [1, 0],
     [1, 1],
   ];
+  const FACE_ORDER = ['front', 'back', 'right', 'left', 'top', 'bottom'];
+  const FACE_VECTORS = {
+    front: {
+      n: [0, 0, 1],
+      u: [1, 0, 0],
+      v: [0, 1, 0],
+    },
+    back: {
+      n: [0, 0, -1],
+      u: [-1, 0, 0],
+      v: [0, 1, 0],
+    },
+    right: {
+      n: [1, 0, 0],
+      u: [0, 0, -1],
+      v: [0, 1, 0],
+    },
+    left: {
+      n: [-1, 0, 0],
+      u: [0, 0, 1],
+      v: [0, 1, 0],
+    },
+    top: {
+      n: [0, -1, 0],
+      u: [1, 0, 0],
+      v: [0, 0, 1],
+    },
+    bottom: {
+      n: [0, 1, 0],
+      u: [1, 0, 0],
+      v: [0, 0, -1],
+    },
+  };
 
   let avatarPulseTimer = null;
   const avatarPulseDuration = 1400;
@@ -166,6 +214,13 @@ let activePreset = null;
     });
   });
 
+  if (toggleBoardModeBtn) {
+    toggleBoardModeBtn.addEventListener('click', () => {
+      const nextMode = boardMode === 'cube' ? '2d' : 'cube';
+      applyBoardMode(nextMode);
+    });
+  }
+
   showMinesBtn.addEventListener('click', () => {
     cheatMode = !cheatMode;
     applyCheatState();
@@ -186,26 +241,68 @@ let activePreset = null;
     });
   }
 
-  boardEl.addEventListener('click', (event) => {
-    if (isReplaying) return;
-    const cellEl = event.target.closest('.cell');
-    if (!cellEl) return;
-    const cell = getCellFromElement(cellEl);
-    revealCell(cell);
-  });
+  if (cubeEl) {
+    cubeEl.addEventListener('pointerdown', (event) => {
+      if (boardMode === '2d') return;
+      if (event.button !== 0) return;
+      cubeDrag = {
+        active: true,
+        x: event.clientX,
+        y: event.clientY,
+        moved: false,
+        pointerId: event.pointerId,
+      };
+    });
 
-  boardEl.addEventListener('contextmenu', (event) => {
-    if (isReplaying) return;
-    event.preventDefault();
-    const cellEl = event.target.closest('.cell');
-    if (!cellEl) return;
-    const cell = getCellFromElement(cellEl);
-    applyFlag(cell, !cell.flagged, { recordAction: true });
-  });
+    document.addEventListener('pointermove', (event) => {
+      if (!cubeDrag?.active || cubeDrag.pointerId !== event.pointerId) return;
+      const dx = event.clientX - cubeDrag.x;
+      const dy = event.clientY - cubeDrag.y;
+      if (Math.abs(dx) + Math.abs(dy) > 3) {
+        cubeDrag.moved = true;
+      }
+      cubeDrag.x = event.clientX;
+      cubeDrag.y = event.clientY;
+      cubeYaw += dx * 0.35;
+      cubePitch = clamp(cubePitch - dy * 0.25, -78, 78);
+      applyTransform();
+    });
+
+    document.addEventListener('pointerup', (event) => {
+      if (!cubeDrag?.active || cubeDrag.pointerId !== event.pointerId) return;
+      if (cubeDrag.moved) {
+        suppressNextReveal = true;
+      }
+      cubeDrag = null;
+    });
+
+    faceBoards.forEach((board) => {
+      board.addEventListener('click', (event) => {
+        if (isReplaying) return;
+        if (suppressNextReveal) {
+          suppressNextReveal = false;
+          return;
+        }
+        const cellEl = event.target.closest('.cell');
+        if (!cellEl) return;
+        const cell = getCellFromElement(cellEl);
+        revealCell(cell);
+      });
+
+      board.addEventListener('contextmenu', (event) => {
+        if (isReplaying) return;
+        event.preventDefault();
+        const cellEl = event.target.closest('.cell');
+        if (!cellEl) return;
+        const cell = getCellFromElement(cellEl);
+        applyFlag(cell, !cell.flagged, { recordAction: true });
+      });
+    });
+  }
 
   document.addEventListener('keydown', (event) => {
     if (isReplaying) return;
-    if (!grid.length) return;
+    if (!grid.front?.length) return;
     const { key } = event;
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
       event.preventDefault();
@@ -215,7 +312,7 @@ let activePreset = null;
 
     if (key === ' ' || key === 'Enter') {
       event.preventDefault();
-      const cell = getCell(focusCell.row, focusCell.col);
+      const cell = getCell(focusCell.face, focusCell.row, focusCell.col);
       if (cell) {
         revealCell(cell);
       }
@@ -224,7 +321,7 @@ let activePreset = null;
 
     if (key.toLowerCase() === 'f') {
       event.preventDefault();
-      const cell = getCell(focusCell.row, focusCell.col);
+      const cell = getCell(focusCell.face, focusCell.row, focusCell.col);
       if (cell) {
         applyFlag(cell, !cell.flagged, { recordAction: true });
       }
@@ -263,6 +360,7 @@ let activePreset = null;
     initLanguageSwitcher();
     initAvatarSwitcher();
     applyStaticTranslations();
+    applyBoardMode(boardMode, { persist: false, restart: false });
     updateSpecialsButton();
     updateShowMinesButton();
     initThemeSwitcher();
@@ -304,7 +402,7 @@ let activePreset = null;
     updateSeedDisplay();
     updateStatus();
     showStatusMessage('status.newBoard');
-    grid[0]?.[0]?.element?.focus();
+    getCell('front', 0, 0)?.element?.focus();
     speakAvatar('ready', { size: `${config.rows}×${config.cols}` });
   }
 
@@ -317,7 +415,7 @@ let activePreset = null;
       replayTimer = null;
     }
     isReplaying = false;
-    boardEl.classList.remove('board--replaying');
+    faceBoards.forEach((board) => board.classList.remove('board--replaying'));
   }
 
   /**
@@ -339,7 +437,7 @@ let activePreset = null;
     applyTransform();
     applyCheatState();
     showStatusMessage('status.replayInit', { timestamp: formatTimestamp(record.timestamp) });
-    boardEl.classList.add('board--replaying');
+    faceBoards.forEach((board) => board.classList.add('board--replaying'));
     const actions = record.actions || [];
     let step = 0;
 
@@ -354,7 +452,8 @@ let activePreset = null;
         step: step + 1,
         total: actions.length,
       });
-      const cell = getCell(action.row, action.col);
+      const face = action.face || 'front';
+      const cell = getCell(face, action.row, action.col);
       if (cell) {
         if (action.type === 'reveal') {
           revealCell(cell, { replay: true, recordAction: false, checkVictory: false });
@@ -398,13 +497,13 @@ let activePreset = null;
       cell.special = null;
     });
     (payload.minePositions || []).forEach((mine) => {
-      const cell = getCell(mine.row, mine.col);
+      const cell = getCell(mine.face || 'front', mine.row, mine.col);
       if (cell) {
         cell.isMine = true;
       }
     });
     (payload.rotationSpecials || []).forEach((special) => {
-      const cell = getCell(special.row, special.col);
+      const cell = getCell(special.face || 'front', special.row, special.col);
       if (cell) {
         cell.special = {
           type: 'rotation',
@@ -414,7 +513,7 @@ let activePreset = null;
       }
     });
     (payload.flipSpecials || []).forEach((special) => {
-      const cell = getCell(special.row, special.col);
+      const cell = getCell(special.face || 'front', special.row, special.col);
       if (cell) {
         cell.special = {
           type: 'flip',
@@ -424,7 +523,7 @@ let activePreset = null;
       }
     });
     (payload.dogSpecials || []).forEach((special) => {
-      const cell = getCell(special.row, special.col);
+      const cell = getCell(special.face || 'front', special.row, special.col);
       if (cell) {
         cell.special = {
           type: 'dog',
@@ -433,7 +532,7 @@ let activePreset = null;
       }
     });
     (payload.guardianSpecials || []).forEach((special) => {
-      const cell = getCell(special.row, special.col);
+      const cell = getCell(special.face || 'front', special.row, special.col);
       if (cell) {
         cell.special = {
           type: 'guardian',
@@ -462,7 +561,7 @@ let activePreset = null;
   function applyConfigFromForm() {
     const rows = clamp(Number(rowsInput.value) || config.rows, 5, 25);
     const cols = clamp(Number(colsInput.value) || config.cols, 5, 25);
-    const totalCells = rows * cols;
+    const totalCells = rows * cols * getActiveFaces().length;
     const maxMines = Math.max(totalCells - 1, 1);
     const mines = clamp(Number(minesInput.value) || config.mines, 1, maxMines);
     const safeCells = Math.max(totalCells - mines, 0);
@@ -525,18 +624,22 @@ let activePreset = null;
    * Builds a blank grid data structure reflecting the requested dimensions.
    */
   function createGrid(rows, cols) {
-    return Array.from({ length: rows }, (_, row) =>
-      Array.from({ length: cols }, (_, col) => ({
-        row,
-        col,
-        isMine: false,
-        neighborMines: 0,
-        special: null,
-        revealed: false,
-        flagged: false,
-        element: null,
-      }))
-    );
+    return getActiveFaces().reduce((acc, face) => {
+      acc[face] = Array.from({ length: rows }, (_, row) =>
+        Array.from({ length: cols }, (_, col) => ({
+          face,
+          row,
+          col,
+          isMine: false,
+          neighborMines: 0,
+          special: null,
+          revealed: false,
+          flagged: false,
+          element: null,
+        }))
+      );
+      return acc;
+    }, {});
   }
 
   /**
@@ -544,15 +647,17 @@ let activePreset = null;
    */
   function placeMines(count, rng = Math.random) {
     const cells = [];
-    for (let row = 0; row < config.rows; row += 1) {
-      for (let col = 0; col < config.cols; col += 1) {
-        cells.push({ row, col });
+    getActiveFaces().forEach((face) => {
+      for (let row = 0; row < config.rows; row += 1) {
+        for (let col = 0; col < config.cols; col += 1) {
+          cells.push({ face, row, col });
+        }
       }
-    }
+    });
     shuffle(cells, rng);
     const selection = cells.slice(0, count);
-    selection.forEach(({ row, col }) => {
-      const cell = getCell(row, col);
+    selection.forEach(({ face, row, col }) => {
+      const cell = getCell(face, row, col);
       if (cell) {
         cell.isMine = true;
       }
@@ -619,12 +724,19 @@ let activePreset = null;
    * Creates and inserts DOM elements for each cell, applying initial classes.
    */
   function renderBoard() {
-    boardEl.innerHTML = '';
-    boardEl.style.gridTemplateColumns = `repeat(${config.cols}, minmax(0, 1fr))`;
+    FACE_ORDER.forEach((face) => {
+      const boardEl = boardByFace[face];
+      if (!boardEl) return;
+      boardEl.innerHTML = '';
+      boardEl.style.gridTemplateColumns = `repeat(${config.cols}, minmax(0, 1fr))`;
+    });
     forEachCell((cell) => {
+      const boardEl = boardByFace[cell.face];
+      if (!boardEl) return;
       const cellEl = document.createElement('button');
       cellEl.type = 'button';
       cellEl.className = 'cell';
+      cellEl.setAttribute('data-face', cell.face);
       cellEl.setAttribute('data-row', cell.row);
       cellEl.setAttribute('data-col', cell.col);
       cellEl.setAttribute('data-show-cheat', cheatMode ? 'true' : 'false');
@@ -677,7 +789,7 @@ let activePreset = null;
     }
     revealedCount += 1;
     if (recordAction && !isReplaying) {
-      runActions.push({ type: 'reveal', row: cell.row, col: cell.col });
+      runActions.push({ type: 'reveal', face: cell.face, row: cell.row, col: cell.col });
     }
     if (cell.special) {
       triggerSpecial(cell.special, cell);
@@ -722,7 +834,7 @@ let activePreset = null;
       flaggedCount = Math.max(0, flaggedCount - 1);
     }
     if (recordAction && !isReplaying) {
-      runActions.push({ type: 'flag', row: cell.row, col: cell.col, flagged: shouldFlag });
+      runActions.push({ type: 'flag', face: cell.face, row: cell.row, col: cell.col, flagged: shouldFlag });
     }
     if (userAction && !replay) {
       commentOnFlag(cell, shouldFlag);
@@ -783,18 +895,30 @@ let activePreset = null;
   }
 
   /**
-   * Applies current rotation/flip transforms to the board element and updates wrapper spacing.
+   * Applies current rotation/flip transforms to the cube container.
    */
   function applyTransform() {
-    if (!specialsEnabled) {
-      boardEl.style.transform = 'none';
+    if (!cubeEl) return;
+    if (boardMode === '2d') {
+      const board = boardByFace.front;
+      if (board) {
+        const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
+        const scaleY = specialsEnabled && flipVertical ? -1 : 1;
+        const spin = specialsEnabled ? rotationAngle : 0;
+        board.style.transform = `rotate(${spin}deg) scale(${scaleX}, ${scaleY})`;
+      }
+      cubeEl.style.transform = 'none';
       updateWrapperSpacing(false);
       return;
     }
-    const scaleX = flipHorizontal ? -1 : 1;
-    const scaleY = flipVertical ? -1 : 1;
-    boardEl.style.transform = `rotate(${rotationAngle}deg) scale(${scaleX}, ${scaleY})`;
-    updateWrapperSpacing(rotationAngle % 180 !== 0);
+    if (boardByFace.front) {
+      boardByFace.front.style.transform = 'none';
+    }
+    const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
+    const scaleY = specialsEnabled && flipVertical ? -1 : 1;
+    const spinY = specialsEnabled ? rotationAngle : 0;
+    cubeEl.style.transform = `rotateX(${cubePitch}deg) rotateY(${cubeYaw + spinY}deg) scale(${scaleX}, ${scaleY})`;
+    updateWrapperSpacing(false);
   }
 
   /**
@@ -875,7 +999,7 @@ let activePreset = null;
    * Determines whether all safe cells are revealed, indicating victory.
    */
   function checkForWin() {
-    const totalSafeCells = config.rows * config.cols - config.mines;
+    const totalSafeCells = config.rows * config.cols * getActiveFaces().length - config.mines;
     return revealedCount >= totalSafeCells;
   }
 
@@ -897,7 +1021,7 @@ let activePreset = null;
       flipTriggers,
       dogTriggers,
       guardianTriggers,
-      totalCells: config.rows * config.cols,
+      totalCells: config.rows * config.cols * getActiveFaces().length,
       minePositions: layoutPayload.minePositions,
       rotationSpecials: layoutPayload.rotationSpecials,
       flipSpecials: layoutPayload.flipSpecials,
@@ -926,7 +1050,7 @@ let activePreset = null;
     const mines = [];
     forEachCell((cell) => {
       if (cell.isMine) {
-        mines.push({ row: cell.row, col: cell.col });
+        mines.push({ face: cell.face, row: cell.row, col: cell.col });
       }
     });
     return mines;
@@ -940,13 +1064,13 @@ let activePreset = null;
     forEachCell((cell) => {
       if (cell.special?.type === type) {
         if (type === 'rotation') {
-          list.push({ row: cell.row, col: cell.col, direction: cell.special.direction });
+          list.push({ face: cell.face, row: cell.row, col: cell.col, direction: cell.special.direction });
         } else if (type === 'flip') {
-          list.push({ row: cell.row, col: cell.col, axis: cell.special.axis });
+          list.push({ face: cell.face, row: cell.row, col: cell.col, axis: cell.special.axis });
         } else if (type === 'dog') {
-          list.push({ row: cell.row, col: cell.col });
+          list.push({ face: cell.face, row: cell.row, col: cell.col });
         } else if (type === 'guardian') {
-          list.push({ row: cell.row, col: cell.col });
+          list.push({ face: cell.face, row: cell.row, col: cell.col });
         }
       }
     });
@@ -1091,7 +1215,7 @@ let activePreset = null;
 
   function describeCellPosition(cell) {
     if (!cell) return 'the board';
-    return `${cell.row + 1},${cell.col + 1}`;
+    return `${cell.face} ${cell.row + 1},${cell.col + 1}`;
   }
 
   function loadAvatarPersona() {
@@ -1472,6 +1596,8 @@ let activePreset = null;
   function resetBoardState() {
     runActions = [];
     rotationAngle = 0;
+    cubeYaw = 36;
+    cubePitch = -28;
     flipHorizontal = false;
     flipVertical = false;
     rotationTriggers = 0;
@@ -1481,7 +1607,9 @@ let activePreset = null;
     guardianShields = 0;
     flaggedCount = 0;
     revealedCount = 0;
-    focusCell = { row: 0, col: 0 };
+    focusCell = { face: 'front', row: 0, col: 0 };
+    suppressNextReveal = false;
+    cubeDrag = null;
   }
 
   /**
@@ -1649,9 +1777,12 @@ let activePreset = null;
    * Iterates every cell row/col pairing and invokes the callback.
    */
   function forEachCell(callback) {
-    grid.forEach((row, rowIndex) => {
-      row.forEach((cell, colIndex) => {
-        callback(cell, rowIndex, colIndex);
+    getActiveFaces().forEach((face) => {
+      const faceGrid = grid[face] || [];
+      faceGrid.forEach((row, rowIndex) => {
+        row.forEach((cell, colIndex) => {
+          callback(cell, rowIndex, colIndex, face);
+        });
       });
     });
   }
@@ -1659,29 +1790,87 @@ let activePreset = null;
   /**
    * Safely returns a grid cell by coordinates.
    */
-  function getCell(row, col) {
-    if (!grid[row]) return null;
-    return grid[row][col] || null;
+  function getCell(face, row, col) {
+    if (!grid[face] || !grid[face][row]) return null;
+    return grid[face][row][col] || null;
   }
 
   /**
    * Maps a DOM cell button back to its data model cell.
    */
   function getCellFromElement(element) {
+    const face = element.dataset.face || 'front';
     const row = Number(element.dataset.row);
     const col = Number(element.dataset.col);
-    return getCell(row, col);
+    return getCell(face, row, col);
   }
 
   /**
    * Returns array of existing neighboring cells for propagation logic.
    */
   function getNeighbors(cell) {
+    if (boardMode === '2d') {
+      return NEIGHBORS.reduce((acc, [dRow, dCol]) => {
+        const neighbor = getCell('front', cell.row + dRow, cell.col + dCol);
+        if (neighbor && neighbor !== cell) {
+          acc.push(neighbor);
+        }
+        return acc;
+      }, []);
+    }
+    const seen = new Set();
     return NEIGHBORS.reduce((acc, [dRow, dCol]) => {
-      const neighbor = getCell(cell.row + dRow, cell.col + dCol);
-      if (neighbor) acc.push(neighbor);
+      const target = resolveNeighbor(cell, dRow, dCol);
+      if (target) {
+        const neighbor = getCell(target.face, target.row, target.col);
+        if (neighbor && neighbor !== cell) {
+          const key = `${target.face}:${target.row}:${target.col}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            acc.push(neighbor);
+          }
+        }
+      }
       return acc;
     }, []);
+  }
+
+  function resolveNeighbor(cell, dRow, dCol) {
+    if (!cell) return null;
+    const basis = FACE_VECTORS[cell.face];
+    if (!basis) return null;
+    const x = ((cell.col + 0.5) / config.cols) * 2 - 1;
+    const y = ((cell.row + 0.5) / config.rows) * 2 - 1;
+    const p = addVec3(
+      basis.n,
+      addVec3(scaleVec3(basis.u, x), scaleVec3(basis.v, y))
+    );
+    const step = addVec3(
+      scaleVec3(basis.u, dCol * (2 / config.cols)),
+      scaleVec3(basis.v, dRow * (2 / config.rows))
+    );
+    const q = addVec3(p, scaleVec3(step, 1 + 1e-6));
+    return projectPointToFaceCell(q);
+  }
+
+  function projectPointToFaceCell(point) {
+    const ax = Math.abs(point[0]);
+    const ay = Math.abs(point[1]);
+    const az = Math.abs(point[2]);
+    let face = 'front';
+    if (ax >= ay && ax >= az) {
+      face = point[0] >= 0 ? 'right' : 'left';
+    } else if (ay >= ax && ay >= az) {
+      face = point[1] >= 0 ? 'bottom' : 'top';
+    } else {
+      face = point[2] >= 0 ? 'front' : 'back';
+    }
+    const basis = FACE_VECTORS[face];
+    const x = dotVec3(point, basis.u);
+    const y = dotVec3(point, basis.v);
+    const col = clamp(Math.floor(((x + 1) / 2) * config.cols), 0, config.cols - 1);
+    const row = clamp(Math.floor(((y + 1) / 2) * config.rows), 0, config.rows - 1);
+    return { face, row, col };
   }
 
   /**
@@ -1695,10 +1884,19 @@ let activePreset = null;
       ArrowRight: [0, 1],
     };
     const [dRow, dCol] = movement[key];
-    const nextRow = clamp(focusCell.row + dRow, 0, config.rows - 1);
-    const nextCol = clamp(focusCell.col + dCol, 0, config.cols - 1);
-    focusCell = { row: nextRow, col: nextCol };
-    const nextCell = getCell(nextRow, nextCol);
+    if (boardMode === '2d') {
+      const nextRow = clamp(focusCell.row + dRow, 0, config.rows - 1);
+      const nextCol = clamp(focusCell.col + dCol, 0, config.cols - 1);
+      focusCell = { face: 'front', row: nextRow, col: nextCol };
+      const nextCell = getCell('front', nextRow, nextCol);
+      nextCell?.element?.focus();
+      return;
+    }
+    const origin = getCell(focusCell.face, focusCell.row, focusCell.col);
+    const next = resolveNeighbor(origin, dRow, dCol);
+    if (!next) return;
+    focusCell = next;
+    const nextCell = getCell(next.face, next.row, next.col);
     nextCell?.element?.focus();
   }
 
@@ -1729,6 +1927,48 @@ let activePreset = null;
   function updateShowMinesButton() {
     if (!showMinesBtn) return;
     showMinesBtn.textContent = cheatMode ? t('button.hideMines') : t('button.showMines');
+  }
+
+  function getActiveFaces() {
+    return boardMode === '2d' ? ['front'] : FACE_ORDER;
+  }
+
+  function loadBoardMode() {
+    const stored = safeGetItem(boardModeStorageKey);
+    return stored === '2d' ? '2d' : 'cube';
+  }
+
+  function applyBoardMode(mode, options = {}) {
+    const { persist = true, restart = true } = options;
+    boardMode = mode === '2d' ? '2d' : 'cube';
+    boardWrapper?.setAttribute('data-board-mode', boardMode);
+    updateBoardModeButton();
+    if (persist) {
+      safeSetItem(boardModeStorageKey, boardMode);
+    }
+    if (restart) {
+      setActivePreset(null);
+      startNewGame();
+    } else {
+      applyTransform();
+    }
+  }
+
+  function updateBoardModeButton() {
+    if (!toggleBoardModeBtn) return;
+    toggleBoardModeBtn.textContent = boardMode === '2d' ? 'Board: 2D' : 'Board: Cube';
+  }
+
+  function addVec3(a, b) {
+    return [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+  }
+
+  function scaleVec3(v, scalar) {
+    return [v[0] * scalar, v[1] * scalar, v[2] * scalar];
+  }
+
+  function dotVec3(a, b) {
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
   }
 
   /**
