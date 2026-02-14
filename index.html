@@ -241,6 +241,28 @@
             </button>
           </div>
         </div>
+        <div class="history-toolbar">
+          <label>
+            <span>Result</span>
+            <select id="historyResultFilter">
+              <option value="all">All</option>
+              <option value="win">Wins</option>
+              <option value="loss">Losses</option>
+            </select>
+          </label>
+          <label>
+            <span>Time</span>
+            <select id="historyDateFilter">
+              <option value="all">All time</option>
+              <option value="24h">Last 24h</option>
+              <option value="7d">Last 7 days</option>
+              <option value="30d">Last 30 days</option>
+            </select>
+          </label>
+          <button type="button" class="ghost history-more" id="historyShowMore">
+            Show 20 more
+          </button>
+        </div>
         <div id="historyList" class="history-list"></div>
       </section>
     </main>

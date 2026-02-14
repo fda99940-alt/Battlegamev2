@@ -38,6 +38,9 @@ const toggleBoardModeBtn = document.getElementById('toggleBoardMode');
 const showMinesBtn = document.getElementById('showMinesHandle');
 const clearHistoryBtn = document.getElementById('clearHistory');
 const historyList = document.getElementById('historyList');
+const historyResultFilterEl = document.getElementById('historyResultFilter');
+const historyDateFilterEl = document.getElementById('historyDateFilter');
+const historyShowMoreBtn = document.getElementById('historyShowMore');
 const historyPanel = document.querySelector('.panel.history');
 const boardWrapper = document.querySelector('.board-wrapper');
 const themeButtons = document.querySelectorAll('[data-theme-option]');
@@ -76,6 +79,10 @@ const difficultyPresets = {
   },
 };
 let activePreset = null;
+  const historyPageSize = 20;
+  let historyVisibleCount = historyPageSize;
+  let historyFilterResult = 'all';
+  let historyFilterDate = 'all';
   const ROOM_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   const ROOM_CODE_RANDOM_SEGMENT_LENGTH = 4;
   const ROOM_CONFIG_SEGMENT_LENGTH = 14;
@@ -234,6 +241,29 @@ let activePreset = null;
     renderHistory();
   });
 
+  if (historyResultFilterEl) {
+    historyResultFilterEl.addEventListener('change', () => {
+      historyFilterResult = historyResultFilterEl.value;
+      historyVisibleCount = historyPageSize;
+      renderHistory();
+    });
+  }
+
+  if (historyDateFilterEl) {
+    historyDateFilterEl.addEventListener('change', () => {
+      historyFilterDate = historyDateFilterEl.value;
+      historyVisibleCount = historyPageSize;
+      renderHistory();
+    });
+  }
+
+  if (historyShowMoreBtn) {
+    historyShowMoreBtn.addEventListener('click', () => {
+      historyVisibleCount += historyPageSize;
+      renderHistory();
+    });
+  }
+
   if (copySeedBtn) {
     copySeedBtn.addEventListener('click', () => {
       if (!currentRoomCode) return;
@@ -366,6 +396,7 @@ let activePreset = null;
     initThemeSwitcher();
     initDifficultyPresets();
     initHistoryCollapse();
+    syncHistoryFiltersUI();
     initRoomJoin();
     renderHistory();
     applyCheatState();
@@ -1087,14 +1118,21 @@ let activePreset = null;
    * Generates the history UI from saved runs, including action buttons.
    */
   function renderHistory() {
+    clearHistoryBtn.disabled = !runs.length;
+    const filteredRuns = getFilteredRuns();
     if (!runs.length) {
       historyList.innerHTML = `<p class="history-empty">${t('history.empty')}</p>`;
-      clearHistoryBtn.disabled = true;
+      updateHistoryShowMoreButton(0);
       return;
     }
-    clearHistoryBtn.disabled = false;
+    if (!filteredRuns.length) {
+      historyList.innerHTML = '<p class="history-empty">No runs match current filters.</p>';
+      updateHistoryShowMoreButton(0);
+      return;
+    }
+    const visibleRuns = filteredRuns.slice(0, historyVisibleCount);
     historyList.innerHTML = '';
-    runs.forEach((run) => {
+    visibleRuns.forEach((run) => {
       const wrapper = document.createElement('article');
       wrapper.className = 'history-run';
       const title = document.createElement('h3');
@@ -1153,6 +1191,49 @@ let activePreset = null;
       wrapper.appendChild(runActionsEl);
       historyList.appendChild(wrapper);
     });
+    updateHistoryShowMoreButton(filteredRuns.length);
+  }
+
+  function getFilteredRuns() {
+    const now = Date.now();
+    const maxAgeMsByFilter = {
+      '24h': 24 * 60 * 60 * 1000,
+      '7d': 7 * 24 * 60 * 60 * 1000,
+      '30d': 30 * 24 * 60 * 60 * 1000,
+    };
+    const maxAgeMs = maxAgeMsByFilter[historyFilterDate] ?? null;
+    return runs.filter((run) => {
+      if (historyFilterResult !== 'all' && run.result !== historyFilterResult) {
+        return false;
+      }
+      if (!maxAgeMs) return true;
+      const timestamp = Date.parse(run.timestamp);
+      if (Number.isNaN(timestamp)) return false;
+      return now - timestamp <= maxAgeMs;
+    });
+  }
+
+  function updateHistoryShowMoreButton(totalFilteredCount) {
+    if (!historyShowMoreBtn) return;
+    const remaining = Math.max(totalFilteredCount - historyVisibleCount, 0);
+    if (remaining <= 0) {
+      historyShowMoreBtn.hidden = true;
+      historyShowMoreBtn.disabled = true;
+      return;
+    }
+    historyShowMoreBtn.hidden = false;
+    historyShowMoreBtn.disabled = false;
+    const step = Math.min(historyPageSize, remaining);
+    historyShowMoreBtn.textContent = `Show ${step} more (${remaining} left)`;
+  }
+
+  function syncHistoryFiltersUI() {
+    if (historyResultFilterEl) {
+      historyResultFilterEl.value = historyFilterResult;
+    }
+    if (historyDateFilterEl) {
+      historyDateFilterEl.value = historyFilterDate;
+    }
   }
 
   /**

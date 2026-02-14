@@ -991,8 +991,43 @@ button.ghost {
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
-  max-height: 2000px;
+  max-height: min(55vh, 520px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 0.25rem;
+  min-height: 0;
   transition: max-height 0.3s ease, opacity 0.2s ease;
+}
+
+.history-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.6rem;
+}
+
+.history-toolbar label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  color: var(--text-faint);
+}
+
+.history-toolbar select {
+  border-radius: 0.45rem;
+  border: 1px solid var(--ghost-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  padding: 0.3rem 0.5rem;
+  font-size: 0.82rem;
+}
+
+.history-more {
+  margin-left: auto;
+  font-size: 0.78rem;
+  padding: 0.35rem 0.7rem;
 }
 
 .history-run {
@@ -1047,6 +1082,8 @@ button.ghost {
 .panel.history {
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .panel.history.history--collapsed .history-list {
@@ -1055,6 +1092,10 @@ button.ghost {
   transition: max-height 0.3s ease;
   pointer-events: none;
   opacity: 0;
+}
+
+.panel.history.history--collapsed .history-toolbar {
+  display: none;
 }
 
 .panel.history.history--collapsed .history-list::after {
