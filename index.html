@@ -116,26 +116,7 @@
           </button>
         </div>
         <div class="cube-scene" id="cubeScene">
-          <div class="cube" id="cube" aria-label="Mindsweeper cube">
-            <div class="cube-face cube-face--front">
-              <div class="board" data-face-board="front" role="grid" aria-label="Front face"></div>
-            </div>
-            <div class="cube-face cube-face--back">
-              <div class="board" data-face-board="back" role="grid" aria-label="Back face"></div>
-            </div>
-            <div class="cube-face cube-face--right">
-              <div class="board" data-face-board="right" role="grid" aria-label="Right face"></div>
-            </div>
-            <div class="cube-face cube-face--left">
-              <div class="board" data-face-board="left" role="grid" aria-label="Left face"></div>
-            </div>
-            <div class="cube-face cube-face--top">
-              <div class="board" data-face-board="top" role="grid" aria-label="Top face"></div>
-            </div>
-            <div class="cube-face cube-face--bottom">
-              <div class="board" data-face-board="bottom" role="grid" aria-label="Bottom face"></div>
-            </div>
-          </div>
+          <div class="cube" id="cube" aria-label="Mindsweeper cube"></div>
         </div>
         <p class="keyboard-hint" data-i18n-key="hint.keyboard">Arrow keys to move focus, Enter/Space to reveal, F to flag.</p>
       </section>
@@ -159,6 +140,10 @@
             <input type="number" id="minesInput" min="1" max="625" value="18" />
           </label>
           <label>
+            <span>Faces</span>
+            <input type="number" id="facesInput" min="4" max="20" step="1" value="6" />
+          </label>
+          <label>
             <span data-i18n-key="label.rotationSpecials">Rotation specials</span>
             <input type="number" id="rotationInput" min="0" max="8" value="2" />
           </label>
@@ -176,6 +161,17 @@
           </label>
           <button type="submit" class="primary" data-i18n-key="button.applyLayout">Apply layout</button>
         </form>
+        <div class="face-preset-switcher" aria-label="Face count presets">
+          <span>Face presets</span>
+          <div class="face-preset-buttons">
+            <button type="button" class="ghost face-preset-toggle" data-face-preset="4" aria-pressed="false">4</button>
+            <button type="button" class="ghost face-preset-toggle" data-face-preset="6" aria-pressed="false">6</button>
+            <button type="button" class="ghost face-preset-toggle" data-face-preset="8" aria-pressed="false">8</button>
+            <button type="button" class="ghost face-preset-toggle" data-face-preset="12" aria-pressed="false">12</button>
+            <button type="button" class="ghost face-preset-toggle" data-face-preset="20" aria-pressed="false">20</button>
+          </div>
+        </div>
+        <p class="config-scale-note" id="faceShapeInfo">Shape: Cube (d6)</p>
         <p class="config-scale-note" id="configScaleInfo" data-i18n-key="config.scaleInfoPlaceholder">
           Counts are per face and multiplied by active faces.
         </p>

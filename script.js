@@ -8,14 +8,8 @@ const TRANSLATIONS = translationBundle.TRANSLATIONS || {};
 (() => {
 const historyKey = 'mindsweeperRuns';
 const cubeEl = document.getElementById('cube');
-const faceBoards = Array.from(document.querySelectorAll('[data-face-board]'));
-const boardByFace = faceBoards.reduce((acc, board) => {
-  const face = board.dataset.faceBoard;
-  if (face) {
-    acc[face] = board;
-  }
-  return acc;
-}, {});
+let faceBoards = [];
+let boardByFace = {};
 const statusMessage = document.getElementById('statusMessage');
 const remainingMinesEl = document.getElementById('remainingMines');
 const revealedCountEl = document.getElementById('revealedCount');
@@ -33,6 +27,8 @@ const rotationInput = document.getElementById('rotationInput');
 const flipInput = document.getElementById('flipInput');
 const dogInput = document.getElementById('dogInput');
 const guardianInput = document.getElementById('guardianInput');
+const facesInput = document.getElementById('facesInput');
+const faceShapeInfoEl = document.getElementById('faceShapeInfo');
 const configScaleInfoEl = document.getElementById('configScaleInfo');
 const toggleSpecialsBtn = document.getElementById('toggleSpecials');
 const toggleBoardModeBtn = document.getElementById('toggleBoardMode');
@@ -50,6 +46,110 @@ const boardModeStorageKey = 'mindsweeperBoardMode';
 const availableThemes = ['neon', 'dusk', 'sunrise', 'midnight', 'verdant', 'ember'];
 const defaultTheme = availableThemes[0];
 const presetButtons = document.querySelectorAll('[data-preset]');
+const facePresetButtons = document.querySelectorAll('[data-face-preset]');
+const ALLOWED_FACE_COUNTS = [4, 6, 8, 12, 20];
+const FACE_SHAPE_NAMES = {
+  4: 'Tetrahedron (d4)',
+  6: 'Cube (d6)',
+  8: 'Octahedron (d8)',
+  12: 'Dodecahedron (d12)',
+  20: 'Icosahedron (d20)',
+};
+const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2;
+const POLYHEDRON_LAYOUTS = {
+  4: {
+    sides: 3,
+    normals: [
+      [1, 1, 1],
+      [-1, -1, 1],
+      [-1, 1, -1],
+      [1, -1, -1],
+    ],
+    radiusFactor: 0.3,
+    faceFactor: 0.66,
+    seamOverlap: 1.003,
+  },
+  8: {
+    sides: 3,
+    normals: [
+      [1, 1, 1],
+      [1, 1, -1],
+      [1, -1, 1],
+      [1, -1, -1],
+      [-1, 1, 1],
+      [-1, 1, -1],
+      [-1, -1, 1],
+      [-1, -1, -1],
+    ],
+    radiusFactor: 0.35,
+    faceFactor: 0.5,
+    seamOverlap: 1.002,
+  },
+  12: {
+    sides: 5,
+    normals: [
+      [0, 1, GOLDEN_RATIO],
+      [0, 1, -GOLDEN_RATIO],
+      [0, -1, GOLDEN_RATIO],
+      [0, -1, -GOLDEN_RATIO],
+      [1, GOLDEN_RATIO, 0],
+      [1, -GOLDEN_RATIO, 0],
+      [-1, GOLDEN_RATIO, 0],
+      [-1, -GOLDEN_RATIO, 0],
+      [GOLDEN_RATIO, 0, 1],
+      [GOLDEN_RATIO, 0, -1],
+      [-GOLDEN_RATIO, 0, 1],
+      [-GOLDEN_RATIO, 0, -1],
+    ],
+    radiusFactor: 0.36,
+    faceFactor: 0.36,
+    seamOverlap: 1.001,
+  },
+  20: {
+    sides: 3,
+    normals: [
+      [1, 1, 1],
+      [1, 1, -1],
+      [1, -1, 1],
+      [1, -1, -1],
+      [-1, 1, 1],
+      [-1, 1, -1],
+      [-1, -1, 1],
+      [-1, -1, -1],
+      [0, 1 / GOLDEN_RATIO, GOLDEN_RATIO],
+      [0, 1 / GOLDEN_RATIO, -GOLDEN_RATIO],
+      [0, -1 / GOLDEN_RATIO, GOLDEN_RATIO],
+      [0, -1 / GOLDEN_RATIO, -GOLDEN_RATIO],
+      [1 / GOLDEN_RATIO, GOLDEN_RATIO, 0],
+      [1 / GOLDEN_RATIO, -GOLDEN_RATIO, 0],
+      [-1 / GOLDEN_RATIO, GOLDEN_RATIO, 0],
+      [-1 / GOLDEN_RATIO, -GOLDEN_RATIO, 0],
+      [GOLDEN_RATIO, 0, 1 / GOLDEN_RATIO],
+      [GOLDEN_RATIO, 0, -1 / GOLDEN_RATIO],
+      [-GOLDEN_RATIO, 0, 1 / GOLDEN_RATIO],
+      [-GOLDEN_RATIO, 0, -1 / GOLDEN_RATIO],
+    ],
+    radiusFactor: 0.39,
+    faceFactor: 0.25,
+    seamOverlap: 1.0,
+  },
+};
+const CUBE_FACE_TRANSITIONS = {
+  0: { left: 3, right: 1, up: 4, down: 5 }, // front
+  1: { left: 0, right: 2, up: 4, down: 5 }, // right
+  2: { left: 1, right: 3, up: 4, down: 5 }, // back
+  3: { left: 2, right: 0, up: 4, down: 5 }, // left
+  4: { left: 3, right: 1, up: 2, down: 0 }, // top
+  5: { left: 3, right: 1, up: 0, down: 2 }, // bottom
+};
+const REPLAY_CAMERA_BY_FACE = {
+  0: { yaw: 0, pitch: -20 },   // front
+  1: { yaw: -90, pitch: -20 }, // right
+  2: { yaw: 180, pitch: -20 }, // back
+  3: { yaw: 90, pitch: -20 },  // left
+  4: { yaw: 0, pitch: -85 },   // top
+  5: { yaw: 0, pitch: 68 },    // bottom
+};
 const difficultyPresets = {
   easy: {
     rows: 8,
@@ -80,6 +180,7 @@ const difficultyPresets = {
   },
 };
 let activePreset = null;
+  let activeFacePreset = null;
   const historyPageSize = 20;
   let historyVisibleCount = historyPageSize;
   let historyFilterResult = 'all';
@@ -122,6 +223,7 @@ let activePreset = null;
   let config = {
     rows: 10,
     cols: 10,
+    faces: 6,
     mines: 108,
     rotationSpecials: 12,
     flipSpecials: 12,
@@ -151,7 +253,7 @@ let activePreset = null;
   let revealedCount = 0;
   let isReplaying = false;
   let replayTimer = null;
-  let focusCell = { face: 'front', row: 0, col: 0 };
+  let focusCell = { face: 'f0', row: 0, col: 0 };
   let runStartTime = Date.now();
   let currentRoomCode = null;
   let currentRoomSeed = null;
@@ -168,39 +270,6 @@ let activePreset = null;
     [1, 0],
     [1, 1],
   ];
-  const FACE_ORDER = ['front', 'back', 'right', 'left', 'top', 'bottom'];
-  const FACE_VECTORS = {
-    front: {
-      n: [0, 0, 1],
-      u: [1, 0, 0],
-      v: [0, 1, 0],
-    },
-    back: {
-      n: [0, 0, -1],
-      u: [-1, 0, 0],
-      v: [0, 1, 0],
-    },
-    right: {
-      n: [1, 0, 0],
-      u: [0, 0, -1],
-      v: [0, 1, 0],
-    },
-    left: {
-      n: [-1, 0, 0],
-      u: [0, 0, 1],
-      v: [0, 1, 0],
-    },
-    top: {
-      n: [0, -1, 0],
-      u: [1, 0, 0],
-      v: [0, 0, 1],
-    },
-    bottom: {
-      n: [0, 1, 0],
-      u: [1, 0, 0],
-      v: [0, 0, -1],
-    },
-  };
 
   let avatarPulseTimer = null;
   const avatarPulseDuration = 1400;
@@ -307,33 +376,31 @@ let activePreset = null;
       cubeDrag = null;
     });
 
-    faceBoards.forEach((board) => {
-      board.addEventListener('click', (event) => {
-        if (isReplaying) return;
-        if (suppressNextReveal) {
-          suppressNextReveal = false;
-          return;
-        }
-        const cellEl = event.target.closest('.cell');
-        if (!cellEl) return;
-        const cell = getCellFromElement(cellEl);
-        revealCell(cell);
-      });
+    cubeEl.addEventListener('click', (event) => {
+      if (isReplaying) return;
+      if (suppressNextReveal) {
+        suppressNextReveal = false;
+        return;
+      }
+      const cellEl = event.target.closest('.cell');
+      if (!cellEl) return;
+      const cell = getCellFromElement(cellEl);
+      revealCell(cell);
+    });
 
-      board.addEventListener('contextmenu', (event) => {
-        if (isReplaying) return;
-        event.preventDefault();
-        const cellEl = event.target.closest('.cell');
-        if (!cellEl) return;
-        const cell = getCellFromElement(cellEl);
-        applyFlag(cell, !cell.flagged, { recordAction: true });
-      });
+    cubeEl.addEventListener('contextmenu', (event) => {
+      if (isReplaying) return;
+      event.preventDefault();
+      const cellEl = event.target.closest('.cell');
+      if (!cellEl) return;
+      const cell = getCellFromElement(cellEl);
+      applyFlag(cell, !cell.flagged, { recordAction: true });
     });
   }
 
   document.addEventListener('keydown', (event) => {
     if (isReplaying) return;
-    if (!grid.front?.length) return;
+    if (!grid[getActiveFaces()[0]]?.length) return;
     const { key } = event;
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
       event.preventDefault();
@@ -388,6 +455,7 @@ let activePreset = null;
    * Initializes the UI, translations, theme, presets, history, and game state.
    */
   function init() {
+    ensureCubeFaces(config.faces);
     initLanguageSwitcher();
     initAvatarSwitcher();
     applyStaticTranslations();
@@ -396,12 +464,14 @@ let activePreset = null;
     updateShowMinesButton();
     initThemeSwitcher();
     initDifficultyPresets();
+    initFacePresets();
     initHistoryCollapse();
     syncHistoryFiltersUI();
     initRoomJoin();
     renderHistory();
     applyCheatState();
     startNewGame();
+    window.addEventListener('resize', layoutCubeFaces);
   }
 
   /**
@@ -413,6 +483,7 @@ let activePreset = null;
     runStartTime = Date.now();
     const safeConfig = applyConfigFromForm();
     config = { ...safeConfig };
+    ensureCubeFaces(config.faces);
     resetBoardState();
     gameActive = true;
     grid = createGrid(config.rows, config.cols);
@@ -434,7 +505,7 @@ let activePreset = null;
     updateSeedDisplay();
     updateStatus();
     showStatusMessage('status.newBoard');
-    getCell('front', 0, 0)?.element?.focus();
+    getCell(getActiveFaces()[0], 0, 0)?.element?.focus();
     speakAvatar('ready', { size: `${config.rows}×${config.cols}` });
   }
 
@@ -463,6 +534,7 @@ let activePreset = null;
     runStartTime = null;
     applyConfigToInputs(record.config);
     config = { ...record.config };
+    ensureCubeFaces(config.faces || 6);
     resetBoardState();
     grid = createGrid(config.rows, config.cols);
     loadLayout(record);
@@ -486,7 +558,7 @@ let activePreset = null;
         step: step + 1,
         total: actions.length,
       });
-      const face = action.face || 'front';
+      const face = normalizeFaceId(action.face);
       const cell = getCell(face, action.row, action.col);
       if (cell) {
         if (action.type === 'reveal') {
@@ -534,13 +606,13 @@ let activePreset = null;
       cell.special = null;
     });
     (payload.minePositions || []).forEach((mine) => {
-      const cell = getCell(mine.face || 'front', mine.row, mine.col);
+      const cell = getCell(normalizeFaceId(mine.face), mine.row, mine.col);
       if (cell) {
         cell.isMine = true;
       }
     });
     (payload.rotationSpecials || []).forEach((special) => {
-      const cell = getCell(special.face || 'front', special.row, special.col);
+      const cell = getCell(normalizeFaceId(special.face), special.row, special.col);
       if (cell) {
         cell.special = {
           type: 'rotation',
@@ -550,7 +622,7 @@ let activePreset = null;
       }
     });
     (payload.flipSpecials || []).forEach((special) => {
-      const cell = getCell(special.face || 'front', special.row, special.col);
+      const cell = getCell(normalizeFaceId(special.face), special.row, special.col);
       if (cell) {
         cell.special = {
           type: 'flip',
@@ -560,7 +632,7 @@ let activePreset = null;
       }
     });
     (payload.dogSpecials || []).forEach((special) => {
-      const cell = getCell(special.face || 'front', special.row, special.col);
+      const cell = getCell(normalizeFaceId(special.face), special.row, special.col);
       if (cell) {
         cell.special = {
           type: 'dog',
@@ -569,7 +641,7 @@ let activePreset = null;
       }
     });
     (payload.guardianSpecials || []).forEach((special) => {
-      const cell = getCell(special.face || 'front', special.row, special.col);
+      const cell = getCell(normalizeFaceId(special.face), special.row, special.col);
       if (cell) {
         cell.special = {
           type: 'guardian',
@@ -598,7 +670,8 @@ let activePreset = null;
   function applyConfigFromForm() {
     const rows = clamp(Number(rowsInput.value) || config.rows, 5, 25);
     const cols = clamp(Number(colsInput.value) || config.cols, 5, 25);
-    const faceCount = getFaceCount();
+    const configuredFaces = normalizeFaceCount(Number(facesInput?.value) || config.faces || 6);
+    const faceCount = boardMode === '2d' ? 1 : configuredFaces;
     const totalCells = rows * cols * faceCount;
     const maxMinesPerFace = Math.max(Math.floor((totalCells - 1) / faceCount), 1);
     const minesPerFace = clamp(Number(minesInput.value) || toPerFaceCount(config.mines), 1, maxMinesPerFace);
@@ -641,6 +714,7 @@ let activePreset = null;
     applyConfigToInputs({
       rows,
       cols,
+      faces: configuredFaces,
       mines,
       rotationSpecials,
       flipSpecials,
@@ -651,6 +725,7 @@ let activePreset = null;
     return {
       rows,
       cols,
+      faces: configuredFaces,
       mines,
       rotationSpecials,
       flipSpecials,
@@ -666,6 +741,10 @@ let activePreset = null;
   function applyConfigToInputs(values) {
     rowsInput.value = values.rows;
     colsInput.value = values.cols;
+    if (facesInput) {
+      facesInput.value = normalizeFaceCount(Number(values.faces) || 6);
+      setActiveFacePreset(String(normalizeFaceCount(Number(facesInput.value) || 6)));
+    }
     minesInput.value = toPerFaceCount(values.mines);
     rotationInput.value = toPerFaceCount(values.rotationSpecials);
     flipInput.value = toPerFaceCount(values.flipSpecials);
@@ -782,7 +861,8 @@ let activePreset = null;
    * Creates and inserts DOM elements for each cell, applying initial classes.
    */
   function renderBoard() {
-    FACE_ORDER.forEach((face) => {
+    layoutCubeFaces();
+    getActiveFaces().forEach((face) => {
       const boardEl = boardByFace[face];
       if (!boardEl) return;
       boardEl.innerHTML = '';
@@ -957,8 +1037,9 @@ let activePreset = null;
    */
   function applyTransform() {
     if (!cubeEl) return;
+    const firstFace = getActiveFaces()[0];
     if (boardMode === '2d') {
-      const board = boardByFace.front;
+      const board = boardByFace[firstFace];
       if (board) {
         const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
         const scaleY = specialsEnabled && flipVertical ? -1 : 1;
@@ -969,8 +1050,8 @@ let activePreset = null;
       updateWrapperSpacing(false);
       return;
     }
-    if (boardByFace.front) {
-      boardByFace.front.style.transform = 'none';
+    if (boardByFace[firstFace]) {
+      boardByFace[firstFace].style.transform = 'none';
     }
     const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
     const scaleY = specialsEnabled && flipVertical ? -1 : 1;
@@ -1721,7 +1802,7 @@ let activePreset = null;
     guardianShields = 0;
     flaggedCount = 0;
     revealedCount = 0;
-    focusCell = { face: 'front', row: 0, col: 0 };
+    focusCell = { face: faceId(0), row: 0, col: 0 };
     suppressNextReveal = false;
     cubeDrag = null;
   }
@@ -1790,12 +1871,38 @@ let activePreset = null;
     presetButtons.forEach((button) => {
       button.addEventListener('click', () => applyPreset(button.dataset.preset));
     });
-    [rowsInput, colsInput, minesInput, rotationInput, flipInput, dogInput, guardianInput]
+    [rowsInput, colsInput, facesInput, minesInput, rotationInput, flipInput, dogInput, guardianInput]
       .filter(Boolean)
       .forEach((input) => {
       input.addEventListener('input', () => setActivePreset(null));
       input.addEventListener('input', () => updateConfigScalingNote());
     });
+  }
+
+  function initFacePresets() {
+    facePresetButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const value = normalizeFaceCount(Number(button.dataset.facePreset) || 6);
+        if (facesInput) {
+          facesInput.value = value;
+        }
+        setActiveFacePreset(String(value));
+        updateFaceShapeInfo();
+        updateConfigScalingNote();
+      });
+    });
+    if (facesInput) {
+      facesInput.addEventListener('input', () => {
+        const value = normalizeFaceCount(Number(facesInput.value) || 6);
+        facesInput.value = value;
+        setActiveFacePreset(String(value));
+        updateFaceShapeInfo();
+      });
+      const value = normalizeFaceCount(Number(facesInput.value) || 6);
+      facesInput.value = value;
+      setActiveFacePreset(String(value));
+      updateFaceShapeInfo();
+    }
   }
 
   /**
@@ -1858,10 +1965,12 @@ let activePreset = null;
   function applyPreset(name) {
     const preset = difficultyPresets[name];
     if (!preset) return;
-    const faceCount = getFaceCount();
+    const configuredFaces = normalizeFaceCount(Number(facesInput?.value) || config.faces || 6);
+    const faceCount = boardMode === '2d' ? 1 : configuredFaces;
     applyConfigToInputs({
       rows: preset.rows,
       cols: preset.cols,
+      faces: configuredFaces,
       mines: preset.mines * faceCount,
       rotationSpecials: preset.rotationSpecials * faceCount,
       flipSpecials: preset.flipSpecials * faceCount,
@@ -1870,6 +1979,15 @@ let activePreset = null;
     });
     setActivePreset(name);
     startNewGame();
+  }
+
+  function setActiveFacePreset(value) {
+    activeFacePreset = value;
+    facePresetButtons.forEach((button) => {
+      const isActive = Boolean(value) && button.dataset.facePreset === value;
+      button.classList.toggle('face-preset-toggle--active', isActive);
+      button.setAttribute('aria-pressed', String(isActive));
+    });
   }
 
   /**
@@ -1917,7 +2035,7 @@ let activePreset = null;
    * Maps a DOM cell button back to its data model cell.
    */
   function getCellFromElement(element) {
-    const face = element.dataset.face || 'front';
+    const face = normalizeFaceId(element.dataset.face);
     const row = Number(element.dataset.row);
     const col = Number(element.dataset.col);
     return getCell(face, row, col);
@@ -1927,9 +2045,10 @@ let activePreset = null;
    * Returns array of existing neighboring cells for propagation logic.
    */
   function getNeighbors(cell) {
+    const firstFace = getActiveFaces()[0];
     if (boardMode === '2d') {
       return NEIGHBORS.reduce((acc, [dRow, dCol]) => {
-        const neighbor = getCell('front', cell.row + dRow, cell.col + dCol);
+        const neighbor = getCell(firstFace, cell.row + dRow, cell.col + dCol);
         if (neighbor && neighbor !== cell) {
           acc.push(neighbor);
         }
@@ -1955,40 +2074,44 @@ let activePreset = null;
 
   function resolveNeighbor(cell, dRow, dCol) {
     if (!cell) return null;
-    const basis = FACE_VECTORS[cell.face];
-    if (!basis) return null;
-    const x = ((cell.col + 0.5) / config.cols) * 2 - 1;
-    const y = ((cell.row + 0.5) / config.rows) * 2 - 1;
-    const p = addVec3(
-      basis.n,
-      addVec3(scaleVec3(basis.u, x), scaleVec3(basis.v, y))
-    );
-    const step = addVec3(
-      scaleVec3(basis.u, dCol * (2 / config.cols)),
-      scaleVec3(basis.v, dRow * (2 / config.rows))
-    );
-    const q = addVec3(p, scaleVec3(step, 1 + 1e-6));
-    return projectPointToFaceCell(q);
-  }
+    const faceCount = getFaceCount();
+    if (faceCount === 6) {
+      let nextFace = parseFaceIndex(cell.face);
+      if (!(nextFace in CUBE_FACE_TRANSITIONS)) return null;
+      let nextRow = cell.row + dRow;
+      let nextCol = cell.col + dCol;
 
-  function projectPointToFaceCell(point) {
-    const ax = Math.abs(point[0]);
-    const ay = Math.abs(point[1]);
-    const az = Math.abs(point[2]);
-    let face = 'front';
-    if (ax >= ay && ax >= az) {
-      face = point[0] >= 0 ? 'right' : 'left';
-    } else if (ay >= ax && ay >= az) {
-      face = point[1] >= 0 ? 'bottom' : 'top';
-    } else {
-      face = point[2] >= 0 ? 'front' : 'back';
+      if (nextCol < 0) {
+        nextFace = CUBE_FACE_TRANSITIONS[nextFace].left;
+        nextCol = config.cols - 1;
+      } else if (nextCol >= config.cols) {
+        nextFace = CUBE_FACE_TRANSITIONS[nextFace].right;
+        nextCol = 0;
+      }
+
+      if (nextRow < 0) {
+        nextFace = CUBE_FACE_TRANSITIONS[nextFace].up;
+        nextRow = config.rows - 1;
+      } else if (nextRow >= config.rows) {
+        nextFace = CUBE_FACE_TRANSITIONS[nextFace].down;
+        nextRow = 0;
+      }
+
+      return { face: faceId(nextFace), row: nextRow, col: nextCol };
     }
-    const basis = FACE_VECTORS[face];
-    const x = dotVec3(point, basis.u);
-    const y = dotVec3(point, basis.v);
-    const col = clamp(Math.floor(((x + 1) / 2) * config.cols), 0, config.cols - 1);
-    const row = clamp(Math.floor(((y + 1) / 2) * config.rows), 0, config.rows - 1);
-    return { face, row, col };
+    const index = parseFaceIndex(cell.face);
+    if (index < 0 || faceCount <= 0) return null;
+    let nextIndex = index;
+    let nextCol = cell.col + dCol;
+    if (nextCol < 0) {
+      nextIndex = (index - 1 + faceCount) % faceCount;
+      nextCol = config.cols - 1;
+    } else if (nextCol >= config.cols) {
+      nextIndex = (index + 1) % faceCount;
+      nextCol = 0;
+    }
+    const nextRow = clamp(cell.row + dRow, 0, config.rows - 1);
+    return { face: faceId(nextIndex), row: nextRow, col: nextCol };
   }
 
   /**
@@ -2005,8 +2128,9 @@ let activePreset = null;
     if (boardMode === '2d') {
       const nextRow = clamp(focusCell.row + dRow, 0, config.rows - 1);
       const nextCol = clamp(focusCell.col + dCol, 0, config.cols - 1);
-      focusCell = { face: 'front', row: nextRow, col: nextCol };
-      const nextCell = getCell('front', nextRow, nextCol);
+      const firstFace = getActiveFaces()[0];
+      focusCell = { face: firstFace, row: nextRow, col: nextCol };
+      const nextCell = getCell(firstFace, nextRow, nextCol);
       nextCell?.element?.focus();
       return;
     }
@@ -2048,7 +2172,8 @@ let activePreset = null;
   }
 
   function getFaceCount() {
-    return boardMode === '2d' ? 1 : FACE_ORDER.length;
+    const configuredFaces = normalizeFaceCount(Number(facesInput?.value) || config.faces || 6);
+    return boardMode === '2d' ? 1 : configuredFaces;
   }
 
   function toPerFaceCount(total) {
@@ -2076,7 +2201,259 @@ let activePreset = null;
   }
 
   function getActiveFaces() {
-    return boardMode === '2d' ? ['front'] : FACE_ORDER;
+    const count = getFaceCount();
+    return Array.from({ length: count }, (_, index) => faceId(index));
+  }
+
+  function normalizeFaceCount(value) {
+    const numeric = Number(value) || 6;
+    let closest = ALLOWED_FACE_COUNTS[0];
+    let bestDelta = Math.abs(numeric - closest);
+    for (const candidate of ALLOWED_FACE_COUNTS) {
+      const delta = Math.abs(numeric - candidate);
+      if (delta < bestDelta) {
+        bestDelta = delta;
+        closest = candidate;
+      }
+    }
+    return closest;
+  }
+
+  function updateFaceShapeInfo() {
+    if (!faceShapeInfoEl) return;
+    const faces = normalizeFaceCount(Number(facesInput?.value) || config.faces || 6);
+    const shapeName = FACE_SHAPE_NAMES[faces] || 'Polyhedron';
+    faceShapeInfoEl.textContent = `Shape: ${shapeName}`;
+  }
+
+  function faceId(index) {
+    return `f${index}`;
+  }
+
+  function parseFaceIndex(face) {
+    const normalized = normalizeFaceId(face);
+    const match = /^f(\d+)$/.exec(normalized);
+    return match ? Number(match[1]) : 0;
+  }
+
+  function normalizeFaceId(face) {
+    const value = String(face || '').toLowerCase();
+    if (/^f\d+$/.test(value)) {
+      return value;
+    }
+    const legacy = {
+      front: 0,
+      right: 1,
+      back: 2,
+      left: 3,
+      top: 4,
+      bottom: 5,
+    };
+    if (value in legacy) {
+      return faceId(legacy[value]);
+    }
+    return faceId(0);
+  }
+
+  function ensureCubeFaces(count = 6) {
+    if (!cubeEl) return;
+    const safeCount = normalizeFaceCount(Number(count) || 6);
+    cubeEl.innerHTML = '';
+    for (let i = 0; i < safeCount; i += 1) {
+      const faceEl = document.createElement('div');
+      faceEl.className = 'cube-face';
+      faceEl.setAttribute('data-face-index', String(i));
+      const boardEl = document.createElement('div');
+      boardEl.className = 'board';
+      boardEl.setAttribute('data-face-board', faceId(i));
+      boardEl.setAttribute('role', 'grid');
+      boardEl.setAttribute('aria-label', `Face ${i + 1}`);
+      faceEl.appendChild(boardEl);
+      cubeEl.appendChild(faceEl);
+    }
+    faceBoards = Array.from(cubeEl.querySelectorAll('[data-face-board]'));
+    boardByFace = faceBoards.reduce((acc, board) => {
+      const face = board.dataset.faceBoard;
+      if (face) {
+        acc[face] = board;
+      }
+      return acc;
+    }, {});
+    layoutCubeFaces();
+  }
+
+  function createRegularPolygonClipPath(sides) {
+    const safeSides = Math.max(Number(sides) || 3, 3);
+    const points = [];
+    const step = (Math.PI * 2) / safeSides;
+    const start = -Math.PI / 2;
+    for (let i = 0; i < safeSides; i += 1) {
+      const angle = start + i * step;
+      const x = 50 + Math.cos(angle) * 50;
+      const y = 50 + Math.sin(angle) * 50;
+      points.push(`${x.toFixed(3)}% ${y.toFixed(3)}%`);
+    }
+    return `polygon(${points.join(', ')})`;
+  }
+
+  function normalizeVector(vector) {
+    const [x, y, z] = vector;
+    const length = Math.hypot(x, y, z) || 1;
+    return [x / length, y / length, z / length];
+  }
+
+  function cross3(a, b) {
+    return [
+      a[1] * b[2] - a[2] * b[1],
+      a[2] * b[0] - a[0] * b[2],
+      a[0] * b[1] - a[1] * b[0],
+    ];
+  }
+
+  function rotateVectorAxisAngle(vector, axis, angle) {
+    const [vx, vy, vz] = vector;
+    const [ax, ay, az] = normalizeVector(axis);
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    const dot = vx * ax + vy * ay + vz * az;
+    return [
+      vx * cos + (ay * vz - az * vy) * sin + ax * dot * (1 - cos),
+      vy * cos + (az * vx - ax * vz) * sin + ay * dot * (1 - cos),
+      vz * cos + (ax * vy - ay * vx) * sin + az * dot * (1 - cos),
+    ];
+  }
+
+  function faceTransformForNormal(vector, radius, sides = 4) {
+    const [nx, ny, nz] = normalizeVector(vector);
+    let ax = -ny;
+    let ay = nx;
+    let az = 0;
+    let axisLength = Math.hypot(ax, ay, az);
+    const angle = Math.acos(clamp(nz, -1, 1));
+    if (axisLength < 1e-6) {
+      if (nz < 0) {
+        ax = 1;
+        ay = 0;
+        az = 0;
+        axisLength = 1;
+      } else {
+        ax = 0;
+        ay = 1;
+        az = 0;
+        axisLength = 1;
+      }
+    }
+    ax /= axisLength;
+    ay /= axisLength;
+    az /= axisLength;
+    const angleDeg = (angle * 180) / Math.PI;
+    const upWorld = [0, -1, 0];
+    const fallbackUp = [1, 0, 0];
+    const upRef = Math.abs(dot3([nx, ny, nz], upWorld)) > 0.96 ? fallbackUp : upWorld;
+    const projectedUp = normalizeVector([
+      upRef[0] - nx * dot3(upRef, [nx, ny, nz]),
+      upRef[1] - ny * dot3(upRef, [nx, ny, nz]),
+      upRef[2] - nz * dot3(upRef, [nx, ny, nz]),
+    ]);
+    const rotatedUp = normalizeVector(rotateVectorAxisAngle([0, -1, 0], [ax, ay, az], angle));
+    const cross = cross3(rotatedUp, projectedUp);
+    const roll = Math.atan2(dot3([nx, ny, nz], cross), dot3(rotatedUp, projectedUp));
+    const rollStep = 360 / Math.max(Number(sides) || 3, 3);
+    const rawRollDeg = (roll * 180) / Math.PI;
+    const rollDeg = Math.round(rawRollDeg / rollStep) * rollStep;
+    return `rotate3d(${ax}, ${ay}, ${az}, ${angleDeg}deg) rotateZ(${rollDeg}deg) translateZ(${radius}px)`;
+  }
+
+  function dot3(a, b) {
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  }
+
+  function derivePolyhedronFaceSizing(normals, sides, diameter, seamOverlap = 1) {
+    const unitNormals = normals.map((normal) => normalizeVector(normal));
+    let maxDot = -1;
+    for (let i = 0; i < unitNormals.length; i += 1) {
+      for (let j = 0; j < unitNormals.length; j += 1) {
+        if (i === j) continue;
+        const d = dot3(unitNormals[i], unitNormals[j]);
+        if (d > maxDot && d < 0.999999) {
+          maxDot = d;
+        }
+      }
+    }
+    const adjacentAngle = Math.acos(clamp(maxDot, -1, 1));
+    const sideApothemFactor = Math.tan(adjacentAngle / 2);
+    const polygonApothemFactor = Math.max(Math.cos(Math.PI / Math.max(sides, 3)), 0.001);
+    const extentFactor = 1 + sideApothemFactor / polygonApothemFactor;
+    const radius = Math.max((diameter * 0.46) / extentFactor, 1);
+    const faceApothem = radius * sideApothemFactor;
+    const faceCircumradius = faceApothem / polygonApothemFactor;
+    const safeOverlap = clamp(Number(seamOverlap) || 1, 0.97, 1.03);
+    const faceWidth = Math.max(faceCircumradius * 2 * safeOverlap, 64);
+    return {
+      radius,
+      faceWidth,
+      normals: unitNormals,
+    };
+  }
+
+  function layoutCubeFaces() {
+    if (!cubeEl) return;
+    const faces = cubeEl.querySelectorAll('.cube-face');
+    const faceCount = faces.length;
+    if (!faceCount) return;
+    if (faceCount === 6) {
+      const size = Math.max(Math.min(cubeEl.clientWidth, cubeEl.clientHeight), 1);
+      const half = size / 2;
+      const transforms = [
+        `translateZ(${half}px)`,
+        `rotateY(90deg) translateZ(${half}px)`,
+        `rotateY(180deg) translateZ(${half}px)`,
+        `rotateY(-90deg) translateZ(${half}px)`,
+        `rotateX(90deg) translateZ(${half}px)`,
+        `rotateX(-90deg) translateZ(${half}px)`,
+      ];
+      cubeEl.style.setProperty('--face-width', `${size}px`);
+      faces.forEach((faceEl, index) => {
+        faceEl.style.left = '0px';
+        faceEl.style.top = '0px';
+        faceEl.style.width = `${size}px`;
+        faceEl.style.height = `${size}px`;
+        faceEl.style.marginLeft = '0px';
+        faceEl.style.clipPath = '';
+        faceEl.style.webkitClipPath = '';
+        faceEl.style.transform = transforms[index] || transforms[0];
+      });
+      return;
+    }
+    const layout = POLYHEDRON_LAYOUTS[faceCount];
+    if (!layout) {
+      return;
+    }
+    const width = Math.max(cubeEl.clientWidth, 1);
+    const height = Math.max(cubeEl.clientHeight, 1);
+    const diameter = Math.max(Math.min(width, height), 1);
+    const sizing = derivePolyhedronFaceSizing(
+      layout.normals,
+      layout.sides,
+      diameter,
+      layout.seamOverlap ?? 1
+    );
+    const radius = sizing.radius;
+    const faceWidth = sizing.faceWidth;
+    const clipPath = createRegularPolygonClipPath(layout.sides);
+    cubeEl.style.setProperty('--face-width', `${faceWidth}px`);
+    const normals = sizing.normals;
+    faces.forEach((faceEl, index) => {
+      const normal = normals[index] || normals[index % normals.length] || [0, 0, 1];
+      faceEl.style.left = '50%';
+      faceEl.style.top = '50%';
+      faceEl.style.width = `${faceWidth}px`;
+      faceEl.style.height = `${faceWidth}px`;
+      faceEl.style.marginLeft = '0px';
+      faceEl.style.clipPath = clipPath;
+      faceEl.style.webkitClipPath = clipPath;
+      faceEl.style.transform = `translate(-50%, -50%) ${faceTransformForNormal(normal, radius, layout.sides)}`;
+    });
   }
 
   function loadBoardMode() {
@@ -2089,6 +2466,7 @@ let activePreset = null;
     boardMode = mode === '2d' ? '2d' : 'cube';
     boardWrapper?.setAttribute('data-board-mode', boardMode);
     updateBoardModeButton();
+    updateFaceShapeInfo();
     updateConfigScalingNote();
     if (persist) {
       safeSetItem(boardModeStorageKey, boardMode);
@@ -2123,29 +2501,27 @@ let activePreset = null;
       ...(record?.dogSpecials || []),
       ...(record?.guardianSpecials || []),
       ...(record?.actions || []),
-    ].some((entry) => entry?.face && entry.face !== 'front');
+    ].some((entry) => entry?.face && normalizeFaceId(entry.face) !== faceId(0));
     return hasNonFrontFaceData ? 'cube' : boardMode;
   }
 
   function followReplayCell(cell) {
     if (boardMode !== 'cube' || !cell) return;
     const spinY = specialsEnabled ? rotationAngle : 0;
-    let targetYaw = 0;
-    let targetPitch = -28;
-    if (cell.face === 'right') {
-      targetYaw = -90;
-    } else if (cell.face === 'back') {
-      targetYaw = 180;
-    } else if (cell.face === 'left') {
-      targetYaw = 90;
-    } else if (cell.face === 'top') {
-      targetPitch = -76;
-    } else if (cell.face === 'bottom') {
-      targetPitch = 70;
+    const faceCount = Math.max(getFaceCount(), 1);
+    const index = parseFaceIndex(cell.face) % faceCount;
+    if (faceCount === 6) {
+      const target = REPLAY_CAMERA_BY_FACE[index] || REPLAY_CAMERA_BY_FACE[0];
+      const desiredCameraYaw = target.yaw - spinY;
+      cubeYaw = shortestAngleTarget(cubeYaw, desiredCameraYaw);
+      cubePitch = shortestAngleTarget(cubePitch, target.pitch);
+    } else {
+      const angleStep = 360 / faceCount;
+      const targetYaw = -index * angleStep;
+      const desiredCameraYaw = targetYaw - spinY;
+      cubeYaw = shortestAngleTarget(cubeYaw, desiredCameraYaw);
+      cubePitch = shortestAngleTarget(cubePitch, -28);
     }
-    const desiredCameraYaw = targetYaw - spinY;
-    cubeYaw = shortestAngleTarget(cubeYaw, desiredCameraYaw);
-    cubePitch = shortestAngleTarget(cubePitch, targetPitch);
     applyTransform();
   }
 
@@ -2159,18 +2535,6 @@ let activePreset = null;
     if (angle > 180) angle -= 360;
     if (angle < -180) angle += 360;
     return angle;
-  }
-
-  function addVec3(a, b) {
-    return [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
-  }
-
-  function scaleVec3(v, scalar) {
-    return [v[0] * scalar, v[1] * scalar, v[2] * scalar];
-  }
-
-  function dotVec3(a, b) {
-    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
   }
 
   /**
