@@ -1,6 +1,6 @@
 # Mindsweeper
 
-**Mindsweeper** is a browser-only twist on Minesweeper: a single static page with keyboard-first controls, persistent history, replay tooling, and configurable specials. It now supports both a true six-face cube board and a classic single-plane 2D board mode, while keeping the same reveal/flag/special systems.
+**Mindsweeper** is a browser-only twist on Minesweeper: a single static page with keyboard-first controls, persistent history, replay tooling, and configurable specials. It now supports both a 3D dice-style board (d4/d6/d8/d12/d20 face presets) and a classic single-plane 2D board mode, while keeping the same reveal/flag/special systems.
 
 ## Structure overview
 
@@ -8,23 +8,23 @@
 - `styles.css`: visual system that defines six palettes (Neon, Dusk, Sunrise, Midnight, Verdant, Ember), cube-face transforms, zero-gap grids, and responsive helpers so the board and controls stay tidy.
 - `translations/locales/*.js`: each language lives in its own file that registers its localized strings plus the seed/share copy text on `window.MindsweeperTranslations.TRANSLATIONS` and `SEED_TERMS`.
 - `translations.js`: aggregates the `LANGUAGE_OPTIONS` list, loads the per-locale registrations, augments theme names, and derives Braille output from English before exposing the bundle to the app.
-- `script.js`: controller that manages input validation, board generation, mine placement, neighbor counting (including cross-face cube edges), specials, replay recording/playback, history rendering, localization wiring, and persistence of user-selected settings.
+- `script.js`: controller that manages input validation, board generation, mine placement, neighbor counting (including cross-face transitions), specials, replay recording/playback, history rendering, localization wiring, and persistence of user-selected settings.
 
 ## Running
 
-Open `index.html` in a modern browser. No build step or server is required—the UI is fully interactive out of the box. Try several games, tweak Rows/Cols/Mines/rotation/flip counts, switch `Board: Cube` / `Board: 2D`, toggle themes/languages, and use the history tools to replay or delete previous runs.
+Open `index.html` in a modern browser. No build step or server is required—the UI is fully interactive out of the box. Try several games, tweak Rows/Cols/Faces/Mines/rotation/flip counts, switch `Board: Cube` / `Board: 2D`, toggle themes/languages, and use the history tools to replay or delete previous runs.
 
 ## Key features
 
 1. **Keyboard-focused controls**: Arrow keys move focus, Enter/Space reveal, and F flags—every action works without a mouse.
-2. **Board mode switch**: Toggle between `Board: Cube` (true six-face board) and `Board: 2D` (single front-face plane). Switching mode starts a fresh board with mode-appropriate cell/mine limits.
-3. **Per-face configuration scaling**: Mine and special inputs are entered per face, then multiplied by active face count (1 in `2D`, 6 in `Cube`) when generating a run. The settings panel shows a live multiplier/total summary so the final counts are explicit before applying.
+2. **Board mode switch**: Toggle between `Board: Cube` (3D dice-style board) and `Board: 2D` (single front-face plane). Switching mode starts a fresh board with mode-appropriate cell/mine limits.
+3. **Face presets + scaling**: Select dice-style face counts (`4`, `6`, `8`, `12`, `20`) and enter mines/specials per face. Values are multiplied by active face count (1 in `2D`, selected faces in `Cube`) when generating a run. The settings panel shows a live multiplier/total summary before applying.
 4. **Difficulty presets**: Easy/Medium/Hard buttons seed the recommended inputs and immediately restart with that setup while highlighting the active preset.
 5. **Rotation & flip fields**: Reveal specials to rotate the board or mirror it horizontally/vertically, and optionally disable these effects with “Specials: on/off”.
 6. **Dog special tile**: Discovering a Dog tile flags a random unmarked mine automatically, so every good sniff buys you a little safety without touching the mine count input or flagging manually.
 7. **Guardian special tile**: Stepping on a Guardian tile arms a temporary shield that automatically flags the next mine you would have hit, letting you recover without ending the run.
 8. **Cheat view**: “Show mines” temporarily highlights raw mine locations and special tiles for inspection before you commit to a move.
-9. **History + replay**: Runs capture timestamps, configurations, board mode, layouts, mine positions, special trigger counts, and action sequences; the panel shows each run’s board type, and replay auto-switches to the corresponding mode before playback. In cube mode, replay camera motion follows each revealed cell so the active face stays in view. History now supports result/date filters, paginated loading (`Show more`), and a bounded internal scroll area so long lists stay contained. Each entry also exposes a copyable room code plus a join form for instant replays.
+9. **History + replay**: Runs capture timestamps, configurations, board mode, layouts, mine positions, special trigger counts, and action sequences; the panel shows each run’s board type, and replay auto-switches to the corresponding mode before playback. In cube mode, replay camera motion follows each revealed cell so the active face stays in view. History supports result/date filters, paginated loading (`Show more`), and a bounded internal scroll area so long lists stay contained. Each entry also exposes a copyable room code plus a join form for instant replays.
 10. **Seed sharing**: A deterministic seed string above the board encodes configuration plus RNG state so the same board/special placement can be recreated by copying/pasting the seed (even into prompts).
 11. **Persistence**: LocalStorage keeps runs (`mindsweeperRuns`), board mode (`mindsweeperBoardMode`), active theme (`mindsweeperTheme`), locale, and history panel collapse state so your setup survives reloads.
 12. **Localization-ready**: Every UI string routes through the `TRANSLATIONS` map; the dropdown shows flag + name, and selecting a new locale rewrites hero text, labels, hints, and status messages (including playful dialects like Klingon, Pirate, LOLcat, and Braille).
@@ -50,3 +50,4 @@ Open `index.html` in a modern browser. No build step or server is required—the
 
 - Built with help from an AI coding assistant (Codex, GPT-5) under human supervision, following the author’s guidance to shape the experience.
 - Some translations are machine-generated; the author may not fully verify every language so take those localized strings with a grain of salt.
+- The non-6 3D presets use dice-like polyhedron rendering; gameplay neighbor transitions outside `d6` are currently simplified and may not yet represent exact mathematical edge adjacency for every solid.
