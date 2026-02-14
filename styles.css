@@ -464,7 +464,7 @@ body {
   top: 1.85rem;
   font-size: 1rem;
 }
-}
+
 
 .avatar-history {
   width: 100%;
@@ -537,7 +537,7 @@ body {
 .cube-scene {
   display: grid;
   place-items: center;
-  perspective: 1400px;
+  perspective: 2000px;
   perspective-origin: center center;
   min-height: clamp(320px, 72vw, 620px);
 }
@@ -551,6 +551,7 @@ body {
   transform-style: preserve-3d;
   transform: rotateX(-28deg) rotateY(36deg);
   transition: transform 0.45s ease;
+  will-change: transform;
 }
 
 .cube-face {
@@ -560,9 +561,11 @@ body {
   width: var(--face-width, 260px);
   height: 100%;
   border-radius: 0;
+  overflow: hidden;
   backface-visibility: hidden;
   transform-origin: center center;
   transform-style: preserve-3d;
+  will-change: transform;
 }
 
 .seed-banner {
@@ -613,6 +616,17 @@ body {
   border-radius: 0;
 }
 
+.cube[data-face-count]:not([data-face-count="6"]) .cell {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.cube[data-face-count]:not([data-face-count="6"]) .cell:not(.cell--revealed):hover,
+.cube[data-face-count]:not([data-face-count="6"]) .cell:not(.cell--revealed):active {
+  transform: none;
+  box-shadow: none;
+}
+
 .board-wrapper[data-board-mode="2d"] .cube-scene {
   perspective: none;
   min-height: 0;
@@ -628,6 +642,7 @@ body {
   position: static;
   left: auto;
   margin-left: 0;
+  margin-top: 0;
   width: auto;
   height: auto;
   transform: none !important;
