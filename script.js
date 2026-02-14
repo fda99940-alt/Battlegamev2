@@ -458,6 +458,9 @@ let activePreset = null;
       const cell = getCell(face, action.row, action.col);
       if (cell) {
         if (action.type === 'reveal') {
+          followReplayCell(cell);
+        }
+        if (action.type === 'reveal') {
           revealCell(cell, { replay: true, recordAction: false, checkVictory: false });
         } else if (action.type === 'flag') {
           applyFlag(cell, action.flagged, { recordAction: false, replay: true, userAction: false });
@@ -1985,6 +1988,40 @@ let activePreset = null;
       ...(record?.actions || []),
     ].some((entry) => entry?.face && entry.face !== 'front');
     return hasNonFrontFaceData ? 'cube' : boardMode;
+  }
+
+  function followReplayCell(cell) {
+    if (boardMode !== 'cube' || !cell) return;
+    const spinY = specialsEnabled ? rotationAngle : 0;
+    let targetYaw = 0;
+    let targetPitch = -28;
+    if (cell.face === 'right') {
+      targetYaw = -90;
+    } else if (cell.face === 'back') {
+      targetYaw = 180;
+    } else if (cell.face === 'left') {
+      targetYaw = 90;
+    } else if (cell.face === 'top') {
+      targetPitch = -76;
+    } else if (cell.face === 'bottom') {
+      targetPitch = 70;
+    }
+    const desiredCameraYaw = targetYaw - spinY;
+    cubeYaw = shortestAngleTarget(cubeYaw, desiredCameraYaw);
+    cubePitch = shortestAngleTarget(cubePitch, targetPitch);
+    applyTransform();
+  }
+
+  function shortestAngleTarget(current, target) {
+    const delta = normalizeAngle(target - current);
+    return current + delta;
+  }
+
+  function normalizeAngle(value) {
+    let angle = value % 360;
+    if (angle > 180) angle -= 360;
+    if (angle < -180) angle += 360;
+    return angle;
   }
 
   function addVec3(a, b) {
