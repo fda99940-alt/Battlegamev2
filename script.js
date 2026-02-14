@@ -424,6 +424,8 @@ let activePreset = null;
    */
   function startReplay(record) {
     stopReplay();
+    const replayBoardMode = resolveReplayBoardMode(record);
+    applyBoardMode(replayBoardMode, { persist: false, restart: false });
     isReplaying = true;
     gameActive = false;
     runStartTime = null;
@@ -1028,6 +1030,7 @@ let activePreset = null;
       dogSpecials: layoutPayload.dogSpecials,
       guardianSpecials: layoutPayload.guardianSpecials,
       layout: layoutPayload,
+      boardMode,
       seed: currentRoomSeed,
       actions: runActions.slice(),
     };
@@ -1101,6 +1104,10 @@ let activePreset = null;
         steps: run.actions.length,
       });
       wrapper.appendChild(meta);
+      const boardType = document.createElement('p');
+      const runMode = resolveReplayBoardMode(run);
+      boardType.textContent = `Board: ${runMode === '2d' ? '2D' : 'Cube'}`;
+      wrapper.appendChild(boardType);
       const specials = document.createElement('p');
       specials.textContent = t('history.metaSpecials', {
         rotations: run.rotationTriggers,
@@ -1957,6 +1964,27 @@ let activePreset = null;
   function updateBoardModeButton() {
     if (!toggleBoardModeBtn) return;
     toggleBoardModeBtn.textContent = boardMode === '2d' ? 'Board: 2D' : 'Board: Cube';
+  }
+
+  function resolveReplayBoardMode(record) {
+    if (record?.boardMode === '2d' || record?.boardMode === 'cube') {
+      return record.boardMode;
+    }
+    const rows = Number(record?.config?.rows) || 0;
+    const cols = Number(record?.config?.cols) || 0;
+    const total2dCells = rows * cols;
+    if (total2dCells > 0 && Number(record?.totalCells) === total2dCells) {
+      return '2d';
+    }
+    const hasNonFrontFaceData = [
+      ...(record?.minePositions || []),
+      ...(record?.rotationSpecials || []),
+      ...(record?.flipSpecials || []),
+      ...(record?.dogSpecials || []),
+      ...(record?.guardianSpecials || []),
+      ...(record?.actions || []),
+    ].some((entry) => entry?.face && entry.face !== 'front');
+    return hasNonFrontFaceData ? 'cube' : boardMode;
   }
 
   function addVec3(a, b) {
