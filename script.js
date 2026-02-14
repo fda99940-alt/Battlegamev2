@@ -241,6 +241,10 @@ let activePreset = null;
   let rotationAngle = 0;
   let cubeYaw = 36;
   let cubePitch = -28;
+  let cubeZoom = 1;
+  const cubeZoomMin = 0.2;
+  const cubeZoomMax = 2.2;
+  const cubeZoomSensitivity = 0.0015;
   let flipHorizontal = false;
   let flipVertical = false;
   let rotationTriggers = 0;
@@ -396,6 +400,19 @@ let activePreset = null;
       const cell = getCellFromElement(cellEl);
       applyFlag(cell, !cell.flagged, { recordAction: true });
     });
+
+    cubeEl.addEventListener(
+      'wheel',
+      (event) => {
+        if (boardMode === '2d') return;
+        if (event.ctrlKey) return;
+        event.preventDefault();
+        const factor = Math.exp(-event.deltaY * cubeZoomSensitivity);
+        cubeZoom = clamp(cubeZoom * factor, cubeZoomMin, cubeZoomMax);
+        applyTransform();
+      },
+      { passive: false }
+    );
   }
 
   document.addEventListener('keydown', (event) => {
@@ -1056,7 +1073,8 @@ let activePreset = null;
     const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
     const scaleY = specialsEnabled && flipVertical ? -1 : 1;
     const spinY = specialsEnabled ? rotationAngle : 0;
-    cubeEl.style.transform = `rotateX(${cubePitch}deg) rotateY(${cubeYaw + spinY}deg) scale(${scaleX}, ${scaleY})`;
+    const zoomDistance = (cubeZoom - 1) * Math.max(cubeEl.clientWidth * 0.75, 240);
+    cubeEl.style.transform = `translateZ(${zoomDistance}px) rotateX(${cubePitch}deg) rotateY(${cubeYaw + spinY}deg) scale(${scaleX}, ${scaleY})`;
     updateWrapperSpacing(false);
   }
 
