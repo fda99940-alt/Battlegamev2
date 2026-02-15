@@ -12,7 +12,17 @@
 - `renderers/canvasRenderer.js`: Canvas renderer implementation (face canvas creation, resize/draw pipeline, and canvas hit testing).
 - `renderers/svgRenderer.js`: SVG renderer implementation (vector cell generation/sync, face SVG setup, and SVG hit testing).
 - `renderers/webglRenderer.js`: WebGL renderer implementation (GPU fill pipeline, overlay labels, WebGL support probe, and WebGL hit testing).
-- `script.js`: game/application controller that manages rules, board generation, mine/special placement, neighbor logic, replay/history/persistence, localization, and renderer selection/orchestration.
+- `modules/coreUtils.js`: shared utility helpers (clamping, seeded RNG, shuffle/pick helpers, formatting, and color helpers).
+- `modules/historyStore.js`: history list filtering/rendering plus run/room-map persistence helpers.
+- `modules/i18n.js`: locale selection, translation lookup, template replacement, and static text hydration.
+- `modules/avatarCommentary.js`: avatar persona selection, commentary line resolution, speech pulse, and avatar history rendering.
+- `modules/boardGeneration.js`: grid creation, mine/special placement, and neighbor count computation.
+- `modules/boardActions.js`: reveal/flag actions, special-trigger flow, and helper actions like random mine flagging.
+- `modules/boardTopology.js`: neighbor/edge transition logic across 2D and cube/poly-face boards.
+- `modules/uiControls.js`: theme, history collapse, and preset UI wiring/state helpers.
+- `modules/roomCodes.js`: room-code encode/decode, join-flow wiring, and clipboard copy helpers.
+- `modules/polyhedronLayout.js`: geometric layout and transform math for non-cube polyhedron face rendering.
+- `script.js`: top-level app orchestrator that composes modules, coordinates renderer mode/board mode/game lifecycle, and owns shared runtime state.
 
 ## Running
 
