@@ -9,12 +9,6 @@ const TRANSLATIONS = translationBundle.TRANSLATIONS || {};
 const historyKey = 'mindsweeperRuns';
 const cubeEl = document.getElementById('cube');
 let faceBoards = [];
-let boardByFace = {};
-let faceCanvasByFace = {};
-let faceSvgByFace = {};
-let faceWebglByFace = {};
-let faceWebglOverlayByFace = {};
-let webglStateByFace = {};
 const statusMessage = document.getElementById('statusMessage');
 const remainingMinesEl = document.getElementById('remainingMines');
 const revealedCountEl = document.getElementById('revealedCount');
@@ -51,7 +45,6 @@ const themeStorageKey = 'mindsweeperTheme';
 const boardModeStorageKey = 'mindsweeperBoardMode';
 const rendererStorageKey = 'mindsweeperRenderer';
 const SUPPORTED_RENDERERS = ['dom', 'canvas', 'svg', 'webgl'];
-const SVG_NS = 'http://www.w3.org/2000/svg';
 const availableThemes = ['neon', 'dusk', 'sunrise', 'midnight', 'verdant', 'ember'];
 const defaultTheme = availableThemes[0];
 const presetButtons = document.querySelectorAll('[data-preset]');
@@ -894,45 +887,6 @@ let activePreset = null;
   }
 
   /**
-   * Creates and inserts DOM elements for each cell, applying initial classes.
-   */
-  function renderBoardDom() {
-    layoutCubeFacesDom();
-    getActiveFaces().forEach((face) => {
-      const boardEl = boardByFace[face];
-      if (!boardEl) return;
-      boardEl.innerHTML = '';
-      boardEl.style.gridTemplateColumns = `repeat(${config.cols}, minmax(0, 1fr))`;
-    });
-    forEachCell((cell) => {
-      const boardEl = boardByFace[cell.face];
-      if (!boardEl) return;
-      const cellEl = document.createElement('button');
-      cellEl.type = 'button';
-      cellEl.className = 'cell';
-      cellEl.setAttribute('data-face', cell.face);
-      cellEl.setAttribute('data-row', cell.row);
-      cellEl.setAttribute('data-col', cell.col);
-      cellEl.setAttribute('data-show-cheat', cheatMode ? 'true' : 'false');
-      cellEl.setAttribute('aria-label', 'Hidden cell');
-      if (cell.special?.type === 'rotation') {
-        cellEl.classList.add('cell--special-rotation');
-      }
-      if (cell.special?.type === 'flip') {
-        cellEl.classList.add('cell--special-flip');
-      }
-      if (cell.special?.type === 'dog') {
-        cellEl.classList.add('cell--special-dog');
-      }
-      if (cell.special?.type === 'guardian') {
-        cellEl.classList.add('cell--special-guardian');
-      }
-      cell.element = cellEl;
-      boardEl.appendChild(cellEl);
-    });
-  }
-
-  /**
    * Reveals a given cell and propagates uncovering, triggers specials, and checks end-of-game conditions.
    * @param {Object} cell Target cell data.
    */
@@ -1071,35 +1025,6 @@ let activePreset = null;
     return target;
   }
 
-  /**
-   * Applies current rotation/flip transforms to the cube container.
-   */
-  function applyTransformDom() {
-    if (!cubeEl) return;
-    const firstFace = getActiveFaces()[0];
-    if (boardMode === '2d') {
-      const board = boardByFace[firstFace];
-      if (board) {
-        const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
-        const scaleY = specialsEnabled && flipVertical ? -1 : 1;
-        const spin = specialsEnabled ? rotationAngle : 0;
-        board.style.transform = `rotate(${spin}deg) scale(${scaleX}, ${scaleY})`;
-      }
-      cubeEl.style.transform = 'none';
-      updateWrapperSpacing(false);
-      return;
-    }
-    if (boardByFace[firstFace]) {
-      boardByFace[firstFace].style.transform = 'none';
-    }
-    const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
-    const scaleY = specialsEnabled && flipVertical ? -1 : 1;
-    const spinY = specialsEnabled ? rotationAngle : 0;
-    const zoomDistance = (cubeZoom - 1) * Math.max(cubeEl.clientWidth * 0.75, 240);
-    cubeEl.style.transform = `translateZ(${zoomDistance}px) rotateX(${cubePitch}deg) rotateY(${cubeYaw + spinY}deg) scale(${scaleX}, ${scaleY})`;
-    updateWrapperSpacing(false);
-  }
-
   function renderBoard() {
     if (!activeRenderer?.renderBoard) return;
     activeRenderer.renderBoard();
@@ -1120,142 +1045,6 @@ let activePreset = null;
     activeRenderer.layoutFaces();
   }
 
-  function renderBoardCanvas() {
-    getActiveFaces().forEach((face) => {
-      const canvas = faceCanvasByFace[face];
-      if (canvas) {
-        canvas.style.aspectRatio = `${config.cols} / ${config.rows}`;
-      }
-    });
-    forEachCell((cell) => {
-      cell.element = null;
-    });
-    layoutCubeFacesCanvas();
-    drawAllCanvasFaces();
-  }
-
-  function applyTransformCanvas() {
-    if (!cubeEl) return;
-    const firstFace = getActiveFaces()[0];
-    if (boardMode === '2d') {
-      const canvas = faceCanvasByFace[firstFace];
-      if (canvas) {
-        const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
-        const scaleY = specialsEnabled && flipVertical ? -1 : 1;
-        const spin = specialsEnabled ? rotationAngle : 0;
-        canvas.style.transform = `rotate(${spin}deg) scale(${scaleX}, ${scaleY})`;
-      }
-      cubeEl.style.transform = 'none';
-      updateWrapperSpacing(false);
-      return;
-    }
-    if (faceCanvasByFace[firstFace]) {
-      faceCanvasByFace[firstFace].style.transform = 'none';
-    }
-    const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
-    const scaleY = specialsEnabled && flipVertical ? -1 : 1;
-    const spinY = specialsEnabled ? rotationAngle : 0;
-    const zoomDistance = (cubeZoom - 1) * Math.max(cubeEl.clientWidth * 0.75, 240);
-    cubeEl.style.transform = `translateZ(${zoomDistance}px) rotateX(${cubePitch}deg) rotateY(${cubeYaw + spinY}deg) scale(${scaleX}, ${scaleY})`;
-    updateWrapperSpacing(false);
-  }
-
-  function ensureCubeFacesCanvas(count = 6) {
-    if (!cubeEl) return;
-    const safeCount = normalizeFaceCount(Number(count) || 6);
-    cubeEl.innerHTML = '';
-    for (let i = 0; i < safeCount; i += 1) {
-      const faceEl = document.createElement('div');
-      faceEl.className = 'cube-face';
-      faceEl.setAttribute('data-face-index', String(i));
-      decorateFaceElement(faceEl, i, safeCount);
-      const canvasEl = document.createElement('canvas');
-      canvasEl.className = 'board board-canvas';
-      canvasEl.setAttribute('data-face-canvas', faceId(i));
-      canvasEl.setAttribute('data-face-board', faceId(i));
-      canvasEl.setAttribute('role', 'img');
-      canvasEl.setAttribute('aria-label', `Face ${i + 1}`);
-      faceEl.appendChild(canvasEl);
-      cubeEl.appendChild(faceEl);
-    }
-    faceBoards = Array.from(cubeEl.querySelectorAll('[data-face-canvas]'));
-    faceCanvasByFace = faceBoards.reduce((acc, canvas) => {
-      const face = canvas.dataset.faceCanvas;
-      if (face) {
-        acc[face] = canvas;
-      }
-      return acc;
-    }, {});
-    faceSvgByFace = {};
-    faceWebglByFace = {};
-    faceWebglOverlayByFace = {};
-    webglStateByFace = {};
-    boardByFace = {};
-    layoutCubeFacesCanvas();
-  }
-
-  function layoutCubeFacesCanvas() {
-    layoutCubeFacesDom();
-    resizeCanvasFaces();
-    drawAllCanvasFaces();
-  }
-
-  function resizeCanvasFaces() {
-    const pixelRatio = Math.max(window.devicePixelRatio || 1, 1);
-    Object.values(faceCanvasByFace).forEach((canvas) => {
-      const rect = canvas.getBoundingClientRect();
-      const width = Math.max(Math.floor(rect.width * pixelRatio), 1);
-      const height = Math.max(Math.floor(rect.height * pixelRatio), 1);
-      if (canvas.width !== width || canvas.height !== height) {
-        canvas.width = width;
-        canvas.height = height;
-      }
-    });
-  }
-
-  function drawAllCanvasFaces() {
-    getActiveFaces().forEach((face) => drawCanvasFace(face));
-  }
-
-  function drawCanvasFace(face) {
-    const canvas = faceCanvasByFace[face];
-    if (!canvas) return;
-    const context = canvas.getContext('2d');
-    if (!context) return;
-    const width = Math.max(canvas.clientWidth, 1);
-    const height = Math.max(canvas.clientHeight, 1);
-    const scaleX = canvas.width / width;
-    const scaleY = canvas.height / height;
-    context.setTransform(scaleX, 0, 0, scaleY, 0, 0);
-    context.clearRect(0, 0, width, height);
-    const palette = getCanvasPalette();
-    context.fillStyle = palette.boardSurface;
-    context.fillRect(0, 0, width, height);
-    const cellWidth = width / Math.max(config.cols, 1);
-    const cellHeight = height / Math.max(config.rows, 1);
-    for (let row = 0; row < config.rows; row += 1) {
-      for (let col = 0; col < config.cols; col += 1) {
-        const cell = getCell(face, row, col);
-        if (!cell) continue;
-        drawCanvasCell(context, cell, col * cellWidth, row * cellHeight, cellWidth, cellHeight, palette);
-      }
-    }
-  }
-
-  function getCanvasPalette() {
-    const rootStyles = getComputedStyle(document.documentElement);
-    return {
-      boardSurface: rootStyles.getPropertyValue('--board-surface').trim() || 'rgba(0, 0, 0, 0.25)',
-      hiddenFill: rootStyles.getPropertyValue('--panel-surface').trim() || 'rgba(255, 255, 255, 0.06)',
-      revealedFill: rootStyles.getPropertyValue('--cell-revealed-bg').trim() || 'rgba(255, 255, 255, 0.12)',
-      border: rootStyles.getPropertyValue('--panel-border').trim() || 'rgba(255, 255, 255, 0.2)',
-      text: rootStyles.getPropertyValue('--text-primary').trim() || '#ffffff',
-      accent: rootStyles.getPropertyValue('--accent').trim() || '#5af2c7',
-      highlight: rootStyles.getPropertyValue('--highlight').trim() || '#39f0ff',
-      mine: rootStyles.getPropertyValue('--danger').trim() || '#ff6b6b',
-    };
-  }
-
   function getSpecialMarker(type) {
     const markerByType = {
       rotation: '⟳',
@@ -1266,592 +1055,12 @@ let activePreset = null;
     return markerByType[type] || '✦';
   }
 
-  function drawCanvasCell(context, cell, x, y, width, height, palette) {
-    const innerPadding = Math.max(Math.min(width, height) * 0.08, 1);
-    const boxX = x + innerPadding;
-    const boxY = y + innerPadding;
-    const boxW = Math.max(width - innerPadding * 2, 1);
-    const boxH = Math.max(height - innerPadding * 2, 1);
-
-    context.fillStyle = cell.revealed ? palette.revealedFill : palette.hiddenFill;
-    context.fillRect(boxX, boxY, boxW, boxH);
-    context.strokeStyle = palette.border;
-    context.lineWidth = 1;
-    context.strokeRect(boxX + 0.5, boxY + 0.5, Math.max(boxW - 1, 1), Math.max(boxH - 1, 1));
-
-    if (!cell.revealed && cell.flagged) {
-      context.fillStyle = palette.accent;
-      context.font = `${Math.max(Math.floor(boxH * 0.6), 10)}px sans-serif`;
-      context.textAlign = 'center';
-      context.textBaseline = 'middle';
-      context.fillText('⚑', boxX + boxW / 2, boxY + boxH / 2);
-      return;
-    }
-
-    if (cell.revealed && cell.isMine) {
-      context.fillStyle = palette.mine;
-      context.beginPath();
-      context.arc(boxX + boxW / 2, boxY + boxH / 2, Math.max(Math.min(boxW, boxH) * 0.22, 3), 0, Math.PI * 2);
-      context.fill();
-      return;
-    }
-
-    if (cell.revealed && cell.neighborMines > 0) {
-      context.fillStyle = getNumberColor(cell.neighborMines);
-      context.font = `${Math.max(Math.floor(boxH * 0.52), 9)}px sans-serif`;
-      context.textAlign = 'center';
-      context.textBaseline = 'middle';
-      context.fillText(String(cell.neighborMines), boxX + boxW / 2, boxY + boxH / 2);
-      return;
-    }
-
-    if (!cell.revealed && cheatMode && cell.special) {
-      context.fillStyle = palette.highlight;
-      context.font = `${Math.max(Math.floor(boxH * 0.38), 8)}px sans-serif`;
-      context.textAlign = 'center';
-      context.textBaseline = 'middle';
-      context.fillText(getSpecialMarker(cell.special.type), boxX + boxW / 2, boxY + boxH / 2);
-    }
-  }
-
-  function renderBoardWebgl() {
-    forEachCell((cell) => {
-      cell.element = null;
-      cell.svgShape = null;
-      cell.svgValue = null;
-      cell.webglLabel = null;
-    });
-    getActiveFaces().forEach((face) => {
-      const overlay = faceWebglOverlayByFace[face];
-      if (!overlay) return;
-      overlay.innerHTML = '';
-      overlay.style.gridTemplateColumns = `repeat(${config.cols}, minmax(0, 1fr))`;
-      for (let row = 0; row < config.rows; row += 1) {
-        for (let col = 0; col < config.cols; col += 1) {
-          const cell = getCell(face, row, col);
-          if (!cell) continue;
-          const labelEl = document.createElement('span');
-          labelEl.className = 'webgl-cell-label';
-          labelEl.setAttribute('data-webgl-cell-face', face);
-          labelEl.setAttribute('data-webgl-cell-row', String(row));
-          labelEl.setAttribute('data-webgl-cell-col', String(col));
-          overlay.appendChild(labelEl);
-          cell.webglLabel = labelEl;
-          syncWebglOverlayCell(cell);
-        }
-      }
-    });
-    layoutCubeFacesWebgl();
-    drawAllWebglFaces();
-  }
-
-  function applyTransformWebgl() {
-    if (!cubeEl) return;
-    const firstFace = getActiveFaces()[0];
-    if (boardMode === '2d') {
-      const canvas = faceWebglByFace[firstFace];
-      const overlay = faceWebglOverlayByFace[firstFace];
-      if (canvas) {
-        const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
-        const scaleY = specialsEnabled && flipVertical ? -1 : 1;
-        const spin = specialsEnabled ? rotationAngle : 0;
-        canvas.style.transform = `rotate(${spin}deg) scale(${scaleX}, ${scaleY})`;
-        if (overlay) {
-          overlay.style.transform = `rotate(${spin}deg) scale(${scaleX}, ${scaleY})`;
-        }
-      }
-      cubeEl.style.transform = 'none';
-      updateWrapperSpacing(false);
-      return;
-    }
-    if (faceWebglByFace[firstFace]) {
-      faceWebglByFace[firstFace].style.transform = 'none';
-    }
-    if (faceWebglOverlayByFace[firstFace]) {
-      faceWebglOverlayByFace[firstFace].style.transform = 'none';
-    }
-    const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
-    const scaleY = specialsEnabled && flipVertical ? -1 : 1;
-    const spinY = specialsEnabled ? rotationAngle : 0;
-    const zoomDistance = (cubeZoom - 1) * Math.max(cubeEl.clientWidth * 0.75, 240);
-    cubeEl.style.transform = `translateZ(${zoomDistance}px) rotateX(${cubePitch}deg) rotateY(${cubeYaw + spinY}deg) scale(${scaleX}, ${scaleY})`;
-    updateWrapperSpacing(false);
-  }
-
-  function ensureCubeFacesWebgl(count = 6) {
-    if (!cubeEl) return;
-    const safeCount = normalizeFaceCount(Number(count) || 6);
-    cubeEl.innerHTML = '';
-    for (let i = 0; i < safeCount; i += 1) {
-      const faceEl = document.createElement('div');
-      faceEl.className = 'cube-face';
-      faceEl.setAttribute('data-face-index', String(i));
-      decorateFaceElement(faceEl, i, safeCount);
-      const canvasEl = document.createElement('canvas');
-      canvasEl.className = 'board board-webgl';
-      canvasEl.setAttribute('data-face-webgl', faceId(i));
-      canvasEl.setAttribute('data-face-board', faceId(i));
-      canvasEl.setAttribute('role', 'img');
-      canvasEl.setAttribute('aria-label', `Face ${i + 1}`);
-      const overlayEl = document.createElement('div');
-      overlayEl.className = 'board-webgl-overlay';
-      overlayEl.setAttribute('data-face-webgl-overlay', faceId(i));
-      faceEl.appendChild(canvasEl);
-      faceEl.appendChild(overlayEl);
-      cubeEl.appendChild(faceEl);
-    }
-    faceBoards = Array.from(cubeEl.querySelectorAll('[data-face-webgl]'));
-    faceWebglByFace = faceBoards.reduce((acc, canvas) => {
-      const face = canvas.dataset.faceWebgl;
-      if (face) {
-        acc[face] = canvas;
-      }
-      return acc;
-    }, {});
-    faceWebglOverlayByFace = Array.from(cubeEl.querySelectorAll('[data-face-webgl-overlay]')).reduce((acc, overlay) => {
-      const face = overlay.dataset.faceWebglOverlay;
-      if (face) {
-        acc[face] = overlay;
-      }
-      return acc;
-    }, {});
-    faceCanvasByFace = {};
-    faceSvgByFace = {};
-    webglStateByFace = {};
-    boardByFace = {};
-    layoutCubeFacesWebgl();
-  }
-
-  function layoutCubeFacesWebgl() {
-    layoutCubeFacesDom();
-    resizeWebglFaces();
-    drawAllWebglFaces();
-  }
-
-  function resizeWebglFaces() {
-    const pixelRatio = Math.max(window.devicePixelRatio || 1, 1);
-    Object.entries(faceWebglByFace).forEach(([face, canvas]) => {
-      // Use layout dimensions instead of transformed bounding box dimensions.
-      // Bounding rect shrinks for angled faces (top/bottom), causing blurry output.
-      const width = Math.max(Math.floor(canvas.clientWidth * pixelRatio), 1);
-      const height = Math.max(Math.floor(canvas.clientHeight * pixelRatio), 1);
-      if (canvas.width !== width || canvas.height !== height) {
-        canvas.width = width;
-        canvas.height = height;
-        const state = webglStateByFace[face];
-        if (state?.gl) {
-          state.gl.viewport(0, 0, width, height);
-        }
-      }
-    });
-  }
-
-  function drawAllWebglFaces() {
-    getActiveFaces().forEach((face) => drawWebglFace(face));
-  }
-
-  function syncWebglOverlayCell(cell) {
-    if (!cell?.webglLabel) return;
-    const label = cell.webglLabel;
-    label.textContent = '';
-    label.style.color = '';
-    label.classList.remove(
-      'webgl-cell-label--covered',
-      'webgl-cell-label--revealed',
-      'webgl-cell-label--flagged',
-      'webgl-cell-label--mine',
-      'webgl-cell-label--special'
-    );
-    if (cell.revealed) {
-      label.classList.add('webgl-cell-label--revealed');
-    } else {
-      label.classList.add('webgl-cell-label--covered');
-    }
-    if (cell.flagged && !cell.revealed) {
-      label.classList.add('webgl-cell-label--flagged');
-      label.textContent = '⚑';
-      return;
-    }
-    if (cell.revealed && cell.isMine) {
-      label.classList.add('webgl-cell-label--mine');
-      label.textContent = '✹';
-      return;
-    }
-    if (cell.revealed && cell.neighborMines > 0) {
-      label.textContent = String(cell.neighborMines);
-      label.style.color = getNumberColor(cell.neighborMines);
-      return;
-    }
-    if (!cell.revealed && cheatMode && cell.special) {
-      label.classList.add('webgl-cell-label--special');
-      label.textContent = getSpecialMarker(cell.special.type);
-    }
-  }
-
-  function createWebglState(canvas) {
-    const gl = canvas.getContext('webgl', { antialias: false, depth: false, stencil: false, alpha: true });
-    if (!gl) return null;
-    const vertexSource = `
-      attribute vec2 aPosition;
-      attribute vec4 aColor;
-      varying vec4 vColor;
-      void main() {
-        gl_Position = vec4(aPosition, 0.0, 1.0);
-        vColor = aColor;
-      }
-    `;
-    const fragmentSource = `
-      precision mediump float;
-      varying vec4 vColor;
-      void main() {
-        gl_FragColor = vColor;
-      }
-    `;
-    const vertexShader = gl.createShader(gl.VERTEX_SHADER);
-    const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-    if (!vertexShader || !fragmentShader) return null;
-    gl.shaderSource(vertexShader, vertexSource);
-    gl.shaderSource(fragmentShader, fragmentSource);
-    gl.compileShader(vertexShader);
-    gl.compileShader(fragmentShader);
-    if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) return null;
-    if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) return null;
-    const program = gl.createProgram();
-    if (!program) return null;
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
-    gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return null;
-    gl.deleteShader(vertexShader);
-    gl.deleteShader(fragmentShader);
-    const buffer = gl.createBuffer();
-    if (!buffer) return null;
-    const aPosition = gl.getAttribLocation(program, 'aPosition');
-    const aColor = gl.getAttribLocation(program, 'aColor');
-    if (aPosition < 0 || aColor < 0) return null;
-    return { gl, program, buffer, aPosition, aColor };
-  }
-
-  function getWebglState(face) {
-    if (webglStateByFace[face]) return webglStateByFace[face];
-    const canvas = faceWebglByFace[face];
-    if (!canvas) return null;
-    const state = createWebglState(canvas);
-    if (!state) return null;
-    webglStateByFace[face] = state;
-    return state;
-  }
-
-  function drawWebglFace(face) {
-    const state = getWebglState(face);
-    const canvas = faceWebglByFace[face];
-    if (!state || !canvas) return;
-    const { gl, program, buffer, aPosition, aColor } = state;
-    gl.viewport(0, 0, canvas.width, canvas.height);
-    const palette = getWebglPalette();
-    gl.clearColor(
-      palette.boardSurface[0],
-      palette.boardSurface[1],
-      palette.boardSurface[2],
-      palette.boardSurface[3]
-    );
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    const vertices = [];
-    const cols = Math.max(config.cols, 1);
-    const rows = Math.max(config.rows, 1);
-    const insetX = 0.06 / cols;
-    const insetY = 0.06 / rows;
-
-    for (let row = 0; row < rows; row += 1) {
-      for (let col = 0; col < cols; col += 1) {
-        const cell = getCell(face, row, col);
-        if (!cell) continue;
-        const left = (col / cols) * 2 - 1 + insetX * 2;
-        const right = ((col + 1) / cols) * 2 - 1 - insetX * 2;
-        const top = 1 - (row / rows) * 2 - insetY * 2;
-        const bottom = 1 - ((row + 1) / rows) * 2 + insetY * 2;
-        const color = getWebglCellColor(cell, palette);
-        pushWebglRect(vertices, left, top, right, bottom, color);
-      }
-    }
-
-    if (!vertices.length) return;
-    gl.useProgram(program);
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STREAM_DRAW);
-    const stride = 6 * 4;
-    gl.enableVertexAttribArray(aPosition);
-    gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, stride, 0);
-    gl.enableVertexAttribArray(aColor);
-    gl.vertexAttribPointer(aColor, 4, gl.FLOAT, false, stride, 2 * 4);
-    gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 6);
-  }
-
-  function pushWebglRect(vertices, left, top, right, bottom, color) {
-    const [r, g, b, a] = color;
-    vertices.push(left, top, r, g, b, a);
-    vertices.push(right, top, r, g, b, a);
-    vertices.push(right, bottom, r, g, b, a);
-    vertices.push(left, top, r, g, b, a);
-    vertices.push(right, bottom, r, g, b, a);
-    vertices.push(left, bottom, r, g, b, a);
-  }
-
-  function parseCssColorToRgba(value, fallback = [1, 1, 1, 1]) {
-    const text = String(value || '').trim();
-    if (!text) return fallback;
-    if (text.startsWith('#')) {
-      const hex = text.slice(1);
-      if (hex.length === 3 || hex.length === 4) {
-        const r = parseInt(hex[0] + hex[0], 16) / 255;
-        const g = parseInt(hex[1] + hex[1], 16) / 255;
-        const b = parseInt(hex[2] + hex[2], 16) / 255;
-        const a = hex.length === 4 ? parseInt(hex[3] + hex[3], 16) / 255 : 1;
-        return [r, g, b, a];
-      }
-      if (hex.length === 6 || hex.length === 8) {
-        const r = parseInt(hex.slice(0, 2), 16) / 255;
-        const g = parseInt(hex.slice(2, 4), 16) / 255;
-        const b = parseInt(hex.slice(4, 6), 16) / 255;
-        const a = hex.length === 8 ? parseInt(hex.slice(6, 8), 16) / 255 : 1;
-        return [r, g, b, a];
-      }
-    }
-    const rgbaMatch = text.match(/^rgba?\(([^)]+)\)$/i);
-    if (rgbaMatch) {
-      const parts = rgbaMatch[1].split(',').map((part) => part.trim());
-      if (parts.length >= 3) {
-        const r = clamp(Number(parts[0]) / 255, 0, 1);
-        const g = clamp(Number(parts[1]) / 255, 0, 1);
-        const b = clamp(Number(parts[2]) / 255, 0, 1);
-        const a = parts.length > 3 ? clamp(Number(parts[3]), 0, 1) : 1;
-        return [r, g, b, a];
-      }
-    }
-    return fallback;
-  }
-
-  function getWebglPalette() {
-    const rootStyles = getComputedStyle(document.documentElement);
-    return {
-      boardSurface: parseCssColorToRgba(rootStyles.getPropertyValue('--board-surface'), [0.02, 0.03, 0.06, 1]),
-      hidden: parseCssColorToRgba(rootStyles.getPropertyValue('--panel-surface'), [0.12, 0.12, 0.14, 1]),
-      revealed: parseCssColorToRgba(rootStyles.getPropertyValue('--cell-revealed-bg'), [0.3, 0.3, 0.35, 1]),
-      mine: parseCssColorToRgba(rootStyles.getPropertyValue('--danger'), [1, 0.3, 0.3, 1]),
-      accent: parseCssColorToRgba(rootStyles.getPropertyValue('--accent'), [0.35, 0.95, 0.78, 1]),
-      highlight: parseCssColorToRgba(rootStyles.getPropertyValue('--highlight'), [0.22, 0.93, 1, 1]),
-    };
-  }
-
-  function getWebglCellColor(cell, palette) {
-    if (!cell) return palette.hidden;
-    if (cell.revealed && cell.isMine) return palette.mine;
-    if (cell.flagged && !cell.revealed) return [palette.accent[0], palette.accent[1], palette.accent[2], 0.65];
-    if (cell.revealed) return palette.revealed;
-    if (cheatMode && cell.special) return [palette.highlight[0], palette.highlight[1], palette.highlight[2], 0.55];
-    return palette.hidden;
-  }
-
   function isWebglSupported() {
-    try {
-      const probe = document.createElement('canvas');
-      return Boolean(probe.getContext('webgl'));
-    } catch (error) {
-      return false;
+    const checker = window.MindsweeperRenderers?.isWebglSupported;
+    if (typeof checker === 'function') {
+      return checker();
     }
-  }
-
-  function renderBoardSvg() {
-    const usePolygonCells = getFaceCount() !== 6;
-    getActiveFaces().forEach((face) => {
-      const svg = faceSvgByFace[face];
-      if (!svg) return;
-      svg.setAttribute('viewBox', `0 0 ${config.cols} ${config.rows}`);
-      svg.innerHTML = '';
-      for (let row = 0; row < config.rows; row += 1) {
-        for (let col = 0; col < config.cols; col += 1) {
-          const cell = getCell(face, row, col);
-          if (!cell) continue;
-          const group = document.createElementNS(SVG_NS, 'g');
-          group.classList.add('svg-cell-group');
-          group.setAttribute('data-cell-face', face);
-          group.setAttribute('data-cell-row', String(row));
-          group.setAttribute('data-cell-col', String(col));
-          group.setAttribute('tabindex', '-1');
-
-          const shape = document.createElementNS(SVG_NS, usePolygonCells ? 'polygon' : 'rect');
-          shape.classList.add('svg-cell');
-          if (usePolygonCells) {
-            const inset = 0.14;
-            const points = [
-              [col + inset, row],
-              [col + 1 - inset, row],
-              [col + 1, row + inset],
-              [col + 1, row + 1 - inset],
-              [col + 1 - inset, row + 1],
-              [col + inset, row + 1],
-              [col, row + 1 - inset],
-              [col, row + inset],
-            ]
-              .map((point) => point.join(','))
-              .join(' ');
-            shape.setAttribute('points', points);
-          } else {
-            shape.setAttribute('x', String(col + 0.06));
-            shape.setAttribute('y', String(row + 0.06));
-            shape.setAttribute('width', '0.88');
-            shape.setAttribute('height', '0.88');
-            shape.setAttribute('rx', '0.08');
-            shape.setAttribute('ry', '0.08');
-          }
-
-          const label = document.createElementNS(SVG_NS, 'text');
-          label.classList.add('svg-cell__value');
-          label.setAttribute('x', String(col + 0.5));
-          label.setAttribute('y', String(row + 0.54));
-
-          group.appendChild(shape);
-          group.appendChild(label);
-          svg.appendChild(group);
-
-          cell.element = group;
-          cell.svgShape = shape;
-          cell.svgValue = label;
-          syncSvgCell(cell);
-        }
-      }
-    });
-    layoutCubeFacesSvg();
-  }
-
-  function applyTransformSvg() {
-    if (!cubeEl) return;
-    const firstFace = getActiveFaces()[0];
-    if (boardMode === '2d') {
-      const svg = faceSvgByFace[firstFace];
-      if (svg) {
-        const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
-        const scaleY = specialsEnabled && flipVertical ? -1 : 1;
-        const spin = specialsEnabled ? rotationAngle : 0;
-        svg.style.transform = `rotate(${spin}deg) scale(${scaleX}, ${scaleY})`;
-      }
-      cubeEl.style.transform = 'none';
-      updateWrapperSpacing(false);
-      return;
-    }
-    if (faceSvgByFace[firstFace]) {
-      faceSvgByFace[firstFace].style.transform = 'none';
-    }
-    const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
-    const scaleY = specialsEnabled && flipVertical ? -1 : 1;
-    const spinY = specialsEnabled ? rotationAngle : 0;
-    const zoomDistance = (cubeZoom - 1) * Math.max(cubeEl.clientWidth * 0.75, 240);
-    cubeEl.style.transform = `translateZ(${zoomDistance}px) rotateX(${cubePitch}deg) rotateY(${cubeYaw + spinY}deg) scale(${scaleX}, ${scaleY})`;
-    updateWrapperSpacing(false);
-  }
-
-  function ensureCubeFacesSvg(count = 6) {
-    if (!cubeEl) return;
-    const safeCount = normalizeFaceCount(Number(count) || 6);
-    cubeEl.innerHTML = '';
-    for (let i = 0; i < safeCount; i += 1) {
-      const faceEl = document.createElement('div');
-      faceEl.className = 'cube-face';
-      faceEl.setAttribute('data-face-index', String(i));
-      decorateFaceElement(faceEl, i, safeCount);
-      const svgEl = document.createElementNS(SVG_NS, 'svg');
-      svgEl.classList.add('board', 'board-svg');
-      svgEl.setAttribute('data-face-svg', faceId(i));
-      svgEl.setAttribute('data-face-board', faceId(i));
-      svgEl.setAttribute('aria-label', `Face ${i + 1}`);
-      faceEl.appendChild(svgEl);
-      cubeEl.appendChild(faceEl);
-    }
-    faceBoards = Array.from(cubeEl.querySelectorAll('[data-face-svg]'));
-    faceSvgByFace = faceBoards.reduce((acc, svg) => {
-      const face = svg.dataset.faceSvg;
-      if (face) {
-        acc[face] = svg;
-      }
-      return acc;
-    }, {});
-    faceCanvasByFace = {};
-    faceWebglByFace = {};
-    faceWebglOverlayByFace = {};
-    webglStateByFace = {};
-    boardByFace = {};
-    layoutCubeFacesSvg();
-  }
-
-  function layoutCubeFacesSvg() {
-    layoutCubeFacesDom();
-    drawAllSvgFaces();
-  }
-
-  function drawAllSvgFaces() {
-    getActiveFaces().forEach((face) => drawSvgFace(face));
-  }
-
-  function drawSvgFace(face) {
-    const faceGrid = grid[face];
-    if (!faceGrid) return;
-    for (let row = 0; row < faceGrid.length; row += 1) {
-      for (let col = 0; col < faceGrid[row].length; col += 1) {
-        syncSvgCell(faceGrid[row][col]);
-      }
-    }
-  }
-
-  function syncSvgCell(cell) {
-    if (!cell?.svgShape || !cell?.svgValue) return;
-    const shape = cell.svgShape;
-    const value = cell.svgValue;
-    shape.classList.remove(
-      'cell--revealed',
-      'cell--mine',
-      'cell--flagged',
-      'cell--special-rotation',
-      'cell--special-flip',
-      'cell--special-dog',
-      'cell--special-guardian'
-    );
-    if (cell.revealed) {
-      shape.classList.add('cell--revealed');
-    }
-    if (cell.isMine && cell.revealed) {
-      shape.classList.add('cell--mine');
-    }
-    if (cell.flagged && !cell.revealed) {
-      shape.classList.add('cell--flagged');
-    }
-    if (cell.special?.type === 'rotation') {
-      shape.classList.add('cell--special-rotation');
-    }
-    if (cell.special?.type === 'flip') {
-      shape.classList.add('cell--special-flip');
-    }
-    if (cell.special?.type === 'dog') {
-      shape.classList.add('cell--special-dog');
-    }
-    if (cell.special?.type === 'guardian') {
-      shape.classList.add('cell--special-guardian');
-    }
-
-    value.classList.remove('svg-cell__value--special');
-    value.textContent = '';
-    value.removeAttribute('fill');
-
-    if (cell.flagged && !cell.revealed) {
-      value.textContent = '⚑';
-    } else if (cell.revealed && cell.isMine) {
-      value.textContent = '✹';
-    } else if (cell.revealed && cell.neighborMines > 0) {
-      value.textContent = String(cell.neighborMines);
-      value.setAttribute('fill', getNumberColor(cell.neighborMines));
-    } else if (!cell.revealed && cheatMode && cell.special) {
-      value.classList.add('svg-cell__value--special');
-      value.textContent = getSpecialMarker(cell.special.type);
-    }
+    return false;
   }
 
   /**
@@ -3104,39 +2313,6 @@ let activePreset = null;
     return faceId(0);
   }
 
-  function ensureCubeFacesDom(count = 6) {
-    if (!cubeEl) return;
-    const safeCount = normalizeFaceCount(Number(count) || 6);
-    cubeEl.innerHTML = '';
-    faceCanvasByFace = {};
-    faceSvgByFace = {};
-    faceWebglOverlayByFace = {};
-    faceWebglByFace = {};
-    webglStateByFace = {};
-    for (let i = 0; i < safeCount; i += 1) {
-      const faceEl = document.createElement('div');
-      faceEl.className = 'cube-face';
-      faceEl.setAttribute('data-face-index', String(i));
-      decorateFaceElement(faceEl, i, safeCount);
-      const boardEl = document.createElement('div');
-      boardEl.className = 'board';
-      boardEl.setAttribute('data-face-board', faceId(i));
-      boardEl.setAttribute('role', 'grid');
-      boardEl.setAttribute('aria-label', `Face ${i + 1}`);
-      faceEl.appendChild(boardEl);
-      cubeEl.appendChild(faceEl);
-    }
-    faceBoards = Array.from(cubeEl.querySelectorAll('[data-face-board]'));
-    boardByFace = faceBoards.reduce((acc, board) => {
-      const face = board.dataset.faceBoard;
-      if (face) {
-        acc[face] = board;
-      }
-      return acc;
-    }, {});
-    layoutCubeFacesDom();
-  }
-
   function createRegularPolygonClipPath(sides) {
     const safeSides = Math.max(Number(sides) || 3, 3);
     const points = [];
@@ -3544,13 +2720,80 @@ let activePreset = null;
     return normalizeRendererMode(safeGetItem(rendererStorageKey));
   }
 
-  function createDomRenderer() {
-    return {
+  function buildRendererContextForMode(mode) {
+    const common = {
+      cubeEl,
+      getActiveFaces,
+      getCell,
+      layoutCubeFacesDom,
+      updateWrapperSpacing,
+      normalizeFaceCount,
+      decorateFaceElement,
+      faceId,
+      setFaceBoards: (boards) => {
+        faceBoards = Array.isArray(boards) ? boards : [];
+      },
+      getConfig: () => config,
+      getVisualState: () => ({
+        boardMode,
+        specialsEnabled,
+        flipHorizontal,
+        flipVertical,
+        rotationAngle,
+        cubeZoom,
+        cubePitch,
+        cubeYaw,
+        cheatMode,
+      }),
+    };
+
+    if (mode === 'dom') {
+      return {
+        ...common,
+        forEachCell,
+        getCellFromElement,
+      };
+    }
+    if (mode === 'canvas') {
+      return {
+        ...common,
+        forEachCell,
+        getNumberColor,
+        getSpecialMarker,
+        normalizeFaceId,
+        clamp,
+      };
+    }
+    if (mode === 'svg') {
+      return {
+        ...common,
+        getFaceCount,
+        normalizeFaceId,
+        getNumberColor,
+        getSpecialMarker,
+      };
+    }
+    if (mode === 'webgl') {
+      return {
+        ...common,
+        forEachCell,
+        getNumberColor,
+        getSpecialMarker,
+        clamp,
+        normalizeFaceId,
+      };
+    }
+    return common;
+  }
+
+  function createRendererWithFallback(mode) {
+    const context = buildRendererContextForMode(mode);
+    const domFallback = {
       id: 'dom',
-      ensureFaces: ensureCubeFacesDom,
+      ensureFaces() {},
       layoutFaces: layoutCubeFacesDom,
-      renderBoard: renderBoardDom,
-      applyTransform: applyTransformDom,
+      renderBoard() {},
+      applyTransform() {},
       syncCell() {},
       syncAll() {},
       getCellFromInteraction(eventOrTarget) {
@@ -3559,106 +2802,31 @@ let activePreset = null;
         return cellEl ? getCellFromElement(cellEl) : null;
       },
     };
-  }
-
-  function createCanvasRenderer() {
-    return {
-      id: 'canvas',
-      ensureFaces: ensureCubeFacesCanvas,
-      layoutFaces: layoutCubeFacesCanvas,
-      renderBoard: renderBoardCanvas,
-      applyTransform: applyTransformCanvas,
-      syncCell(cell) {
-        if (!cell) return;
-        drawCanvasFace(cell.face);
-      },
-      syncAll() {
-        drawAllCanvasFaces();
-      },
-      getCellFromInteraction(eventOrTarget) {
-        const event = eventOrTarget?.target ? eventOrTarget : null;
-        const target = event?.target || eventOrTarget;
-        const canvas = target?.closest?.('[data-face-canvas]');
-        if (!canvas) return null;
-        const face = normalizeFaceId(canvas.dataset.faceCanvas);
-        const rect = canvas.getBoundingClientRect();
-        if (!rect.width || !rect.height) return null;
-        const x = event ? event.clientX - rect.left : 0;
-        const y = event ? event.clientY - rect.top : 0;
-        const col = clamp(Math.floor((x / rect.width) * config.cols), 0, config.cols - 1);
-        const row = clamp(Math.floor((y / rect.height) * config.rows), 0, config.rows - 1);
-        return getCell(face, row, col);
-      },
+    const factories = window.MindsweeperRenderers || {};
+    const factoryByMode = {
+      dom: factories.createDomRenderer,
+      canvas: factories.createCanvasRenderer,
+      svg: factories.createSvgRenderer,
+      webgl: factories.createWebglRenderer,
     };
-  }
-
-  function createSvgRenderer() {
-    return {
-      id: 'svg',
-      ensureFaces: ensureCubeFacesSvg,
-      layoutFaces: layoutCubeFacesSvg,
-      renderBoard: renderBoardSvg,
-      applyTransform: applyTransformSvg,
-      syncCell(cell) {
-        syncSvgCell(cell);
-      },
-      syncAll() {
-        drawAllSvgFaces();
-      },
-      getCellFromInteraction(eventOrTarget) {
-        const target = eventOrTarget?.target || eventOrTarget;
-        const hit = target?.closest?.('[data-cell-face]');
-        if (!hit) return null;
-        const face = normalizeFaceId(hit.dataset.cellFace);
-        const row = Number(hit.dataset.cellRow);
-        const col = Number(hit.dataset.cellCol);
-        return getCell(face, row, col);
-      },
-    };
-  }
-
-  function createWebglRenderer() {
-    return {
-      id: 'webgl',
-      ensureFaces: ensureCubeFacesWebgl,
-      layoutFaces: layoutCubeFacesWebgl,
-      renderBoard: renderBoardWebgl,
-      applyTransform: applyTransformWebgl,
-      syncCell(cell) {
-        if (!cell) return;
-        syncWebglOverlayCell(cell);
-        drawWebglFace(cell.face);
-      },
-      syncAll() {
-        forEachCell((cell) => syncWebglOverlayCell(cell));
-        drawAllWebglFaces();
-      },
-      getCellFromInteraction(eventOrTarget) {
-        const target = eventOrTarget?.target || eventOrTarget;
-        const hit = target?.closest?.('[data-webgl-cell-face]');
-        if (!hit) return null;
-        const face = normalizeFaceId(hit.dataset.webglCellFace);
-        const row = Number(hit.dataset.webglCellRow);
-        const col = Number(hit.dataset.webglCellCol);
-        return getCell(face, row, col);
-      },
-    };
+    const factory = factoryByMode[mode] || factoryByMode.dom;
+    if (typeof factory === 'function') {
+      const renderer = factory(context);
+      if (renderer) return renderer;
+    }
+    const domFactory = factoryByMode.dom;
+    if (typeof domFactory === 'function') {
+      const domRenderer = domFactory(buildRendererContextForMode('dom'));
+      if (domRenderer) return domRenderer;
+    }
+    return domFallback;
   }
 
   function createRenderer(mode) {
-    if (mode === 'dom') {
-      return createDomRenderer();
+    if (!SUPPORTED_RENDERERS.includes(mode)) {
+      return createRendererWithFallback('dom');
     }
-    if (mode === 'canvas') {
-      return createCanvasRenderer();
-    }
-    if (mode === 'svg') {
-      return createSvgRenderer();
-    }
-    if (mode === 'webgl') {
-      return createWebglRenderer();
-    }
-    return createDomRenderer();
+    return createRendererWithFallback(mode);
   }
 
   function applyRendererMode(mode, options = {}) {

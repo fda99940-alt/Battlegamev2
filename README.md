@@ -4,11 +4,15 @@
 
 ## Structure overview
 
-- `index.html`: bootstrapper that wires `styles.css`, `translations.js`, and `script.js`. The markup scopes every UI region—board, status, controls, theme toggles, difficulty presets, language dropdown (flags included), history panel, seed copy/join tools, and room-code tracker.
+- `index.html`: bootstrapper that wires `styles.css`, locale files, `translations.js`, renderer modules in `renderers/*.js`, and `script.js`. The markup scopes every UI region—board, status, controls, theme toggles, difficulty presets, language dropdown (flags included), history panel, seed copy/join tools, and room-code tracker.
 - `styles.css`: visual system that defines six palettes (Neon, Dusk, Sunrise, Midnight, Verdant, Ember), cube-face transforms, zero-gap grids, and responsive helpers so the board and controls stay tidy.
 - `translations/locales/*.js`: each language lives in its own file that registers its localized strings plus the seed/share copy text on `window.MindsweeperTranslations.TRANSLATIONS` and `SEED_TERMS`.
 - `translations.js`: aggregates the `LANGUAGE_OPTIONS` list, loads the per-locale registrations, augments theme names, and derives Braille output from English before exposing the bundle to the app.
-- `script.js`: controller that manages input validation, board generation, mine placement, neighbor counting (including cross-face transitions), specials, replay recording/playback, history rendering, localization wiring, and persistence of user-selected settings.
+- `renderers/domRenderer.js`: DOM renderer implementation (button-grid board creation, DOM-mode transforms, and DOM hit resolution).
+- `renderers/canvasRenderer.js`: Canvas renderer implementation (face canvas creation, resize/draw pipeline, and canvas hit testing).
+- `renderers/svgRenderer.js`: SVG renderer implementation (vector cell generation/sync, face SVG setup, and SVG hit testing).
+- `renderers/webglRenderer.js`: WebGL renderer implementation (GPU fill pipeline, overlay labels, WebGL support probe, and WebGL hit testing).
+- `script.js`: game/application controller that manages rules, board generation, mine/special placement, neighbor logic, replay/history/persistence, localization, and renderer selection/orchestration.
 
 ## Running
 
