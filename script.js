@@ -295,7 +295,7 @@ let activePreset = null;
   configForm.addEventListener('submit', (event) => {
     event.preventDefault();
     setActivePreset(null);
-    startNewGame();
+    startNewGame({ forceNewSeed: true });
   });
 
   toggleSpecialsBtn.addEventListener('click', () => {
@@ -507,7 +507,7 @@ let activePreset = null;
    * Resets state for a fresh run, builds a new grid, and renders the updated board.
    */
   function startNewGame(options = {}) {
-    const { roomCode, layout, seed } = options;
+    const { roomCode, layout, seed, forceNewSeed = false } = options;
     stopReplay();
     runStartTime = Date.now();
     const safeConfig = applyConfigFromForm();
@@ -516,7 +516,7 @@ let activePreset = null;
     resetBoardState();
     gameActive = true;
     grid = createGrid(config.rows, config.cols);
-    const seedValue = seed || currentRoomSeed || createRandomSeed();
+    const seedValue = seed || (forceNewSeed ? createDistinctSeed(currentRoomSeed) : currentRoomSeed || createRandomSeed());
     currentRoomSeed = seedValue;
     const rng = createRng(seedValue);
     if (layout?.minePositions?.length || layout?.rotationSpecials?.length || layout?.flipSpecials?.length) {
@@ -2981,6 +2981,18 @@ let activePreset = null;
     return Array.from({ length }, () => ROOM_CODE_ALPHABET[Math.floor(Math.random() * ROOM_CODE_ALPHABET.length)]).join(
       ''
     );
+  }
+
+  function createDistinctSeed(previousSeed, maxAttempts = 12) {
+    let next = createRandomSeed();
+    for (let attempt = 0; attempt < maxAttempts && next === previousSeed; attempt += 1) {
+      next = createRandomSeed();
+    }
+    if (next === previousSeed) {
+      const stamp = Date.now().toString(36).toUpperCase();
+      next = `${stamp}${createRandomSeed()}`.slice(0, ROOM_CODE_RANDOM_SEGMENT_LENGTH);
+    }
+    return next;
   }
 
   /**
