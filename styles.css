@@ -616,6 +616,70 @@ body {
   border-radius: 0;
 }
 
+.board-canvas {
+  display: block;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.board-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.svg-cell-group {
+  cursor: pointer;
+}
+
+.svg-cell {
+  fill: rgba(255, 255, 255, 0.045);
+  stroke: var(--panel-border);
+  stroke-width: 0.04;
+  vector-effect: non-scaling-stroke;
+  transition: fill 0.12s ease, opacity 0.12s ease;
+}
+
+.svg-cell-group:hover .svg-cell:not(.cell--revealed) {
+  fill: rgba(255, 255, 255, 0.12);
+}
+
+.svg-cell.cell--revealed {
+  fill: rgba(255, 255, 255, 0.12);
+}
+
+.svg-cell.cell--mine {
+  fill: rgba(255, 107, 107, 0.45);
+}
+
+.svg-cell.cell--flagged {
+  fill: rgba(90, 242, 199, 0.18);
+}
+
+.svg-cell.cell--special-rotation,
+.svg-cell.cell--special-flip,
+.svg-cell.cell--special-dog,
+.svg-cell.cell--special-guardian {
+  stroke: var(--highlight);
+}
+
+.svg-cell__value {
+  text-anchor: middle;
+  dominant-baseline: middle;
+  fill: var(--text-primary);
+  font-size: 0.5px;
+  font-weight: 700;
+  font-family: var(--cell-font, "Space Grotesk", "Inter", sans-serif);
+  pointer-events: none;
+}
+
+.svg-cell__value--special {
+  fill: var(--highlight);
+  opacity: 0.9;
+}
+
 .cube[data-face-count]:not([data-face-count="6"]) .cell {
   border-radius: 0;
   box-shadow: none;
@@ -902,6 +966,23 @@ button.ghost {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+.renderer-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--text-faint);
+  font-size: 0.9rem;
+}
+
+.renderer-switcher select {
+  border-radius: 0.45rem;
+  border: 1px solid var(--ghost-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+  padding: 0.35rem 0.6rem;
+  font-size: 0.9rem;
 }
 
 .theme-switcher {

@@ -10,6 +10,8 @@ const historyKey = 'mindsweeperRuns';
 const cubeEl = document.getElementById('cube');
 let faceBoards = [];
 let boardByFace = {};
+let faceCanvasByFace = {};
+let faceSvgByFace = {};
 const statusMessage = document.getElementById('statusMessage');
 const remainingMinesEl = document.getElementById('remainingMines');
 const revealedCountEl = document.getElementById('revealedCount');
@@ -32,6 +34,7 @@ const faceShapeInfoEl = document.getElementById('faceShapeInfo');
 const configScaleInfoEl = document.getElementById('configScaleInfo');
 const toggleSpecialsBtn = document.getElementById('toggleSpecials');
 const toggleBoardModeBtn = document.getElementById('toggleBoardMode');
+const rendererModeSelectEl = document.getElementById('rendererModeSelect');
 const showMinesBtn = document.getElementById('showMinesHandle');
 const clearHistoryBtn = document.getElementById('clearHistory');
 const historyList = document.getElementById('historyList');
@@ -43,6 +46,9 @@ const boardWrapper = document.querySelector('.board-wrapper');
 const themeButtons = document.querySelectorAll('[data-theme-option]');
 const themeStorageKey = 'mindsweeperTheme';
 const boardModeStorageKey = 'mindsweeperBoardMode';
+const rendererStorageKey = 'mindsweeperRenderer';
+const SUPPORTED_RENDERERS = ['dom', 'canvas', 'svg'];
+const SVG_NS = 'http://www.w3.org/2000/svg';
 const availableThemes = ['neon', 'dusk', 'sunrise', 'midnight', 'verdant', 'ember'];
 const defaultTheme = availableThemes[0];
 const presetButtons = document.querySelectorAll('[data-preset]');
@@ -243,6 +249,8 @@ let activePreset = null;
   let runs = loadRuns();
   let gameActive = false;
   let boardMode = loadBoardMode();
+  let rendererMode = loadRendererMode();
+  let activeRenderer = null;
   let specialsEnabled = true;
   let cheatMode = false;
   let rotationAngle = 0;
@@ -393,18 +401,16 @@ let activePreset = null;
         suppressNextReveal = false;
         return;
       }
-      const cellEl = event.target.closest('.cell');
-      if (!cellEl) return;
-      const cell = getCellFromElement(cellEl);
+      const cell = resolveCellFromInteractionTarget(event);
+      if (!cell) return;
       revealCell(cell);
     });
 
     cubeEl.addEventListener('contextmenu', (event) => {
       if (isReplaying) return;
       event.preventDefault();
-      const cellEl = event.target.closest('.cell');
-      if (!cellEl) return;
-      const cell = getCellFromElement(cellEl);
+      const cell = resolveCellFromInteractionTarget(event);
+      if (!cell) return;
       applyFlag(cell, !cell.flagged, { recordAction: true });
     });
 
@@ -479,6 +485,8 @@ let activePreset = null;
    * Initializes the UI, translations, theme, presets, history, and game state.
    */
   function init() {
+    applyRendererMode(rendererMode, { persist: false, restart: false, rebuildFaces: false });
+    initRendererModeSelector();
     ensureCubeFaces(config.faces);
     initLanguageSwitcher();
     initAvatarSwitcher();
@@ -884,8 +892,8 @@ let activePreset = null;
   /**
    * Creates and inserts DOM elements for each cell, applying initial classes.
    */
-  function renderBoard() {
-    layoutCubeFaces();
+  function renderBoardDom() {
+    layoutCubeFacesDom();
     getActiveFaces().forEach((face) => {
       const boardEl = boardByFace[face];
       if (!boardEl) return;
@@ -940,15 +948,17 @@ let activePreset = null;
     }
     cell.revealed = true;
     const cellEl = cell.element;
-    if (!cellEl) return;
-    cellEl.classList.add('cell--revealed');
-    cellEl.removeAttribute('aria-label');
-    if (cell.isMine) {
-      cellEl.classList.add('cell--mine');
-    } else if (cell.neighborMines) {
-      cellEl.textContent = cell.neighborMines;
-      cellEl.style.color = getNumberColor(cell.neighborMines);
+    if (cellEl && rendererMode === 'dom') {
+      cellEl.classList.add('cell--revealed');
+      cellEl.removeAttribute('aria-label');
+      if (cell.isMine) {
+        cellEl.classList.add('cell--mine');
+      } else if (cell.neighborMines) {
+        cellEl.textContent = cell.neighborMines;
+        cellEl.style.color = getNumberColor(cell.neighborMines);
+      }
     }
+    activeRenderer?.syncCell?.(cell);
     revealedCount += 1;
     if (recordAction && !isReplaying) {
       runActions.push({ type: 'reveal', face: cell.face, row: cell.row, col: cell.col });
@@ -986,7 +996,7 @@ let activePreset = null;
     const wasFlagged = cell.flagged;
     cell.flagged = shouldFlag;
     const cellEl = cell.element;
-    if (cellEl) {
+    if (cellEl && rendererMode === 'dom') {
       cellEl.classList.toggle('cell--flagged', shouldFlag);
     }
     if (shouldFlag && !wasFlagged) {
@@ -1001,6 +1011,7 @@ let activePreset = null;
     if (userAction && !replay) {
       commentOnFlag(cell, shouldFlag);
     }
+    activeRenderer?.syncCell?.(cell);
     updateStatus();
   }
 
@@ -1059,7 +1070,7 @@ let activePreset = null;
   /**
    * Applies current rotation/flip transforms to the cube container.
    */
-  function applyTransform() {
+  function applyTransformDom() {
     if (!cubeEl) return;
     const firstFace = getActiveFaces()[0];
     if (boardMode === '2d') {
@@ -1083,6 +1094,407 @@ let activePreset = null;
     const zoomDistance = (cubeZoom - 1) * Math.max(cubeEl.clientWidth * 0.75, 240);
     cubeEl.style.transform = `translateZ(${zoomDistance}px) rotateX(${cubePitch}deg) rotateY(${cubeYaw + spinY}deg) scale(${scaleX}, ${scaleY})`;
     updateWrapperSpacing(false);
+  }
+
+  function renderBoard() {
+    if (!activeRenderer?.renderBoard) return;
+    activeRenderer.renderBoard();
+  }
+
+  function applyTransform() {
+    if (!activeRenderer?.applyTransform) return;
+    activeRenderer.applyTransform();
+  }
+
+  function ensureCubeFaces(count = 6) {
+    if (!activeRenderer?.ensureFaces) return;
+    activeRenderer.ensureFaces(count);
+  }
+
+  function layoutCubeFaces() {
+    if (!activeRenderer?.layoutFaces) return;
+    activeRenderer.layoutFaces();
+  }
+
+  function renderBoardCanvas() {
+    getActiveFaces().forEach((face) => {
+      const canvas = faceCanvasByFace[face];
+      if (canvas) {
+        canvas.style.aspectRatio = `${config.cols} / ${config.rows}`;
+      }
+    });
+    forEachCell((cell) => {
+      cell.element = null;
+    });
+    layoutCubeFacesCanvas();
+    drawAllCanvasFaces();
+  }
+
+  function applyTransformCanvas() {
+    if (!cubeEl) return;
+    const firstFace = getActiveFaces()[0];
+    if (boardMode === '2d') {
+      const canvas = faceCanvasByFace[firstFace];
+      if (canvas) {
+        const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
+        const scaleY = specialsEnabled && flipVertical ? -1 : 1;
+        const spin = specialsEnabled ? rotationAngle : 0;
+        canvas.style.transform = `rotate(${spin}deg) scale(${scaleX}, ${scaleY})`;
+      }
+      cubeEl.style.transform = 'none';
+      updateWrapperSpacing(false);
+      return;
+    }
+    if (faceCanvasByFace[firstFace]) {
+      faceCanvasByFace[firstFace].style.transform = 'none';
+    }
+    const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
+    const scaleY = specialsEnabled && flipVertical ? -1 : 1;
+    const spinY = specialsEnabled ? rotationAngle : 0;
+    const zoomDistance = (cubeZoom - 1) * Math.max(cubeEl.clientWidth * 0.75, 240);
+    cubeEl.style.transform = `translateZ(${zoomDistance}px) rotateX(${cubePitch}deg) rotateY(${cubeYaw + spinY}deg) scale(${scaleX}, ${scaleY})`;
+    updateWrapperSpacing(false);
+  }
+
+  function ensureCubeFacesCanvas(count = 6) {
+    if (!cubeEl) return;
+    const safeCount = normalizeFaceCount(Number(count) || 6);
+    cubeEl.innerHTML = '';
+    for (let i = 0; i < safeCount; i += 1) {
+      const faceEl = document.createElement('div');
+      faceEl.className = 'cube-face';
+      faceEl.setAttribute('data-face-index', String(i));
+      const canvasEl = document.createElement('canvas');
+      canvasEl.className = 'board board-canvas';
+      canvasEl.setAttribute('data-face-canvas', faceId(i));
+      canvasEl.setAttribute('data-face-board', faceId(i));
+      canvasEl.setAttribute('role', 'img');
+      canvasEl.setAttribute('aria-label', `Face ${i + 1}`);
+      faceEl.appendChild(canvasEl);
+      cubeEl.appendChild(faceEl);
+    }
+    faceBoards = Array.from(cubeEl.querySelectorAll('[data-face-canvas]'));
+    faceCanvasByFace = faceBoards.reduce((acc, canvas) => {
+      const face = canvas.dataset.faceCanvas;
+      if (face) {
+        acc[face] = canvas;
+      }
+      return acc;
+    }, {});
+    faceSvgByFace = {};
+    boardByFace = {};
+    layoutCubeFacesCanvas();
+  }
+
+  function layoutCubeFacesCanvas() {
+    layoutCubeFacesDom();
+    resizeCanvasFaces();
+    drawAllCanvasFaces();
+  }
+
+  function resizeCanvasFaces() {
+    const pixelRatio = Math.max(window.devicePixelRatio || 1, 1);
+    Object.values(faceCanvasByFace).forEach((canvas) => {
+      const rect = canvas.getBoundingClientRect();
+      const width = Math.max(Math.floor(rect.width * pixelRatio), 1);
+      const height = Math.max(Math.floor(rect.height * pixelRatio), 1);
+      if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+      }
+    });
+  }
+
+  function drawAllCanvasFaces() {
+    getActiveFaces().forEach((face) => drawCanvasFace(face));
+  }
+
+  function drawCanvasFace(face) {
+    const canvas = faceCanvasByFace[face];
+    if (!canvas) return;
+    const context = canvas.getContext('2d');
+    if (!context) return;
+    const width = Math.max(canvas.clientWidth, 1);
+    const height = Math.max(canvas.clientHeight, 1);
+    const scaleX = canvas.width / width;
+    const scaleY = canvas.height / height;
+    context.setTransform(scaleX, 0, 0, scaleY, 0, 0);
+    context.clearRect(0, 0, width, height);
+    const palette = getCanvasPalette();
+    context.fillStyle = palette.boardSurface;
+    context.fillRect(0, 0, width, height);
+    const cellWidth = width / Math.max(config.cols, 1);
+    const cellHeight = height / Math.max(config.rows, 1);
+    for (let row = 0; row < config.rows; row += 1) {
+      for (let col = 0; col < config.cols; col += 1) {
+        const cell = getCell(face, row, col);
+        if (!cell) continue;
+        drawCanvasCell(context, cell, col * cellWidth, row * cellHeight, cellWidth, cellHeight, palette);
+      }
+    }
+  }
+
+  function getCanvasPalette() {
+    const rootStyles = getComputedStyle(document.documentElement);
+    return {
+      boardSurface: rootStyles.getPropertyValue('--board-surface').trim() || 'rgba(0, 0, 0, 0.25)',
+      hiddenFill: rootStyles.getPropertyValue('--panel-surface').trim() || 'rgba(255, 255, 255, 0.06)',
+      revealedFill: rootStyles.getPropertyValue('--cell-revealed-bg').trim() || 'rgba(255, 255, 255, 0.12)',
+      border: rootStyles.getPropertyValue('--panel-border').trim() || 'rgba(255, 255, 255, 0.2)',
+      text: rootStyles.getPropertyValue('--text-primary').trim() || '#ffffff',
+      accent: rootStyles.getPropertyValue('--accent').trim() || '#5af2c7',
+      highlight: rootStyles.getPropertyValue('--highlight').trim() || '#39f0ff',
+      mine: rootStyles.getPropertyValue('--danger').trim() || '#ff6b6b',
+    };
+  }
+
+  function drawCanvasCell(context, cell, x, y, width, height, palette) {
+    const innerPadding = Math.max(Math.min(width, height) * 0.08, 1);
+    const boxX = x + innerPadding;
+    const boxY = y + innerPadding;
+    const boxW = Math.max(width - innerPadding * 2, 1);
+    const boxH = Math.max(height - innerPadding * 2, 1);
+
+    context.fillStyle = cell.revealed ? palette.revealedFill : palette.hiddenFill;
+    context.fillRect(boxX, boxY, boxW, boxH);
+    context.strokeStyle = palette.border;
+    context.lineWidth = 1;
+    context.strokeRect(boxX + 0.5, boxY + 0.5, Math.max(boxW - 1, 1), Math.max(boxH - 1, 1));
+
+    if (!cell.revealed && cell.flagged) {
+      context.fillStyle = palette.accent;
+      context.font = `${Math.max(Math.floor(boxH * 0.6), 10)}px sans-serif`;
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      context.fillText('⚑', boxX + boxW / 2, boxY + boxH / 2);
+      return;
+    }
+
+    if (cell.revealed && cell.isMine) {
+      context.fillStyle = palette.mine;
+      context.beginPath();
+      context.arc(boxX + boxW / 2, boxY + boxH / 2, Math.max(Math.min(boxW, boxH) * 0.22, 3), 0, Math.PI * 2);
+      context.fill();
+      return;
+    }
+
+    if (cell.revealed && cell.neighborMines > 0) {
+      context.fillStyle = getNumberColor(cell.neighborMines);
+      context.font = `${Math.max(Math.floor(boxH * 0.52), 9)}px sans-serif`;
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      context.fillText(String(cell.neighborMines), boxX + boxW / 2, boxY + boxH / 2);
+      return;
+    }
+
+    if (!cell.revealed && cheatMode && cell.special) {
+      context.fillStyle = palette.highlight;
+      context.font = `${Math.max(Math.floor(boxH * 0.38), 8)}px sans-serif`;
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      const markerByType = {
+        rotation: 'R',
+        flip: 'F',
+        dog: 'D',
+        guardian: 'G',
+      };
+      context.fillText(markerByType[cell.special.type] || 'S', boxX + boxW / 2, boxY + boxH / 2);
+    }
+  }
+
+  function renderBoardSvg() {
+    const usePolygonCells = getFaceCount() !== 6;
+    getActiveFaces().forEach((face) => {
+      const svg = faceSvgByFace[face];
+      if (!svg) return;
+      svg.setAttribute('viewBox', `0 0 ${config.cols} ${config.rows}`);
+      svg.innerHTML = '';
+      for (let row = 0; row < config.rows; row += 1) {
+        for (let col = 0; col < config.cols; col += 1) {
+          const cell = getCell(face, row, col);
+          if (!cell) continue;
+          const group = document.createElementNS(SVG_NS, 'g');
+          group.classList.add('svg-cell-group');
+          group.setAttribute('data-cell-face', face);
+          group.setAttribute('data-cell-row', String(row));
+          group.setAttribute('data-cell-col', String(col));
+          group.setAttribute('tabindex', '-1');
+
+          const shape = document.createElementNS(SVG_NS, usePolygonCells ? 'polygon' : 'rect');
+          shape.classList.add('svg-cell');
+          if (usePolygonCells) {
+            const inset = 0.14;
+            const points = [
+              [col + inset, row],
+              [col + 1 - inset, row],
+              [col + 1, row + inset],
+              [col + 1, row + 1 - inset],
+              [col + 1 - inset, row + 1],
+              [col + inset, row + 1],
+              [col, row + 1 - inset],
+              [col, row + inset],
+            ]
+              .map((point) => point.join(','))
+              .join(' ');
+            shape.setAttribute('points', points);
+          } else {
+            shape.setAttribute('x', String(col + 0.06));
+            shape.setAttribute('y', String(row + 0.06));
+            shape.setAttribute('width', '0.88');
+            shape.setAttribute('height', '0.88');
+            shape.setAttribute('rx', '0.08');
+            shape.setAttribute('ry', '0.08');
+          }
+
+          const label = document.createElementNS(SVG_NS, 'text');
+          label.classList.add('svg-cell__value');
+          label.setAttribute('x', String(col + 0.5));
+          label.setAttribute('y', String(row + 0.54));
+
+          group.appendChild(shape);
+          group.appendChild(label);
+          svg.appendChild(group);
+
+          cell.element = group;
+          cell.svgShape = shape;
+          cell.svgValue = label;
+          syncSvgCell(cell);
+        }
+      }
+    });
+    layoutCubeFacesSvg();
+  }
+
+  function applyTransformSvg() {
+    if (!cubeEl) return;
+    const firstFace = getActiveFaces()[0];
+    if (boardMode === '2d') {
+      const svg = faceSvgByFace[firstFace];
+      if (svg) {
+        const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
+        const scaleY = specialsEnabled && flipVertical ? -1 : 1;
+        const spin = specialsEnabled ? rotationAngle : 0;
+        svg.style.transform = `rotate(${spin}deg) scale(${scaleX}, ${scaleY})`;
+      }
+      cubeEl.style.transform = 'none';
+      updateWrapperSpacing(false);
+      return;
+    }
+    if (faceSvgByFace[firstFace]) {
+      faceSvgByFace[firstFace].style.transform = 'none';
+    }
+    const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
+    const scaleY = specialsEnabled && flipVertical ? -1 : 1;
+    const spinY = specialsEnabled ? rotationAngle : 0;
+    const zoomDistance = (cubeZoom - 1) * Math.max(cubeEl.clientWidth * 0.75, 240);
+    cubeEl.style.transform = `translateZ(${zoomDistance}px) rotateX(${cubePitch}deg) rotateY(${cubeYaw + spinY}deg) scale(${scaleX}, ${scaleY})`;
+    updateWrapperSpacing(false);
+  }
+
+  function ensureCubeFacesSvg(count = 6) {
+    if (!cubeEl) return;
+    const safeCount = normalizeFaceCount(Number(count) || 6);
+    cubeEl.innerHTML = '';
+    for (let i = 0; i < safeCount; i += 1) {
+      const faceEl = document.createElement('div');
+      faceEl.className = 'cube-face';
+      faceEl.setAttribute('data-face-index', String(i));
+      const svgEl = document.createElementNS(SVG_NS, 'svg');
+      svgEl.classList.add('board', 'board-svg');
+      svgEl.setAttribute('data-face-svg', faceId(i));
+      svgEl.setAttribute('data-face-board', faceId(i));
+      svgEl.setAttribute('aria-label', `Face ${i + 1}`);
+      faceEl.appendChild(svgEl);
+      cubeEl.appendChild(faceEl);
+    }
+    faceBoards = Array.from(cubeEl.querySelectorAll('[data-face-svg]'));
+    faceSvgByFace = faceBoards.reduce((acc, svg) => {
+      const face = svg.dataset.faceSvg;
+      if (face) {
+        acc[face] = svg;
+      }
+      return acc;
+    }, {});
+    faceCanvasByFace = {};
+    boardByFace = {};
+    layoutCubeFacesSvg();
+  }
+
+  function layoutCubeFacesSvg() {
+    layoutCubeFacesDom();
+    drawAllSvgFaces();
+  }
+
+  function drawAllSvgFaces() {
+    getActiveFaces().forEach((face) => drawSvgFace(face));
+  }
+
+  function drawSvgFace(face) {
+    const faceGrid = grid[face];
+    if (!faceGrid) return;
+    for (let row = 0; row < faceGrid.length; row += 1) {
+      for (let col = 0; col < faceGrid[row].length; col += 1) {
+        syncSvgCell(faceGrid[row][col]);
+      }
+    }
+  }
+
+  function syncSvgCell(cell) {
+    if (!cell?.svgShape || !cell?.svgValue) return;
+    const shape = cell.svgShape;
+    const value = cell.svgValue;
+    shape.classList.remove(
+      'cell--revealed',
+      'cell--mine',
+      'cell--flagged',
+      'cell--special-rotation',
+      'cell--special-flip',
+      'cell--special-dog',
+      'cell--special-guardian'
+    );
+    if (cell.revealed) {
+      shape.classList.add('cell--revealed');
+    }
+    if (cell.isMine && cell.revealed) {
+      shape.classList.add('cell--mine');
+    }
+    if (cell.flagged && !cell.revealed) {
+      shape.classList.add('cell--flagged');
+    }
+    if (cell.special?.type === 'rotation') {
+      shape.classList.add('cell--special-rotation');
+    }
+    if (cell.special?.type === 'flip') {
+      shape.classList.add('cell--special-flip');
+    }
+    if (cell.special?.type === 'dog') {
+      shape.classList.add('cell--special-dog');
+    }
+    if (cell.special?.type === 'guardian') {
+      shape.classList.add('cell--special-guardian');
+    }
+
+    value.classList.remove('svg-cell__value--special');
+    value.textContent = '';
+    value.removeAttribute('fill');
+
+    if (cell.flagged && !cell.revealed) {
+      value.textContent = '⚑';
+    } else if (cell.revealed && cell.isMine) {
+      value.textContent = '✹';
+    } else if (cell.revealed && cell.neighborMines > 0) {
+      value.textContent = String(cell.neighborMines);
+      value.setAttribute('fill', getNumberColor(cell.neighborMines));
+    } else if (!cell.revealed && cheatMode && cell.special) {
+      const markerByType = {
+        rotation: 'R',
+        flip: 'F',
+        dog: 'D',
+        guardian: 'G',
+      };
+      value.classList.add('svg-cell__value--special');
+      value.textContent = markerByType[cell.special.type] || 'S';
+    }
   }
 
   /**
@@ -1151,10 +1563,11 @@ let activePreset = null;
     forEachCell((cell) => {
       if (cell.isMine && !cell.revealed) {
         const cellEl = cell.element;
-        if (cellEl) {
+        if (cellEl && rendererMode === 'dom') {
           cellEl.classList.add('cell--revealed', 'cell--mine');
         }
         cell.revealed = true;
+        activeRenderer?.syncCell?.(cell);
       }
     });
   }
@@ -1860,6 +2273,33 @@ let activePreset = null;
     if (persist) {
       safeSetItem(themeStorageKey, themeName);
     }
+    activeRenderer?.syncAll?.();
+  }
+
+  function initRendererModeSelector() {
+    if (!rendererModeSelectEl) return;
+    rendererModeSelectEl.innerHTML = '';
+    SUPPORTED_RENDERERS.forEach((mode) => {
+      const option = document.createElement('option');
+      option.value = mode;
+      const rendererLabels = {
+        dom: 'DOM',
+        canvas: 'Canvas',
+        svg: 'SVG',
+      };
+      option.textContent = rendererLabels[mode] || mode.toUpperCase();
+      rendererModeSelectEl.appendChild(option);
+    });
+    rendererModeSelectEl.addEventListener('change', () => {
+      if (!SUPPORTED_RENDERERS.includes(rendererModeSelectEl.value)) return;
+      applyRendererMode(rendererModeSelectEl.value, { persist: true, restart: true });
+    });
+    updateRendererModeSelect();
+  }
+
+  function updateRendererModeSelect() {
+    if (!rendererModeSelectEl) return;
+    rendererModeSelectEl.value = rendererMode;
   }
 
   /**
@@ -2067,6 +2507,18 @@ let activePreset = null;
   }
 
   /**
+   * Resolves an interaction target element to a cell via the active renderer.
+   */
+  function resolveCellFromInteractionTarget(eventOrTarget) {
+    if (activeRenderer?.getCellFromInteraction) {
+      return activeRenderer.getCellFromInteraction(eventOrTarget);
+    }
+    const target = eventOrTarget?.target || eventOrTarget;
+    const cellEl = target?.closest?.('.cell');
+    return cellEl ? getCellFromElement(cellEl) : null;
+  }
+
+  /**
    * Returns array of existing neighboring cells for propagation logic.
    */
   function getNeighbors(cell) {
@@ -2172,10 +2624,11 @@ let activePreset = null;
    */
   function applyCheatState() {
     forEachCell((cell) => {
-      if (cell.element) {
+      if (cell.element && rendererMode === 'dom') {
         cell.element.setAttribute('data-show-cheat', cheatMode ? 'true' : 'false');
       }
     });
+    activeRenderer?.syncAll?.();
   }
 
   /**
@@ -2280,10 +2733,12 @@ let activePreset = null;
     return faceId(0);
   }
 
-  function ensureCubeFaces(count = 6) {
+  function ensureCubeFacesDom(count = 6) {
     if (!cubeEl) return;
     const safeCount = normalizeFaceCount(Number(count) || 6);
     cubeEl.innerHTML = '';
+    faceCanvasByFace = {};
+    faceSvgByFace = {};
     for (let i = 0; i < safeCount; i += 1) {
       const faceEl = document.createElement('div');
       faceEl.className = 'cube-face';
@@ -2304,7 +2759,7 @@ let activePreset = null;
       }
       return acc;
     }, {});
-    layoutCubeFaces();
+    layoutCubeFacesDom();
   }
 
   function createRegularPolygonClipPath(sides) {
@@ -2607,7 +3062,7 @@ let activePreset = null;
     faceEl.style.webkitClipPath = clipPath;
   }
 
-  function layoutCubeFaces() {
+  function layoutCubeFacesDom() {
     if (!cubeEl) return;
     const faces = cubeEl.querySelectorAll('.cube-face');
     const faceCount = faces.length;
@@ -2704,6 +3159,120 @@ let activePreset = null;
       applyPolyFaceStyles(faceEl, faceWidth, clipPath);
       faceEl.style.transform = faceTransformForNormal(normal, radius, layout.sides, upHint);
     });
+  }
+
+  function normalizeRendererMode(mode) {
+    return SUPPORTED_RENDERERS.includes(mode) ? mode : SUPPORTED_RENDERERS[0];
+  }
+
+  function loadRendererMode() {
+    return normalizeRendererMode(safeGetItem(rendererStorageKey));
+  }
+
+  function createDomRenderer() {
+    return {
+      id: 'dom',
+      ensureFaces: ensureCubeFacesDom,
+      layoutFaces: layoutCubeFacesDom,
+      renderBoard: renderBoardDom,
+      applyTransform: applyTransformDom,
+      syncCell() {},
+      syncAll() {},
+      getCellFromInteraction(eventOrTarget) {
+        const target = eventOrTarget?.target || eventOrTarget;
+        const cellEl = target?.closest?.('.cell');
+        return cellEl ? getCellFromElement(cellEl) : null;
+      },
+    };
+  }
+
+  function createCanvasRenderer() {
+    return {
+      id: 'canvas',
+      ensureFaces: ensureCubeFacesCanvas,
+      layoutFaces: layoutCubeFacesCanvas,
+      renderBoard: renderBoardCanvas,
+      applyTransform: applyTransformCanvas,
+      syncCell(cell) {
+        if (!cell) return;
+        drawCanvasFace(cell.face);
+      },
+      syncAll() {
+        drawAllCanvasFaces();
+      },
+      getCellFromInteraction(eventOrTarget) {
+        const event = eventOrTarget?.target ? eventOrTarget : null;
+        const target = event?.target || eventOrTarget;
+        const canvas = target?.closest?.('[data-face-canvas]');
+        if (!canvas) return null;
+        const face = normalizeFaceId(canvas.dataset.faceCanvas);
+        const rect = canvas.getBoundingClientRect();
+        if (!rect.width || !rect.height) return null;
+        const x = event ? event.clientX - rect.left : 0;
+        const y = event ? event.clientY - rect.top : 0;
+        const col = clamp(Math.floor((x / rect.width) * config.cols), 0, config.cols - 1);
+        const row = clamp(Math.floor((y / rect.height) * config.rows), 0, config.rows - 1);
+        return getCell(face, row, col);
+      },
+    };
+  }
+
+  function createSvgRenderer() {
+    return {
+      id: 'svg',
+      ensureFaces: ensureCubeFacesSvg,
+      layoutFaces: layoutCubeFacesSvg,
+      renderBoard: renderBoardSvg,
+      applyTransform: applyTransformSvg,
+      syncCell(cell) {
+        syncSvgCell(cell);
+      },
+      syncAll() {
+        drawAllSvgFaces();
+      },
+      getCellFromInteraction(eventOrTarget) {
+        const target = eventOrTarget?.target || eventOrTarget;
+        const hit = target?.closest?.('[data-cell-face]');
+        if (!hit) return null;
+        const face = normalizeFaceId(hit.dataset.cellFace);
+        const row = Number(hit.dataset.cellRow);
+        const col = Number(hit.dataset.cellCol);
+        return getCell(face, row, col);
+      },
+    };
+  }
+
+  function createRenderer(mode) {
+    if (mode === 'dom') {
+      return createDomRenderer();
+    }
+    if (mode === 'canvas') {
+      return createCanvasRenderer();
+    }
+    if (mode === 'svg') {
+      return createSvgRenderer();
+    }
+    return createDomRenderer();
+  }
+
+  function applyRendererMode(mode, options = {}) {
+    const { persist = true, restart = false, rebuildFaces = true } = options;
+    rendererMode = normalizeRendererMode(mode);
+    activeRenderer = createRenderer(rendererMode);
+    boardWrapper?.setAttribute('data-renderer', rendererMode);
+    updateRendererModeSelect();
+    if (persist) {
+      safeSetItem(rendererStorageKey, rendererMode);
+    }
+    if (rebuildFaces) {
+      ensureCubeFaces(config.faces);
+    }
+    if (restart) {
+      setActivePreset(null);
+      startNewGame();
+      return;
+    }
+    applyTransform();
   }
 
   function loadBoardMode() {
@@ -2863,6 +3432,16 @@ let activePreset = null;
         return '#dadada';
     }
   }
+
+  window.mindsweeperRenderer = {
+    listModes: () => SUPPORTED_RENDERERS.slice(),
+    getMode: () => rendererMode,
+    setMode: (mode, options = {}) =>
+      applyRendererMode(mode, {
+        persist: options.persist ?? true,
+        restart: options.restart ?? true,
+      }),
+  };
 
   init();
 })();

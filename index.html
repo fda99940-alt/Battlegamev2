@@ -176,6 +176,14 @@
           Counts are per face and multiplied by active faces.
         </p>
         <div class="actions">
+          <label class="renderer-switcher" for="rendererModeSelect">
+            <span>Renderer</span>
+            <select id="rendererModeSelect" aria-label="Select renderer mode">
+              <option value="dom">DOM</option>
+              <option value="canvas">Canvas</option>
+              <option value="svg">SVG</option>
+            </select>
+          </label>
           <button type="button" class="ghost" id="toggleBoardMode">
             Board: Cube
           </button>
