@@ -568,6 +568,26 @@ body {
   will-change: transform;
 }
 
+.cube-face::before {
+  content: attr(data-face-icon);
+  position: absolute;
+  top: 0.4rem;
+  right: 0.45rem;
+  z-index: 4;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--highlight-strong);
+  background: rgba(0, 0, 0, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+}
+
 .seed-banner {
   align-self: flex-end;
   display: flex;
@@ -630,6 +650,84 @@ body {
   touch-action: none;
 }
 
+.board-webgl {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.board-webgl-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  pointer-events: auto;
+  padding: 0;
+}
+
+.webgl-cell-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  font-family: var(--cell-font, "Space Grotesk", "Inter", "Segoe UI Emoji", "Apple Color Emoji", sans-serif);
+  font-weight: 700;
+  font-size: clamp(0.52rem, 1.2vw, 1rem);
+  line-height: 1;
+  user-select: none;
+  pointer-events: auto;
+  position: relative;
+  border-radius: 0.26rem;
+  margin: 0.06rem;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.webgl-cell-label--covered {
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(0, 0, 0, 0.24) 100%
+  );
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.36),
+    0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.webgl-cell-label--covered:hover {
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.34),
+    0 4px 8px rgba(0, 0, 0, 0.28);
+}
+
+.webgl-cell-label--covered:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.42),
+    0 1px 2px rgba(0, 0, 0, 0.22);
+}
+
+.webgl-cell-label--revealed {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.webgl-cell-label--flagged {
+  color: var(--accent);
+}
+
+.webgl-cell-label--mine {
+  color: var(--danger);
+  text-shadow: 0 0 8px rgba(255, 107, 107, 0.35);
+}
+
+.webgl-cell-label--special {
+  color: var(--highlight);
+  font-size: clamp(0.58rem, 1.35vw, 1.08rem);
+}
+
 .svg-cell-group {
   cursor: pointer;
 }
@@ -671,13 +769,14 @@ body {
   fill: var(--text-primary);
   font-size: 0.5px;
   font-weight: 700;
-  font-family: var(--cell-font, "Space Grotesk", "Inter", sans-serif);
+  font-family: var(--cell-font, "Space Grotesk", "Inter", "Segoe UI Emoji", "Apple Color Emoji", sans-serif);
   pointer-events: none;
 }
 
 .svg-cell__value--special {
   fill: var(--highlight);
   opacity: 0.9;
+  font-size: 0.58px;
 }
 
 .cube[data-face-count]:not([data-face-count="6"]) .cell {
@@ -703,7 +802,7 @@ body {
 }
 
 .board-wrapper[data-board-mode="2d"] .cube-face {
-  position: static;
+  position: relative;
   left: auto;
   margin-left: 0;
   margin-top: 0;
@@ -795,23 +894,33 @@ body {
 
 .cell--special-rotation::after,
 .cell--special-flip::after {
-  content: "";
   position: absolute;
-  width: 12px;
-  height: 12px;
-  border: 2px solid var(--highlight);
-  border-radius: 999px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.95rem;
+  line-height: 1;
+  color: var(--highlight);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   opacity: 0;
   transition: opacity 0.2s ease;
 }
 
-.cell[data-show-cheat="true"].cell--special-rotation::after,
-.cell[data-show-cheat="true"].cell--special-flip::after {
-  opacity: 0.7;
+.cell--special-rotation::after {
+  content: "⟳";
 }
 
-.cell--special-dog::after {
-  content: "🐶";
+.cell--special-flip::after {
+  content: "⇋";
+}
+
+.cell[data-show-cheat="true"].cell--special-rotation::after,
+.cell[data-show-cheat="true"].cell--special-flip::after {
+  opacity: 0.85;
+}
+
+.cell--special-dog::after,
+.cell--special-guardian::after {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -820,6 +929,10 @@ body {
   opacity: 0;
   transition: opacity 0.2s ease;
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.cell--special-dog::after {
+  content: "🐶";
 }
 
 .cell[data-show-cheat="true"].cell--special-dog::after {
@@ -828,27 +941,11 @@ body {
 
 .cell--special-guardian::after {
   content: "🛡";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1rem;
-  opacity: 0;
-  transition: opacity 0.2s ease;
   color: var(--accent);
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .cell[data-show-cheat="true"].cell--special-guardian::after {
   opacity: 0.9;
-}
-
-.cell--special-rotation::after {
-  border-top-color: transparent;
-}
-
-.cell--special-flip::after {
-  border-left-color: transparent;
 }
 
 .cell[data-show-cheat="true"] {
