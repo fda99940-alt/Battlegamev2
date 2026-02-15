@@ -6,6 +6,8 @@ const { loadBrowserModule } = require('./helpers/loadBrowserModule');
 const boardActions = loadBrowserModule('modules/boardActions.js', 'MindsweeperBoardActions');
 const boardGeneration = loadBrowserModule('modules/boardGeneration.js', 'MindsweeperBoardGeneration');
 const boardTopology = loadBrowserModule('modules/boardTopology.js', 'MindsweeperBoardTopology');
+const coreUtils = loadBrowserModule('modules/coreUtils.js', 'MindsweeperCoreUtils');
+const roomCodes = loadBrowserModule('modules/roomCodes.js', 'MindsweeperRoomCodes');
 const plain = (value) => JSON.parse(JSON.stringify(value));
 const CUBE_FACE_TRANSITIONS = {
   0: { left: 3, right: 1, up: 4, down: 5 },
@@ -521,7 +523,7 @@ test('neighbor count includes cross-face neighbors at cube corner connections', 
   const target = grid.f0[0][0];
   grid.f3[0][2].isMine = true; // left neighbor across face boundary
   grid.f4[2][0].isMine = true; // up neighbor across face boundary
-  grid.f4[2][2].isMine = true; // up-left diagonal after two transitions
+  grid.f3[1][2].isMine = true; // diagonal neighbor across the same corner seam
 
   const getCell = (face, row, col) => grid[face]?.[row]?.[col] || null;
   const parseFaceIndex = (face) => Number(String(face).slice(1));
@@ -569,4 +571,169 @@ test('neighbor count includes cross-face neighbors at cube corner connections', 
   });
 
   assert.equal(target.neighborMines, 3);
+});
+
+test('room code 005005006006006006006006-ATQ7: revealed safe region shows correct mine indication numbers', () => {
+  const decoded = roomCodes.decodeRoomCode({
+    code: '005005006006006006006006-ATQ7',
+    roomConfigSegmentLength: 24,
+  });
+  assert.ok(decoded?.config);
+
+  const config = { ...decoded.config };
+  const boardMode = 'cube';
+  const faceId = (index) => `f${index}`;
+  const parseFaceIndex = (face) => Number(String(face).slice(1));
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  const getFaceCount = () => (boardMode === '2d' ? 1 : config.faces);
+  const getActiveFaces = () => Array.from({ length: getFaceCount() }, (_, index) => faceId(index));
+
+  const grid = boardGeneration.createGrid({
+    rows: config.rows,
+    cols: config.cols,
+    getActiveFaces,
+  });
+
+  const getCell = (face, row, col) => grid[face]?.[row]?.[col] || null;
+  const forEachCell = (callback) => {
+    getActiveFaces().forEach((face) => {
+      grid[face].forEach((row) => row.forEach((cell) => callback(cell)));
+    });
+  };
+  const resolveNeighbor = (cell, dRow, dCol) =>
+    boardTopology.resolveNeighbor({
+      cell,
+      dRow,
+      dCol,
+      getFaceCount,
+      parseFaceIndex,
+      cubeFaceTransitions: CUBE_FACE_TRANSITIONS,
+      config,
+      faceId,
+      clamp,
+    });
+  const neighbors = [
+    [-1, -1],
+    [-1, 0],
+    [-1, 1],
+    [0, -1],
+    [0, 1],
+    [1, -1],
+    [1, 0],
+    [1, 1],
+  ];
+  const getNeighbors = (cell) =>
+    boardTopology.getNeighbors({
+      cell,
+      boardMode,
+      neighbors,
+      getActiveFaces,
+      getCell,
+      resolveNeighbor,
+    });
+
+  const rng = coreUtils.createRng(decoded.seed);
+  boardGeneration.placeMines({
+    count: config.mines,
+    rng,
+    config,
+    getActiveFaces,
+    getCell,
+    shuffle: coreUtils.shuffle,
+  });
+  boardGeneration.assignSpecials({
+    rng,
+    config,
+    forEachCell,
+    shuffle: coreUtils.shuffle,
+    pick: coreUtils.pick,
+  });
+  boardGeneration.computeNeighborCounts({
+    forEachCell,
+    getNeighbors,
+  });
+
+  forEachCell((cell) => {
+    cell.element = createMockElement();
+  });
+
+  let revealedCount = 0;
+  let guardianShields = 0;
+  const runActions = [];
+
+  const reveal = (cell, options = {}) => {
+    boardActions.revealCell({
+      cell,
+      gameActive: true,
+      replay: options.replay ?? false,
+      recordAction: options.recordAction ?? true,
+      checkVictory: options.checkVictory ?? true,
+      userAction: options.userAction ?? true,
+      guardianShields,
+      setGuardianShields: (value) => {
+        guardianShields = value;
+      },
+      describeCellPosition: () => 'test',
+      speakAvatar: () => {},
+      showStatusMessage: () => {},
+      showGuardianToast: () => {},
+      applyFlag: () => {},
+      rendererMode: 'dom',
+      getNumberColor: (value) => `c${value}`,
+      activeRenderer: { syncCell: () => {} },
+      setRevealedCount: (value) => {
+        revealedCount = value;
+      },
+      getRevealedCount: () => revealedCount,
+      isReplaying: false,
+      runActions,
+      triggerSpecial: () => {},
+      getNeighbors,
+      revealCell: reveal,
+      commentOnReveal: () => {},
+      updateStatus: () => {},
+      handleLoss: () => {
+        throw new Error('expected safe reveal in this test');
+      },
+      checkForWin: () => false,
+      handleWin: () => {},
+    });
+  };
+
+  let startCell = null;
+  forEachCell((cell) => {
+    if (startCell) return;
+    if (!cell.isMine && cell.neighborMines === 0) {
+      startCell = cell;
+    }
+  });
+  if (!startCell) {
+    forEachCell((cell) => {
+      if (startCell) return;
+      if (!cell.isMine) {
+        startCell = cell;
+      }
+    });
+  }
+  assert.ok(startCell, 'expected at least one safe cell');
+
+  reveal(startCell, { checkVictory: false, userAction: false });
+
+  const revealedCells = [];
+  forEachCell((cell) => {
+    if (cell.revealed) {
+      revealedCells.push(cell);
+    }
+  });
+  assert.ok(revealedCells.length > 0, 'expected at least one revealed cell');
+
+  revealedCells.forEach((cell) => {
+    const expected = getNeighbors(cell).filter((neighbor) => neighbor.isMine).length;
+    assert.equal(cell.neighborMines, expected, `neighbor count mismatch for ${cell.face}:${cell.row}:${cell.col}`);
+    if (expected > 0) {
+      assert.equal(String(cell.element.textContent), String(expected), `display mismatch for ${cell.face}:${cell.row}:${cell.col}`);
+    } else {
+      assert.equal(String(cell.element.textContent), '', `expected empty text for zero-neighbor cell ${cell.face}:${cell.row}:${cell.col}`);
+    }
+  });
 });

@@ -124,3 +124,19 @@ test('resolveNeighbor returns null for invalid cube face index', () => {
 
   assert.equal(result, null);
 });
+
+test('resolveNeighbor keeps top-front-left diagonal on adjacent seams (no opposite-face jump)', () => {
+  const result = boardTopology.resolveNeighbor({
+    cell: { face: 'f4', row: 4, col: 0 },
+    dRow: 1,
+    dCol: -1,
+    getFaceCount: () => 6,
+    parseFaceIndex: (face) => Number(String(face).slice(1)),
+    cubeFaceTransitions: CUBE_FACE_TRANSITIONS,
+    config: { rows: 5, cols: 5 },
+    faceId: (index) => `f${index}`,
+    clamp: (value, min, max) => Math.min(Math.max(value, min), max),
+  });
+
+  assert.deepEqual(plain(result), { face: 'f0', row: 0, col: 0 });
+});

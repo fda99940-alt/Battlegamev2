@@ -40,10 +40,13 @@ const historyDateFilterEl = document.getElementById('historyDateFilter');
 const historyShowMoreBtn = document.getElementById('historyShowMore');
 const historyPanel = document.querySelector('.panel.history');
 const boardWrapper = document.querySelector('.board-wrapper');
+const toggleNeighborDebugBtn = document.getElementById('toggleNeighborDebug');
+const neighborDebugEl = document.getElementById('neighborDebug');
 const themeButtons = document.querySelectorAll('[data-theme-option]');
 const themeStorageKey = 'mindsweeperTheme';
 const boardModeStorageKey = 'mindsweeperBoardMode';
 const rendererStorageKey = 'mindsweeperRenderer';
+const neighborDebugStorageKey = 'mindsweeperNeighborDebug';
 const SUPPORTED_RENDERERS = ['dom', 'canvas', 'svg', 'webgl'];
 const availableThemes = ['neon', 'dusk', 'sunrise', 'midnight', 'verdant', 'ember'];
 const defaultTheme = availableThemes[0];
@@ -224,6 +227,10 @@ const difficultyPresets = {
   let currentRoomSeed = null;
   let cubeDrag = null;
   let suppressNextReveal = false;
+  let neighborDebugEnabled = safeGetItem(neighborDebugStorageKey) === 'true';
+  let neighborDebugOriginNodes = [];
+  let neighborDebugNeighborNodes = [];
+  let neighborDebugHoverNodes = [];
 
   const NEIGHBORS = [
     [-1, -1],
@@ -351,6 +358,7 @@ const difficultyPresets = {
       }
       const cell = resolveCellFromInteractionTarget(event);
       if (!cell) return;
+      renderNeighborDebug(cell);
       revealCell(cell);
     });
 
@@ -359,7 +367,19 @@ const difficultyPresets = {
       event.preventDefault();
       const cell = resolveCellFromInteractionTarget(event);
       if (!cell) return;
+      renderNeighborDebug(cell);
       applyFlag(cell, !cell.flagged, { recordAction: true });
+    });
+
+    cubeEl.addEventListener('pointermove', (event) => {
+      if (cubeDrag?.active) return;
+      const cell = resolveCellFromInteractionTarget(event);
+      if (!cell) return;
+      renderNeighborDebug(cell);
+    });
+
+    cubeEl.addEventListener('pointerleave', () => {
+      renderNeighborDebug();
     });
 
     cubeEl.addEventListener(
@@ -448,9 +468,11 @@ const difficultyPresets = {
     initHistoryCollapse();
     syncHistoryFiltersUI();
     initRoomJoin();
+    initNeighborDebugToggle();
     renderHistory();
     applyCheatState();
     startNewGame();
+    renderNeighborDebug();
     window.addEventListener('resize', layoutCubeFaces);
   }
 
@@ -484,6 +506,8 @@ const difficultyPresets = {
     currentRoomCode = roomCode || generateRoomCode(config, currentRoomSeed);
     updateSeedDisplay();
     updateStatus();
+    const firstFace = getActiveFaces()[0];
+    renderNeighborDebug(getCell(firstFace, 0, 0));
     showStatusMessage('status.newBoard');
     getCell(getActiveFaces()[0], 0, 0)?.element?.focus();
     speakAvatar('ready', { size: `${config.rows}×${config.cols}` });
@@ -1166,6 +1190,141 @@ const difficultyPresets = {
     return `${cell.face} ${cell.row + 1},${cell.col + 1}`;
   }
 
+  function clearNeighborDebugHighlight(nodes, className) {
+    nodes.forEach((node) => node?.classList?.remove(className));
+  }
+
+  function getNeighborDebugHighlightNodes(cell) {
+    if (!cell) return [];
+    const candidates = [cell.svgShape, cell.webglLabel, cell.element];
+    const unique = [];
+    candidates.forEach((node) => {
+      if (!node || !node.classList) return;
+      if (unique.includes(node)) return;
+      unique.push(node);
+    });
+    return unique;
+  }
+
+  function setNeighborDebugOrigin(cell) {
+    clearNeighborDebugHighlight(neighborDebugOriginNodes, 'neighbor-debug--origin');
+    neighborDebugOriginNodes = getNeighborDebugHighlightNodes(cell);
+    neighborDebugOriginNodes.forEach((node) => node.classList.add('neighbor-debug--origin'));
+  }
+
+  function setNeighborDebugNeighbors(cells = []) {
+    clearNeighborDebugHighlight(neighborDebugNeighborNodes, 'neighbor-debug--neighbor');
+    const unique = [];
+    cells.forEach((cell) => {
+      getNeighborDebugHighlightNodes(cell).forEach((node) => {
+        if (!unique.includes(node)) {
+          unique.push(node);
+        }
+      });
+    });
+    neighborDebugNeighborNodes = unique;
+    neighborDebugNeighborNodes.forEach((node) => node.classList.add('neighbor-debug--neighbor'));
+  }
+
+  function clearNeighborDebugNeighbors() {
+    clearNeighborDebugHighlight(neighborDebugNeighborNodes, 'neighbor-debug--neighbor');
+    neighborDebugNeighborNodes = [];
+  }
+
+  function setNeighborDebugHover(cell) {
+    clearNeighborDebugHighlight(neighborDebugHoverNodes, 'neighbor-debug--target');
+    neighborDebugHoverNodes = getNeighborDebugHighlightNodes(cell);
+    neighborDebugHoverNodes.forEach((node) => node.classList.add('neighbor-debug--target'));
+  }
+
+  function clearNeighborDebugHover() {
+    clearNeighborDebugHighlight(neighborDebugHoverNodes, 'neighbor-debug--target');
+    neighborDebugHoverNodes = [];
+  }
+
+  function applyNeighborDebug(enabled, options = {}) {
+    const { persist = true } = options;
+    neighborDebugEnabled = Boolean(enabled);
+    if (neighborDebugEl) {
+      neighborDebugEl.hidden = !neighborDebugEnabled;
+      if (!neighborDebugEnabled) {
+        neighborDebugEl.textContent = '';
+      }
+    }
+    if (!neighborDebugEnabled) {
+      clearNeighborDebugHover();
+      clearNeighborDebugNeighbors();
+      clearNeighborDebugHighlight(neighborDebugOriginNodes, 'neighbor-debug--origin');
+      neighborDebugOriginNodes = [];
+    }
+    if (toggleNeighborDebugBtn) {
+      toggleNeighborDebugBtn.textContent = `Debug: ${neighborDebugEnabled ? 'on' : 'off'}`;
+      toggleNeighborDebugBtn.setAttribute('aria-pressed', String(neighborDebugEnabled));
+    }
+    if (persist) {
+      safeSetItem(neighborDebugStorageKey, String(neighborDebugEnabled));
+    }
+  }
+
+  function initNeighborDebugToggle() {
+    applyNeighborDebug(neighborDebugEnabled, { persist: false });
+    if (!toggleNeighborDebugBtn) return;
+    toggleNeighborDebugBtn.addEventListener('click', () => {
+      applyNeighborDebug(!neighborDebugEnabled);
+      if (neighborDebugEnabled) {
+        const current = getCell(focusCell.face, focusCell.row, focusCell.col);
+        renderNeighborDebug(current);
+      }
+    });
+    if (neighborDebugEl) {
+      neighborDebugEl.addEventListener('pointerover', (event) => {
+        if (!neighborDebugEnabled) return;
+        const rowEl = event.target.closest('[data-debug-face][data-debug-row][data-debug-col]');
+        if (!rowEl) return;
+        const face = rowEl.dataset.debugFace;
+        const row = Number(rowEl.dataset.debugRow);
+        const col = Number(rowEl.dataset.debugCol);
+        const neighbor = getCell(face, row, col);
+        setNeighborDebugHover(neighbor);
+      });
+      neighborDebugEl.addEventListener('pointerleave', () => {
+        clearNeighborDebugHover();
+      });
+    }
+  }
+
+  function renderNeighborDebug(cell = null) {
+    if (!neighborDebugEl || !neighborDebugEnabled) return;
+    if (!cell) {
+      neighborDebugEl.textContent = 'Debug: hover a cell (or use arrow keys) to inspect seam neighbors.';
+      setNeighborDebugOrigin(null);
+      clearNeighborDebugNeighbors();
+      clearNeighborDebugHover();
+      return;
+    }
+    const neighbors = getNeighbors(cell);
+    const mineCount = neighbors.filter((neighbor) => neighbor.isMine).length;
+    const header = `Cell ${cell.face}:${cell.row},${cell.col} mine=${cell.isMine ? 'yes' : 'no'} shown=${cell.neighborMines} expected=${mineCount}`;
+    const headerEl = document.createElement('div');
+    headerEl.className = 'neighbor-debug__header';
+    headerEl.textContent = header;
+    const listEl = document.createElement('div');
+    listEl.className = 'neighbor-debug__list';
+    neighbors.forEach((neighbor) => {
+      const rowEl = document.createElement('div');
+      rowEl.className = `neighbor-debug__row${neighbor.isMine ? ' neighbor-debug__row--mine' : ''}`;
+      rowEl.dataset.debugFace = neighbor.face;
+      rowEl.dataset.debugRow = String(neighbor.row);
+      rowEl.dataset.debugCol = String(neighbor.col);
+      rowEl.textContent = `${neighbor.isMine ? 'M' : '.'} ${neighbor.face}:${neighbor.row},${neighbor.col}`;
+      listEl.appendChild(rowEl);
+    });
+    neighborDebugEl.replaceChildren(headerEl, listEl);
+    setNeighborDebugOrigin(cell);
+    setNeighborDebugNeighbors(neighbors);
+    clearNeighborDebugHover();
+  }
+
   function loadAvatarPersona() {
     return avatarCommentary.loadAvatarPersona({
       safeGetItem,
@@ -1743,6 +1902,7 @@ const difficultyPresets = {
       const firstFace = getActiveFaces()[0];
       focusCell = { face: firstFace, row: nextRow, col: nextCol };
       const nextCell = getCell(firstFace, nextRow, nextCol);
+      renderNeighborDebug(nextCell);
       nextCell?.element?.focus();
       return;
     }
@@ -1751,6 +1911,7 @@ const difficultyPresets = {
     if (!next) return;
     focusCell = next;
     const nextCell = getCell(next.face, next.row, next.col);
+    renderNeighborDebug(nextCell);
     nextCell?.element?.focus();
   }
 
