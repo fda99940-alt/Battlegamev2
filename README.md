@@ -23,10 +23,24 @@
 - `modules/roomCodes.js`: room-code encode/decode, join-flow wiring, and clipboard copy helpers.
 - `modules/polyhedronLayout.js`: geometric layout and transform math for non-cube polyhedron face rendering.
 - `script.js`: top-level app orchestrator that composes modules, coordinates renderer mode/board mode/game lifecycle, and owns shared runtime state.
+- `tests/*.test.js` + `tests/helpers/loadBrowserModule.js`: lightweight Node test harness for browser-style modules via VM loading.
 
 ## Running
 
 Open `index.html` in a modern browser. No build step or server is required—the UI is fully interactive out of the box. Try several games, tweak Rows/Cols/Faces/Mines/rotation/flip counts, switch `Board: Cube` / `Board: 2D`, choose a renderer (`DOM`, `Canvas`, `SVG`, `WebGL`) from the controls dropdown, toggle themes/languages, and use the history tools to replay or delete previous runs.
+
+## Testing
+
+Run the lightweight Node test harness:
+
+```bash
+npm test
+```
+
+Current automated coverage focuses on:
+- `modules/roomCodes.js` (lossless config encode/decode including `faces`, join flow behavior, clipboard callback behavior)
+- `modules/boardTopology.js` (neighbor transition, invalid/edge handling, and de-dup logic)
+- `modules/boardGeneration.js` + `modules/boardActions.js` (neighbor mine counts, reveal/flag state transitions, guardian/mine edge cases, cross-face rim/corner adjacency)
 
 ## Key features
 
@@ -41,7 +55,7 @@ Open `index.html` in a modern browser. No build step or server is required—the
 9. **Guardian special tile**: Stepping on a Guardian tile arms a temporary shield that automatically flags the next mine you would have hit, letting you recover without ending the run.
 10. **Cheat view**: “Show mines” temporarily highlights raw mine locations and special tiles for inspection before you commit to a move.
 11. **History + replay**: Runs capture timestamps, configurations, board mode, layouts, mine positions, special trigger counts, and action sequences; the panel shows each run’s board type, and replay auto-switches to the corresponding mode before playback. In cube mode, replay camera motion follows each revealed cell so the active face stays in view. History supports result/date filters, paginated loading (`Show more`), and a bounded internal scroll area so long lists stay contained. Each entry also exposes a copyable room code plus a join form for instant replays.
-12. **Seed sharing**: A deterministic seed string above the board encodes configuration plus RNG state so the same board/special placement can be recreated by copying/pasting the seed (even into prompts). Clicking **Apply layout** intentionally rolls a fresh seed for the new board.
+12. **Seed sharing**: A deterministic seed string above the board encodes configuration (including `faces`) plus RNG state so the same board/special placement can be recreated by copying/pasting the seed (even into prompts). Clicking **Apply layout** intentionally rolls a fresh seed for the new board.
 13. **Persistence**: LocalStorage keeps runs (`mindsweeperRuns`), board mode (`mindsweeperBoardMode`), renderer mode (`mindsweeperRenderer`), active theme (`mindsweeperTheme`), locale, and history panel collapse state so your setup survives reloads.
 14. **Localization-ready**: Every UI string routes through the `TRANSLATIONS` map; the dropdown shows flag + name, and selecting a new locale rewrites hero text, labels, hints, and status messages (including playful dialects like Klingon, Pirate, LOLcat, and Braille).
 15. **Hero personas**: Multilingual hero text changes tone per locale, covering canonical translations plus fantasy/dialect voices (Yoda, Elvish, Melodia, Angry mode, etc.).

@@ -111,7 +111,7 @@ const difficultyPresets = {
   let historyFilterDate = 'all';
   const ROOM_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   const ROOM_CODE_RANDOM_SEGMENT_LENGTH = 4;
-  const ROOM_CONFIG_SEGMENT_LENGTH = 14;
+  const ROOM_CONFIG_SEGMENT_LENGTH = 24;
   function requireModule(key, path) {
     const module = window[key];
     if (!module) {
@@ -272,7 +272,9 @@ const difficultyPresets = {
 
   clearHistoryBtn.addEventListener('click', () => {
     runs = [];
+    roomMap = {};
     persistRuns();
+    persistRoomMap();
     renderHistory();
   });
 
@@ -1573,8 +1575,8 @@ const difficultyPresets = {
     roomCodes.initRoomJoin({
       joinRoomBtn,
       roomCodeInput,
-      roomMap,
-      runs,
+      getRoomMap: () => roomMap,
+      getRuns: () => runs,
       decodeRoomCode,
       applyRoomSettings,
       showStatusMessage,
