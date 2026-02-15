@@ -51,16 +51,8 @@ const SUPPORTED_RENDERERS = ['dom', 'canvas', 'svg', 'webgl'];
 const availableThemes = ['neon', 'dusk', 'sunrise', 'midnight', 'verdant', 'ember'];
 const defaultTheme = availableThemes[0];
 const presetButtons = document.querySelectorAll('[data-preset]');
-const facePresetButtons = document.querySelectorAll('[data-face-preset]');
-const ALLOWED_FACE_COUNTS = [4, 6, 8, 12, 20];
-const FACE_SHAPE_NAMES = {
-  4: 'Tetrahedron (d4)',
-  6: 'Cube (d6)',
-  8: 'Octahedron (d8)',
-  12: 'Dodecahedron (d12)',
-  20: 'Icosahedron (d20)',
-};
-const FACE_BADGE_ICONS = ['*', '+', 'x', '#', '^', 'v', '~', '=', '%', '@'];
+const ALLOWED_FACE_COUNTS = [6];
+const FACE_SHAPE_NAME = 'Cube (d6)';
 const CUBE_FACE_TRANSITIONS = {
   0: { left: 3, right: 1, up: 4, down: 5 }, // front
   1: { left: 0, right: 2, up: 4, down: 5 }, // right
@@ -107,7 +99,6 @@ const difficultyPresets = {
   },
 };
   let activePreset = null;
-  let activeFacePreset = null;
   const historyPageSize = 20;
   let historyVisibleCount = historyPageSize;
   let historyFilterResult = 'all';
@@ -464,7 +455,9 @@ const difficultyPresets = {
     updateShowMinesButton();
     initThemeSwitcher();
     initDifficultyPresets();
-    initFacePresets();
+    if (facesInput) {
+      facesInput.value = '6';
+    }
     initHistoryCollapse();
     syncHistoryFiltersUI();
     initRoomJoin();
@@ -747,7 +740,6 @@ const difficultyPresets = {
     colsInput.value = values.cols;
     if (facesInput) {
       facesInput.value = normalizeFaceCount(Number(values.faces) || 6);
-      setActiveFacePreset(String(normalizeFaceCount(Number(facesInput.value) || 6)));
     }
     minesInput.value = toPerFaceCount(values.mines);
     rotationInput.value = toPerFaceCount(values.rotationSpecials);
@@ -1708,22 +1700,11 @@ const difficultyPresets = {
     uiControls.initDifficultyPresets({
       presetButtons,
       onPresetClick: (name) => applyPreset(name),
-      inputs: [rowsInput, colsInput, facesInput, minesInput, rotationInput, flipInput, dogInput, guardianInput],
+      inputs: [rowsInput, colsInput, minesInput, rotationInput, flipInput, dogInput, guardianInput],
       onInputsChanged: () => {
         setActivePreset(null);
         updateConfigScalingNote();
       },
-    });
-  }
-
-  function initFacePresets() {
-    uiControls.initFacePresets({
-      facePresetButtons,
-      facesInput,
-      normalizeFaceCount,
-      setActiveFacePreset: (value) => setActiveFacePreset(value),
-      updateFaceShapeInfo,
-      updateConfigScalingNote,
     });
   }
 
@@ -1784,14 +1765,6 @@ const difficultyPresets = {
     });
     setActivePreset(name);
     startNewGame();
-  }
-
-  function setActiveFacePreset(value) {
-    activeFacePreset = value;
-    uiControls.setActiveFacePreset({
-      value,
-      facePresetButtons,
-    });
   }
 
   /**
@@ -1981,23 +1954,12 @@ const difficultyPresets = {
 
   function normalizeFaceCount(value) {
     const numeric = Number(value) || 6;
-    let closest = ALLOWED_FACE_COUNTS[0];
-    let bestDelta = Math.abs(numeric - closest);
-    for (const candidate of ALLOWED_FACE_COUNTS) {
-      const delta = Math.abs(numeric - candidate);
-      if (delta < bestDelta) {
-        bestDelta = delta;
-        closest = candidate;
-      }
-    }
-    return closest;
+    return numeric === 6 ? 6 : ALLOWED_FACE_COUNTS[0];
   }
 
   function updateFaceShapeInfo() {
     if (!faceShapeInfoEl) return;
-    const faces = normalizeFaceCount(Number(facesInput?.value) || config.faces || 6);
-    const shapeName = FACE_SHAPE_NAMES[faces] || 'Polyhedron';
-    faceShapeInfoEl.textContent = `Shape: ${shapeName}`;
+    faceShapeInfoEl.textContent = `Shape: ${FACE_SHAPE_NAME}`;
   }
 
   function faceId(index) {
@@ -2005,11 +1967,8 @@ const difficultyPresets = {
   }
 
   function getFaceBadgeIcon(index, totalFaces) {
-    if (totalFaces === 6) {
-      const cubeIcons = ['F', 'R', 'B', 'L', 'T', 'D'];
-      return cubeIcons[index] || cubeIcons[index % cubeIcons.length];
-    }
-    return FACE_BADGE_ICONS[index % FACE_BADGE_ICONS.length];
+    const cubeIcons = ['F', 'R', 'B', 'L', 'T', 'D'];
+    return cubeIcons[index] || cubeIcons[index % cubeIcons.length];
   }
 
   function decorateFaceElement(faceEl, index, totalFaces) {
@@ -2246,12 +2205,6 @@ const difficultyPresets = {
       const desiredCameraYaw = target.yaw - spinY;
       cubeYaw = shortestAngleTarget(cubeYaw, desiredCameraYaw);
       cubePitch = shortestAngleTarget(cubePitch, target.pitch);
-    } else {
-      const angleStep = 360 / faceCount;
-      const targetYaw = -index * angleStep;
-      const desiredCameraYaw = targetYaw - spinY;
-      cubeYaw = shortestAngleTarget(cubeYaw, desiredCameraYaw);
-      cubePitch = shortestAngleTarget(cubePitch, -28);
     }
     applyTransform();
   }

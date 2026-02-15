@@ -114,55 +114,6 @@
       });
   }
 
-  function setActiveFacePreset(options = {}) {
-    const {
-      value,
-      facePresetButtons = [],
-    } = options;
-
-    facePresetButtons.forEach((button) => {
-      const isActive = Boolean(value) && button.dataset.facePreset === value;
-      button.classList.toggle('face-preset-toggle--active', isActive);
-      button.setAttribute('aria-pressed', String(isActive));
-    });
-  }
-
-  function initFacePresets(options = {}) {
-    const {
-      facePresetButtons = [],
-      facesInput,
-      normalizeFaceCount,
-      setActiveFacePreset,
-      updateFaceShapeInfo,
-      updateConfigScalingNote,
-    } = options;
-
-    facePresetButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        const value = normalizeFaceCount(Number(button.dataset.facePreset) || 6);
-        if (facesInput) {
-          facesInput.value = value;
-        }
-        setActiveFacePreset(String(value));
-        updateFaceShapeInfo();
-        updateConfigScalingNote();
-      });
-    });
-
-    if (facesInput) {
-      facesInput.addEventListener('input', () => {
-        const value = normalizeFaceCount(Number(facesInput.value) || 6);
-        facesInput.value = value;
-        setActiveFacePreset(String(value));
-        updateFaceShapeInfo();
-      });
-      const value = normalizeFaceCount(Number(facesInput.value) || 6);
-      facesInput.value = value;
-      setActiveFacePreset(String(value));
-      updateFaceShapeInfo();
-    }
-  }
-
   window.MindsweeperUiControls = {
     applyTheme,
     initThemeSwitcher,
@@ -170,7 +121,5 @@
     initHistoryCollapse,
     setActivePreset,
     initDifficultyPresets,
-    setActiveFacePreset,
-    initFacePresets,
   };
 })();

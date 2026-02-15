@@ -1,6 +1,6 @@
 # Mindsweeper
 
-**Mindsweeper** is a browser-only twist on Minesweeper: a single static page with keyboard-first controls, persistent history, replay tooling, configurable specials, and swappable renderers. It supports both a 3D dice-style board (d4/d6/d8/d12/d20 face presets) and a classic single-plane 2D board mode, while keeping the same reveal/flag/special systems.
+**Mindsweeper** is a browser-only twist on Minesweeper: a single static page with keyboard-first controls, persistent history, replay tooling, configurable specials, and swappable renderers. It supports both a 3D cube board (`d6`) and a classic single-plane 2D board mode, while keeping the same reveal/flag/special systems.
 
 ## Structure overview
 
@@ -21,7 +21,7 @@
 - `modules/boardTopology.js`: neighbor/edge transition logic across 2D and cube/poly-face boards.
 - `modules/uiControls.js`: theme, history collapse, and preset UI wiring/state helpers.
 - `modules/roomCodes.js`: room-code encode/decode, join-flow wiring, and clipboard copy helpers.
-- `modules/polyhedronLayout.js`: geometric layout and transform math for non-cube polyhedron face rendering.
+- `modules/polyhedronLayout.js`: cube face transform/layout helper used by renderer modules.
 - `script.js`: top-level app orchestrator that composes modules, coordinates renderer mode/board mode/game lifecycle, and owns shared runtime state.
 - `tests/*.test.js` + `tests/helpers/loadBrowserModule.js`: lightweight Node test harness for browser-style modules via VM loading.
 
@@ -48,7 +48,7 @@ Current automated coverage focuses on:
 2. **Mouse camera controls (3D mode)**: Left-drag orbits the board, and mouse wheel zooms in/out with a camera-depth transform (non-distorting) so perspective remains stable while inspecting dense layouts.
 3. **Board mode switch**: Toggle between `Board: Cube` (3D dice-style board) and `Board: 2D` (single front-face plane). Switching mode starts a fresh board with mode-appropriate cell/mine limits.
 4. **Renderer mode switch**: Choose `DOM`, `Canvas`, `SVG`, or `WebGL` from the controls dropdown. `DOM` preserves native button-grid behavior, `Canvas` favors draw performance on bigger boards, `SVG` gives crisp scalable vector cells with class-based styling and easy hit testing, and `WebGL` draws fast GPU-backed cell fills with an overlay label layer for clear numbers/icons.
-5. **Face presets + scaling**: Select dice-style face counts (`4`, `6`, `8`, `12`, `20`) and enter mines/specials per face. Values are multiplied by active face count (1 in `2D`, selected faces in `Cube`) when generating a run. The settings panel shows a live multiplier/total summary before applying.
+5. **Cube-only 3D scaling**: 3D mode uses a fixed six-face cube (`d6`). Mines/specials inputs are still per-face values, multiplied by active faces (1 in `2D`, 6 in `Cube`) before a run starts.
 6. **Difficulty presets**: Easy/Medium/Hard buttons seed the recommended inputs and immediately restart with that setup while highlighting the active preset.
 7. **Rotation & flip fields**: Reveal specials to rotate the board or mirror it horizontally/vertically, and optionally disable these effects with “Specials: on/off”.
 8. **Dog special tile**: Discovering a Dog tile flags a random unmarked mine automatically, so every good sniff buys you a little safety without touching the mine count input or flagging manually.
@@ -83,4 +83,4 @@ Current automated coverage focuses on:
 
 - Built with help from an AI coding assistant (Codex, GPT-5) under human supervision, following the author’s guidance to shape the experience.
 - Some translations are machine-generated; the author may not fully verify every language so take those localized strings with a grain of salt.
-- The non-6 3D presets use dice-like polyhedron rendering; gameplay neighbor transitions outside `d6` are currently simplified and may not yet represent exact mathematical edge adjacency for every solid.
+- 3D mode is intentionally cube-only (`d6`) to keep visual seams and neighbor transitions consistent.

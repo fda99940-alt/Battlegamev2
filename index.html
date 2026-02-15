@@ -143,7 +143,7 @@
           </label>
           <label>
             <span>Faces</span>
-            <input type="number" id="facesInput" min="4" max="20" step="1" value="6" />
+            <input type="number" id="facesInput" min="6" max="6" step="1" value="6" readonly disabled />
           </label>
           <label>
             <span data-i18n-key="label.rotationSpecials">Rotation specials</span>
@@ -163,16 +163,6 @@
           </label>
           <button type="submit" class="primary" data-i18n-key="button.applyLayout">Apply layout</button>
         </form>
-        <div class="face-preset-switcher" aria-label="Face count presets">
-          <span>Face presets</span>
-          <div class="face-preset-buttons">
-            <button type="button" class="ghost face-preset-toggle" data-face-preset="4" aria-pressed="false">4</button>
-            <button type="button" class="ghost face-preset-toggle" data-face-preset="6" aria-pressed="false">6</button>
-            <button type="button" class="ghost face-preset-toggle" data-face-preset="8" aria-pressed="false">8</button>
-            <button type="button" class="ghost face-preset-toggle" data-face-preset="12" aria-pressed="false">12</button>
-            <button type="button" class="ghost face-preset-toggle" data-face-preset="20" aria-pressed="false">20</button>
-          </div>
-        </div>
         <p class="config-scale-note" id="faceShapeInfo">Shape: Cube (d6)</p>
         <p class="config-scale-note" id="configScaleInfo" data-i18n-key="config.scaleInfoPlaceholder">
           Counts are per face and multiplied by active faces.

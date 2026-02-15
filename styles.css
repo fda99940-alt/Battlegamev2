@@ -779,17 +779,6 @@ body {
   font-size: 0.58px;
 }
 
-.cube[data-face-count]:not([data-face-count="6"]) .cell {
-  border-radius: 0;
-  box-shadow: none;
-}
-
-.cube[data-face-count]:not([data-face-count="6"]) .cell:not(.cell--revealed):hover,
-.cube[data-face-count]:not([data-face-count="6"]) .cell:not(.cell--revealed):active {
-  transform: none;
-  box-shadow: none;
-}
-
 .board-wrapper[data-board-mode="2d"] .cube-scene {
   perspective: none;
   min-height: 0;
@@ -1070,32 +1059,6 @@ body {
   margin: 0.7rem 0 0;
   font-size: 0.82rem;
   color: var(--text-faint);
-}
-
-.face-preset-switcher {
-  margin-top: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  color: var(--text-faint);
-}
-
-.face-preset-buttons {
-  display: flex;
-  gap: 0.35rem;
-  flex-wrap: wrap;
-}
-
-.face-preset-toggle {
-  min-width: 2.2rem;
-  padding: 0.3rem 0.6rem;
-}
-
-.face-preset-toggle--active {
-  border-color: var(--highlight);
-  color: var(--text-primary);
-  box-shadow: 0 0 0 1px rgba(120, 235, 255, 0.35);
 }
 
 input[type="number"] {
