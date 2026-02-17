@@ -48,7 +48,7 @@
         },
       },
       button: {
-        applyLayout: 'लागू करें',
+        applyLayout: 'गेम शुरू करें',
         specials: 'विशेष: {state}',
         showMines: 'बम दिखाएँ',
         hideMines: 'बम छुपाएँ',

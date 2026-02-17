@@ -48,7 +48,7 @@
         },
       },
       button: {
-        applyLayout: 'Apply',
+        applyLayout: 'Start gaem',
         specials: 'Specials: {state}',
         showMines: 'Show mines',
         hideMines: 'Hide mines',

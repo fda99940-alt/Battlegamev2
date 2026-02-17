@@ -48,7 +48,7 @@
         },
       },
       button: {
-        applyLayout: 'Применить',
+        applyLayout: 'Начать игру',
         specials: 'Спецэффекты: {state}',
         showMines: 'Показать мины',
         hideMines: 'Спрятать мины',

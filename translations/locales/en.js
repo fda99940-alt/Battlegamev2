@@ -53,7 +53,7 @@
     },
     button: {
       size: 'Size',
-      applyLayout: 'Apply layout',
+      applyLayout: 'Start game',
       specials: 'Specials: {state}',
       showMines: 'Show mines',
       hideMines: 'Hide mines',

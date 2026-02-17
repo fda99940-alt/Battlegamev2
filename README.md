@@ -56,8 +56,8 @@ Current automated coverage focuses on:
 10. **Cheat view**: “Show mines” temporarily highlights raw mine locations and special tiles for inspection before you commit to a move.
 11. **Neighbor debug inspector**: A `Debug: on/off` toggle under the board lists the currently hovered/focused cell neighbors (including cross-face seams) and highlights origin/neighbor cells directly on the board to verify adjacency behavior.
 12. **History + replay**: Runs capture timestamps, configurations, board mode, layouts, mine positions, special trigger counts, and action sequences; the panel shows each run’s board type, and replay auto-switches to the corresponding mode before playback. In cube mode, replay camera motion follows each revealed cell so the active face stays in view. History supports result/date filters, paginated loading (`Show more`), and a bounded internal scroll area so long lists stay contained. Each entry also exposes a copyable room code plus a join form for instant replays.
-13. **Seed sharing**: A deterministic seed string above the board encodes configuration (including `faces`) plus RNG state so the same board/special placement can be recreated by copying/pasting the seed (even into prompts). Clicking **Apply layout** intentionally rolls a fresh seed for the new board.
-14. **Persistence**: LocalStorage keeps runs (`mindsweeperRuns`), board mode (`mindsweeperBoardMode`), renderer mode (`mindsweeperRenderer`), active theme (`mindsweeperTheme`), locale, and history panel collapse state so your setup survives reloads.
+13. **Seed sharing**: A deterministic seed string above the board encodes configuration (including `faces`) plus RNG state so the same board/special placement can be recreated by copying/pasting the seed (even into prompts). Clicking **Start game** intentionally rolls a fresh seed for the new board.
+14. **Persistence**: LocalStorage keeps runs (`mindsweeperRuns`), board mode (`mindsweeperBoardMode`), renderer mode (`mindsweeperRenderer`), active theme (`mindsweeperTheme`), locale, focus mode (`mindsweeperFocusMode`), and history panel collapse state so your setup survives reloads.
 15. **Localization-ready**: Every UI string routes through the `TRANSLATIONS` map; the dropdown shows flag + name, and selecting a new locale rewrites hero text, labels, hints, and status messages (including playful dialects like Klingon, Pirate, LOLcat, and Braille).
 16. **Hero personas**: Multilingual hero text changes tone per locale, covering canonical translations plus fantasy/dialect voices (Yoda, Elvish, Melodia, Angry mode, etc.).
 17. **Commentary avatar**: An above-board avatar narrates each move, keeps a rolling five-line conversation history, lets you choose between the polite guide, the evil heckler, the anime-inspired “cute” bunny, or the teasing anime girl, and tapping the portrait briefly reveals the dropdown so you can change voices without adding extra chrome.
@@ -71,6 +71,7 @@ Current automated coverage focuses on:
 19. **Face badges + visual polish**: Face icons now appear on rendered faces for quicker orientation, and covered cells in modern renderers have stronger depth/hover/press feedback.
 20. **Special icon consistency**: Rotation, flip, dog, and guardian specials now use consistent icon markers across renderer modes for better readability.
 21. **Win/loss polish**: Winning reveals every mine before declaring victory, matching the loss behavior so the board state is obvious either way.
+22. **Focus mode**: A `Focus: on/off` toggle in the status strip hides non-essential chrome (hero, avatar, history, themes, debug helpers) to keep attention on board play and core controls.
 
 ## Future improvements
 

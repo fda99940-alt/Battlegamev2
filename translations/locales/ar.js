@@ -48,7 +48,7 @@
         },
       },
       button: {
-        applyLayout: 'تطبيق',
+        applyLayout: 'ابدأ اللعبة',
         specials: 'الخصائص: {state}',
         showMines: 'اظهر المناجم',
         hideMines: 'اخفِ المناجم',

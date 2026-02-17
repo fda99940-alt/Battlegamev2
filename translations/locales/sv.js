@@ -48,7 +48,7 @@
         },
       },
       button: {
-        applyLayout: 'Använd',
+        applyLayout: 'Starta spel',
         specials: 'Specialer: {state}',
         showMines: 'Visa minor',
         hideMines: 'Dölj minor',

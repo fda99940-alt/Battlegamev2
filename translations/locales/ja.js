@@ -48,7 +48,7 @@
         },
       },
       button: {
-        applyLayout: '適用',
+        applyLayout: 'ゲーム開始',
         specials: 'スペシャル：{state}',
         showMines: '地雷表示',
         hideMines: '地雷非表示',

@@ -48,7 +48,7 @@
         },
       },
       button: {
-        applyLayout: 'Apliki',
+        applyLayout: 'Komenci ludon',
         specials: 'Specialoj: {state}',
         showMines: 'Montri minojn',
         hideMines: 'Kaŝi minojn',

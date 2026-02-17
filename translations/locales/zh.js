@@ -48,7 +48,7 @@
         },
       },
       button: {
-        applyLayout: '应用布局',
+        applyLayout: '开始游戏',
         specials: '特效：{state}',
         showMines: '显示地雷',
         hideMines: '隐藏地雷',

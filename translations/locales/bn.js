@@ -50,7 +50,7 @@
     },
     button: {
       size: 'মাপ',
-      applyLayout: 'লেআউট প্রয়োগ কর',
+      applyLayout: 'গেম শুরু কর',
       specials: 'স্পেশাল: {state}',
       showMines: 'মাইন দেখাও',
       hideMines: 'মাইন লুকাও',

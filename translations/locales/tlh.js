@@ -48,7 +48,7 @@
         },
       },
       button: {
-        applyLayout: 'HoS',
+        applyLayout: 'Quj tagh',
         specials: 'QIn: {state}',
         showMines: 'mab yIlegh',
         hideMines: 'mab yItlh',

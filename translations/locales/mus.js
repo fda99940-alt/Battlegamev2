@@ -48,7 +48,7 @@
         },
       },
       button: {
-        applyLayout: '♩♬',
+        applyLayout: '♫▶♫',
         specials: '♫♩',
         showMines: '♬♫',
         hideMines: '♩♪',

@@ -48,7 +48,7 @@
         },
       },
       button: {
-        applyLayout: 'Apply layout, do it you must',
+        applyLayout: 'Start game, you must',
         specials: 'Specials: {state}, sense them you do',
         showMines: 'Show mines, reveal them you will',
         hideMines: 'Hide mines, hush now',

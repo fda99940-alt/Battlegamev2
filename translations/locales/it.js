@@ -50,7 +50,7 @@
     },
     button: {
       size: 'Dimensione',
-      applyLayout: 'Applica layout',
+      applyLayout: 'Inizia partita',
       specials: 'Speciali: {state}',
       showMines: 'Mostra mine',
       hideMines: 'Nascondi mine',

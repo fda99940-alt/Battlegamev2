@@ -76,7 +76,12 @@
           </section>
 
           <section class="status-panel" aria-live="polite">
-            <div class="status-message" id="statusMessage" data-i18n-key="status.start">Click any cell to begin.</div>
+            <div class="status-head">
+              <div class="status-message" id="statusMessage" data-i18n-key="status.start">Click any cell to begin.</div>
+              <button type="button" class="ghost status-focus-toggle" id="toggleFocusMode" aria-pressed="false">
+                Focus: off
+              </button>
+            </div>
             <div class="status-grid status-grid--primary">
               <div class="status-card">
                 <span class="label" data-i18n-key="label.minesRemaining">Mines remaining</span>
@@ -134,7 +139,7 @@
                 <span data-i18n-key="label.mines">Mines</span>
                 <input type="number" id="minesInput" min="1" max="625" value="18" />
               </label>
-              <button type="submit" class="primary" data-i18n-key="button.applyLayout">Apply layout</button>
+              <button type="submit" class="primary" data-i18n-key="button.applyLayout">Start game</button>
               <details class="advanced-controls">
                 <summary>Advanced layout settings</summary>
                 <div class="advanced-controls__grid">

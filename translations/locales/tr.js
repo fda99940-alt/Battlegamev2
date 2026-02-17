@@ -49,7 +49,7 @@
       },
     },
     button: {
-      applyLayout: 'Diziyi uygula',
+      applyLayout: 'Oyunu başlat',
       specials: 'Özelikler: {state}',
       showMines: 'Mayınları göster',
       hideMines: 'Mayınları gizle',

@@ -48,7 +48,7 @@
         },
       },
       button: {
-        applyLayout: 'Aplicar',
+        applyLayout: 'Iniciar jogo',
         specials: 'Especiais: {state}',
         showMines: 'Mostrar minas',
         hideMines: 'Ocultar minas',

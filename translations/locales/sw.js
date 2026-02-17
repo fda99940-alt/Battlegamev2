@@ -48,7 +48,7 @@
         },
       },
       button: {
-        applyLayout: 'Weka mipangilio',
+        applyLayout: 'Anza mchezo',
         specials: 'Maalum: {state}',
         showMines: 'Onyesha mina',
         hideMines: 'Ficha mina',

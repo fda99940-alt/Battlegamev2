@@ -48,7 +48,7 @@
         },
       },
       button: {
-        applyLayout: 'Appliquer',
+        applyLayout: 'Démarrer partie',
         specials: 'Spéciaux : {state}',
         showMines: 'Afficher les mines',
         hideMines: 'Cacher les mines',

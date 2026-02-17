@@ -48,7 +48,7 @@
         },
       },
       button: {
-        applyLayout: 'Aicanë',
+        applyLayout: 'Aicanë Quetta',
         specials: 'Alcaro: {state}',
         showMines: 'Cenda minion',
         hideMines: 'Tanca minion',

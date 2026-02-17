@@ -41,6 +41,7 @@ const historyDateFilterEl = document.getElementById('historyDateFilter');
 const historyShowMoreBtn = document.getElementById('historyShowMore');
 const historyPanel = document.querySelector('.panel.history');
 const boardWrapper = document.querySelector('.board-wrapper');
+const toggleFocusModeBtn = document.getElementById('toggleFocusMode');
 const appShellEl = document.querySelector('.app-shell');
 const toggleNeighborDebugBtn = document.getElementById('toggleNeighborDebug');
 const neighborDebugEl = document.getElementById('neighborDebug');
@@ -49,6 +50,7 @@ const themeStorageKey = 'mindsweeperTheme';
 const boardModeStorageKey = 'mindsweeperBoardMode';
 const rendererStorageKey = 'mindsweeperRenderer';
 const neighborDebugStorageKey = 'mindsweeperNeighborDebug';
+const focusModeStorageKey = 'mindsweeperFocusMode';
 const SUPPORTED_RENDERERS = ['dom', 'canvas', 'svg', 'webgl'];
 const availableThemes = ['neon', 'dusk', 'sunrise', 'midnight', 'verdant', 'ember'];
 const defaultTheme = availableThemes[0];
@@ -193,6 +195,7 @@ const difficultyPresets = {
   let boardMode = loadBoardMode();
   let rendererMode = loadRendererMode();
   let activeRenderer = null;
+  let focusMode = safeGetItem(focusModeStorageKey) === 'true';
   let specialsEnabled = true;
   let cheatMode = false;
   let rotationAngle = 0;
@@ -247,6 +250,23 @@ const difficultyPresets = {
     appShellEl.classList.toggle('app-shell--playing', Boolean(gameActive || isReplaying));
   }
 
+  function updateFocusModeButton() {
+    if (!toggleFocusModeBtn) return;
+    toggleFocusModeBtn.textContent = `Focus: ${focusMode ? 'on' : 'off'}`;
+    toggleFocusModeBtn.setAttribute('aria-pressed', String(focusMode));
+  }
+
+  function applyFocusMode(enabled, options = {}) {
+    focusMode = Boolean(enabled);
+    if (appShellEl) {
+      appShellEl.classList.toggle('app-shell--focus', focusMode);
+    }
+    updateFocusModeButton();
+    if (options.persist ?? true) {
+      safeSetItem(focusModeStorageKey, String(focusMode));
+    }
+  }
+
   function formatElapsed(ms) {
     const totalSeconds = Math.max(Math.floor(ms / 1000), 0);
     const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
@@ -293,6 +313,12 @@ const difficultyPresets = {
     updateShowMinesButton();
     showStatusMessage(cheatMode ? 'status.cheatEnabled' : 'status.cheatDisabled');
   });
+
+  if (toggleFocusModeBtn) {
+    toggleFocusModeBtn.addEventListener('click', () => {
+      applyFocusMode(!focusMode);
+    });
+  }
 
   clearHistoryBtn.addEventListener('click', () => {
     runs = [];
@@ -488,6 +514,7 @@ const difficultyPresets = {
     syncHistoryFiltersUI();
     initRoomJoin();
     initNeighborDebugToggle();
+    applyFocusMode(focusMode, { persist: false });
     renderHistory();
     applyCheatState();
     startNewGame();

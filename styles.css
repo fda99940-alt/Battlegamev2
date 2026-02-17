@@ -346,6 +346,25 @@ body {
   max-width: 190px;
 }
 
+.app-shell--focus .hero {
+  display: none;
+}
+
+.app-shell--focus .game-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 300px);
+  gap: 0.75rem;
+}
+
+.app-shell--focus .panel.avatar-panel,
+.app-shell--focus .panel.history,
+.app-shell--focus .theme-switcher,
+.app-shell--focus .board-tools,
+.app-shell--focus .neighbor-debug,
+.app-shell--focus .neighbor-debug-toggle,
+.app-shell--focus .keyboard-hint {
+  display: none;
+}
+
 .hero-copy {
   flex: 1;
   min-width: 220px;
@@ -562,6 +581,24 @@ body {
   font-size: 1.1rem;
   font-weight: 500;
   margin-bottom: 1rem;
+}
+
+.status-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.85rem;
+}
+
+.status-head .status-message {
+  margin-bottom: 0;
+}
+
+.status-focus-toggle {
+  white-space: nowrap;
+  font-size: 0.82rem;
+  padding: 0.35rem 0.75rem;
 }
 
 .status-grid {
@@ -1514,6 +1551,10 @@ button.ghost {
     justify-content: space-between;
   }
 
+  .app-shell--focus .game-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .status-grid {
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   }
@@ -1525,5 +1566,10 @@ button.ghost {
   .cube {
     --cube-size: min(88vw, 62vh, 520px);
     transform: rotateX(-24deg) rotateY(30deg);
+  }
+
+  .status-head {
+    flex-wrap: wrap;
+    align-items: flex-start;
   }
 }
