@@ -74,8 +74,9 @@
     } = options;
 
     if (!toggleHistoryBtn || !historyPanel) return;
-    const stored = safeGetItem(historyCollapsedKey) === 'true';
-    applyHistoryCollapse(stored, { persist: false });
+    const storedValue = safeGetItem(historyCollapsedKey);
+    const collapsed = storedValue == null ? true : storedValue === 'true';
+    applyHistoryCollapse(collapsed, { persist: false });
     toggleHistoryBtn.addEventListener('click', () => {
       const currentlyCollapsed = historyPanel.classList.contains('history--collapsed');
       applyHistoryCollapse(!currentlyCollapsed);

@@ -11,6 +11,7 @@ const cubeEl = document.getElementById('cube');
 let faceBoards = [];
 const statusMessage = document.getElementById('statusMessage');
 const remainingMinesEl = document.getElementById('remainingMines');
+const elapsedTimeEl = document.getElementById('elapsedTime');
 const revealedCountEl = document.getElementById('revealedCount');
 const rotationCountEl = document.getElementById('rotationCount');
 const flipCountEl = document.getElementById('flipCount');
@@ -40,6 +41,7 @@ const historyDateFilterEl = document.getElementById('historyDateFilter');
 const historyShowMoreBtn = document.getElementById('historyShowMore');
 const historyPanel = document.querySelector('.panel.history');
 const boardWrapper = document.querySelector('.board-wrapper');
+const appShellEl = document.querySelector('.app-shell');
 const toggleNeighborDebugBtn = document.getElementById('toggleNeighborDebug');
 const neighborDebugEl = document.getElementById('neighborDebug');
 const themeButtons = document.querySelectorAll('[data-theme-option]');
@@ -212,6 +214,7 @@ const difficultyPresets = {
   let revealedCount = 0;
   let isReplaying = false;
   let replayTimer = null;
+  let elapsedTimer = null;
   let focusCell = { face: 'f0', row: 0, col: 0 };
   let runStartTime = Date.now();
   let currentRoomCode = null;
@@ -238,6 +241,29 @@ const difficultyPresets = {
   const avatarPulseDuration = 1400;
   let avatarHistory = [];
   const avatarHistoryLimit = 5;
+
+  function updatePlayLayoutState() {
+    if (!appShellEl) return;
+    appShellEl.classList.toggle('app-shell--playing', Boolean(gameActive || isReplaying));
+  }
+
+  function formatElapsed(ms) {
+    const totalSeconds = Math.max(Math.floor(ms / 1000), 0);
+    const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+    const seconds = String(totalSeconds % 60).padStart(2, '0');
+    return `${minutes}:${seconds}`;
+  }
+
+  function restartElapsedTimer() {
+    if (elapsedTimer) {
+      clearInterval(elapsedTimer);
+      elapsedTimer = null;
+    }
+    elapsedTimer = setInterval(() => {
+      if (!gameActive || !runStartTime) return;
+      updateStatus();
+    }, 1000);
+  }
 
   configForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -481,6 +507,7 @@ const difficultyPresets = {
     ensureCubeFaces(config.faces);
     resetBoardState();
     gameActive = true;
+    updatePlayLayoutState();
     grid = createGrid(config.rows, config.cols);
     const seedValue = seed || (forceNewSeed ? createDistinctSeed(currentRoomSeed) : currentRoomSeed || createRandomSeed());
     currentRoomSeed = seedValue;
@@ -499,6 +526,7 @@ const difficultyPresets = {
     currentRoomCode = roomCode || generateRoomCode(config, currentRoomSeed);
     updateSeedDisplay();
     updateStatus();
+    restartElapsedTimer();
     const firstFace = getActiveFaces()[0];
     renderNeighborDebug(getCell(firstFace, 0, 0));
     showStatusMessage('status.newBoard');
@@ -515,6 +543,7 @@ const difficultyPresets = {
       replayTimer = null;
     }
     isReplaying = false;
+    updatePlayLayoutState();
     faceBoards.forEach((board) => board.classList.remove('board--replaying'));
   }
 
@@ -528,6 +557,7 @@ const difficultyPresets = {
     applyBoardMode(replayBoardMode, { persist: false, restart: false });
     isReplaying = true;
     gameActive = false;
+    updatePlayLayoutState();
     runStartTime = null;
     applyConfigToInputs(record.config);
     config = { ...record.config };
@@ -965,6 +995,9 @@ const difficultyPresets = {
    */
   function updateStatus() {
     remainingMinesEl.textContent = Math.max(config.mines - flaggedCount, 0);
+    if (elapsedTimeEl) {
+      elapsedTimeEl.textContent = runStartTime ? formatElapsed(Date.now() - runStartTime) : '00:00';
+    }
     revealedCountEl.textContent = revealedCount;
     rotationCountEl.textContent = rotationTriggers;
     flipCountEl.textContent = flipTriggers;
@@ -994,6 +1027,7 @@ const difficultyPresets = {
    */
   function handleLoss(cell) {
     gameActive = false;
+    updatePlayLayoutState();
     revealAllMines();
     showStatusMessage('status.loss');
     saveRun('loss');
@@ -1005,6 +1039,7 @@ const difficultyPresets = {
    */
   function handleWin() {
     gameActive = false;
+    updatePlayLayoutState();
     revealAllMines();
     showStatusMessage('status.win');
     saveRun('win');
