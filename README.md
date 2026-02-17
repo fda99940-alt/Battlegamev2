@@ -2,6 +2,10 @@
 
 **Mindsweeper** is a browser-only twist on Minesweeper: a single static page with keyboard-first controls, persistent history, replay tooling, configurable specials, and swappable renderers. It supports both a 3D cube board (`d6`) and a classic single-plane 2D board mode, while keeping the same reveal/flag/special systems.
 
+![Mindsweeper Screenshot](./Mindsweeper.png)
+
+![Mindsweeper Focus Mode Screenshot](./Mindsweeper_Focus.png)
+
 ## Structure overview
 
 - `index.html`: bootstrapper that wires `styles.css`, locale files, `translations.js`, renderer modules in `renderers/*.js`, and `script.js`. The markup scopes every UI region—board, status, controls, theme toggles, difficulty presets, language dropdown (flags included), history panel, seed copy/join tools, and room-code tracker.

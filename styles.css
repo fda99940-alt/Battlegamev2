@@ -272,6 +272,20 @@ body {
   gap: 1.5rem;
 }
 
+.floating-start-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: -1.05rem;
+  margin-bottom: -0.45rem;
+}
+
+.floating-start-btn {
+  min-width: 200px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
 .game-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(300px, 340px);
@@ -351,8 +365,12 @@ body {
 }
 
 .app-shell--focus .game-layout {
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 300px);
-  gap: 0.75rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.app-shell--focus .side-rail {
+  display: none;
 }
 
 .app-shell--focus .panel.avatar-panel,
@@ -586,7 +604,7 @@ body {
 .status-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 0.6rem;
   margin-bottom: 0.85rem;
 }
@@ -784,8 +802,8 @@ body {
   user-select: none;
   pointer-events: auto;
   position: relative;
-  border-radius: 0.26rem;
-  margin: 0.06rem;
+  border-radius: 0;
+  margin: 0;
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
 }
 
@@ -841,7 +859,7 @@ body {
 .svg-cell {
   fill: rgba(255, 255, 255, 0.045);
   stroke: var(--panel-border);
-  stroke-width: 0.04;
+  stroke-width: 0.02;
   vector-effect: non-scaling-stroke;
   transition: fill 0.12s ease, opacity 0.12s ease;
 }
@@ -921,7 +939,7 @@ body {
   width: 100%;
   min-width: 0;
   aspect-ratio: 1 / 1;
-  border-radius: 0.3rem;
+  border-radius: 0;
   border: none;
   box-shadow: var(--cell-hidden-shadow);
   background: var(--cell-hidden-bg);
@@ -1571,5 +1589,15 @@ button.ghost {
   .status-head {
     flex-wrap: wrap;
     align-items: flex-start;
+  }
+
+  .floating-start-row {
+    margin-top: -0.2rem;
+    margin-bottom: -0.1rem;
+  }
+
+  .floating-start-btn {
+    min-width: 160px;
+    padding-inline: 0.85rem;
   }
 }
