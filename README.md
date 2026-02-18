@@ -2,6 +2,13 @@
 
 **Mindsweeper** is a browser-only twist on Minesweeper: a single static page with keyboard-first controls, persistent history, replay tooling, configurable specials, and swappable renderers. It supports both a 3D cube board (`d6`) and a classic single-plane 2D board mode, while keeping the same reveal/flag/special systems.
 
+## Start playing (recommended)
+
+1. Download `dist/index.single.html`.
+2. Open it in any modern browser.
+
+That file is self-contained and ready to play.
+
 ![Mindsweeper Screenshot](./Mindsweeper.png)
 
 ![Mindsweeper Focus Mode Screenshot](./Mindsweeper_Focus.png)
@@ -29,9 +36,9 @@
 - `script.js`: top-level app orchestrator that composes modules, coordinates renderer mode/board mode/game lifecycle, and owns shared runtime state.
 - `tests/*.test.js` + `tests/helpers/loadBrowserModule.js`: lightweight Node test harness for browser-style modules via VM loading.
 
-## Running
+## Running from source
 
-Open `index.html` in a modern browser. No build step or server is required—the UI is fully interactive out of the box. Try several games, tweak Rows/Cols/Faces/Mines/rotation/flip counts, switch `Board: Cube` / `Board: 2D`, choose a renderer (`DOM`, `Canvas`, `SVG`, `WebGL`) from the controls dropdown, toggle themes/languages, and use the history tools to replay or delete previous runs.
+Open `index.html` in a modern browser. No server is required.
 
 ## Single-file build
 
