@@ -47,6 +47,7 @@
         overlay.innerHTML = '';
         const config = getConfig();
         overlay.style.gridTemplateColumns = `repeat(${config.cols}, minmax(0, 1fr))`;
+        overlay.style.gridTemplateRows = `repeat(${config.rows}, minmax(0, 1fr))`;
         for (let row = 0; row < config.rows; row += 1) {
           for (let col = 0; col < config.cols; col += 1) {
             const cell = getCell(face, row, col);

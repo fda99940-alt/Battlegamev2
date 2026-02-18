@@ -50,6 +50,7 @@
         overlay.innerHTML = '';
         const config = getConfig();
         overlay.style.gridTemplateColumns = `repeat(${config.cols}, minmax(0, 1fr))`;
+        overlay.style.gridTemplateRows = `repeat(${config.rows}, minmax(0, 1fr))`;
         for (let row = 0; row < config.rows; row += 1) {
           for (let col = 0; col < config.cols; col += 1) {
             const cell = getCell(face, row, col);
@@ -238,7 +239,7 @@
       }
       if (cell.revealed && cell.isMine) {
         label.classList.add('three-cell-label--mine');
-        label.textContent = '✹';
+        label.textContent = '🔥';
         return;
       }
       if (cell.revealed && cell.neighborMines > 0) {
@@ -269,7 +270,7 @@
         camera.position.z = 1;
 
         const geometry = new THREE.BufferGeometry();
-        const material = new THREE.MeshBasicMaterial({ vertexColors: true });
+        const material = new THREE.MeshBasicMaterial({ vertexColors: true, side: 2 });
         const mesh = new THREE.Mesh(geometry, material);
         scene.add(mesh);
 
@@ -299,6 +300,47 @@
       ];
     }
 
+    function mixRgb(base, tint, amount) {
+      const ratio = clamp(Number(amount) || 0, 0, 1);
+      return [
+        base[0] * (1 - ratio) + tint[0] * ratio,
+        base[1] * (1 - ratio) + tint[1] * ratio,
+        base[2] * (1 - ratio) + tint[2] * ratio,
+      ];
+    }
+
+    function toFaceIndex(face) {
+      const text = String(face || '');
+      const match = text.match(/\d+/);
+      return match ? Number(match[0]) || 0 : 0;
+    }
+
+    function hashNoise(faceIndex, x, y) {
+      const seed = Math.sin((faceIndex + 1) * 12.9898 + x * 78.233 + y * 37.719) * 43758.5453;
+      return seed - Math.floor(seed);
+    }
+
+    function applyMetalTexture(baseColor, face, x, y, strength = 0.2) {
+      const faceIndex = toFaceIndex(face);
+      const waveA = Math.sin(x * 1.6 + y * 0.95 + faceIndex * 0.5) * 0.5 + 0.5;
+      const waveB = Math.sin(x * 5.2 - y * 3.6 + faceIndex * 1.1) * 0.5 + 0.5;
+      const noise = hashNoise(faceIndex, x * 2.7, y * 2.7);
+      const grain = clamp(0.2 + waveA * 0.45 + waveB * 0.25 + noise * 0.2, 0, 1);
+      const brushedDark = [0.2, 0.22, 0.26];
+      const brushedMid = [0.48, 0.5, 0.55];
+      const brushedHot = [0.72, 0.74, 0.78];
+      let metal = mixRgb(brushedDark, brushedMid, grain);
+      metal = mixRgb(metal, brushedHot, clamp(waveB > 0.9 ? 0.4 : 0.08, 0, 0.5));
+      const mix = clamp(strength * (0.4 + grain * 0.45), 0, 0.62);
+      const toned = mixRgb(baseColor, metal, mix);
+      const shadow = clamp((1 - grain) * strength * 0.16, 0, 0.14);
+      return [
+        clamp(toned[0] * (1 - shadow), 0, 1),
+        clamp(toned[1] * (1 - shadow), 0, 1),
+        clamp(toned[2] * (1 - shadow), 0, 1),
+      ];
+    }
+
     function drawThreeFace(face) {
       const state = getThreeState(face);
       const canvas = faceCanvasByFace[face];
@@ -323,7 +365,7 @@
       const config = getConfig();
       const cols = Math.max(config.cols, 1);
       const rows = Math.max(config.rows, 1);
-      const inset = 0.06;
+      const inset = 0.015;
       const vertices = [];
       const colors = [];
 
@@ -335,8 +377,11 @@
           const right = col + 1 - inset;
           const top = row + inset;
           const bottom = row + 1 - inset;
-          const color = getThreeCellColor(cell, palette);
-          pushThreeRect(vertices, colors, left, top, right, bottom, color);
+          const style = getThreeCellStyle(cell, palette, face, row, col);
+          pushThreeSubdividedRect(vertices, colors, left, top, right, bottom, 3, (sampleX, sampleY) =>
+            applyMetalTexture(style.baseColor, face, sampleX, sampleY, style.textureStrength)
+          );
+          pushThreeEdgeGlow(vertices, colors, left, top, right, bottom, style.edgeColor, style.edgeStrength);
         }
       }
 
@@ -352,6 +397,49 @@
       for (let i = 0; i < 6; i += 1) {
         colors.push(r, g, b);
       }
+    }
+
+    function pushThreeRectGradient(vertices, colors, left, top, right, bottom, cTL, cTR, cBR, cBL) {
+      vertices.push(left, top, 0, right, top, 0, right, bottom, 0, left, top, 0, right, bottom, 0, left, bottom, 0);
+      colors.push(
+        cTL[0], cTL[1], cTL[2],
+        cTR[0], cTR[1], cTR[2],
+        cBR[0], cBR[1], cBR[2],
+        cTL[0], cTL[1], cTL[2],
+        cBR[0], cBR[1], cBR[2],
+        cBL[0], cBL[1], cBL[2]
+      );
+    }
+
+    function pushThreeSubdividedRect(vertices, colors, left, top, right, bottom, subdivisions = 3, sampleColor) {
+      const steps = Math.max(1, Math.floor(subdivisions));
+      const width = right - left;
+      const height = bottom - top;
+      for (let sy = 0; sy < steps; sy += 1) {
+        for (let sx = 0; sx < steps; sx += 1) {
+          const x0 = left + (sx / steps) * width;
+          const y0 = top + (sy / steps) * height;
+          const x1 = left + ((sx + 1) / steps) * width;
+          const y1 = top + ((sy + 1) / steps) * height;
+          const cTL = sampleColor(x0, y0);
+          const cTR = sampleColor(x1, y0);
+          const cBR = sampleColor(x1, y1);
+          const cBL = sampleColor(x0, y1);
+          pushThreeRectGradient(vertices, colors, x0, y0, x1, y1, cTL, cTR, cBR, cBL);
+        }
+      }
+    }
+
+    function pushThreeEdgeGlow(vertices, colors, left, top, right, bottom, edgeColor, edgeStrength = 0) {
+      const strength = clamp(edgeStrength, 0, 1);
+      if (strength <= 0.01) return;
+      const thickness = 0.04;
+      const [r, g, b] = mixRgb([0, 0, 0], edgeColor, strength);
+      const push = (x1, y1, x2, y2) => pushThreeRect(vertices, colors, x1, y1, x2, y2, [r, g, b]);
+      push(left, top, right, Math.min(top + thickness, bottom));
+      push(left, Math.max(bottom - thickness, top), right, bottom);
+      push(left, top + thickness, Math.min(left + thickness, right), Math.max(bottom - thickness, top + thickness));
+      push(Math.max(right - thickness, left), top + thickness, right, Math.max(bottom - thickness, top + thickness));
     }
 
     function parseCssColorToRgba(value, fallback = [1, 1, 1, 1]) {
@@ -400,18 +488,62 @@
       };
     }
 
-    function getThreeCellColor(cell, palette) {
+    function getThreeCellStyle(cell, palette, face, row, col) {
       const boardSurface = palette.boardSurface || [0, 0, 0, 1];
-      if (!cell) return blendOver(boardSurface, palette.hidden);
-      if (cell.revealed && cell.isMine) return blendOver(boardSurface, palette.mine);
+      const activeTheme = document.documentElement.getAttribute('data-theme') || '';
+      const steelBoost = activeTheme === 'midnight' ? 1.08 : 1;
+      const steelHiddenBase = blendOver(boardSurface, [0.04, 0.045, 0.055, 0.92]);
+      const steelRevealedBase = blendOver(boardSurface, [0.48, 0.5, 0.55, 0.76]);
+      const steelMineBase = blendOver(boardSurface, [0.72, 0.22, 0.2, 0.84]);
+      const steelSpecialBase = blendOver(boardSurface, [0.4, 0.46, 0.56, 0.74]);
+      const edgeBase = [0.66, 0.69, 0.74];
+
+      if (!cell) {
+        return {
+          baseColor: steelHiddenBase,
+          textureStrength: 0.22 * steelBoost,
+          edgeColor: [0.3, 0.34, 0.42],
+          edgeStrength: 0.1,
+        };
+      }
+      if (cell.revealed && cell.isMine) {
+        return {
+          baseColor: steelMineBase,
+          textureStrength: 0.34 * steelBoost,
+          edgeColor: [0.9, 0.35, 0.32],
+          edgeStrength: 0.2,
+        };
+      }
       if (cell.flagged && !cell.revealed) {
-        return blendOver(boardSurface, [palette.accent[0], palette.accent[1], palette.accent[2], 0.65]);
+        return {
+          baseColor: blendOver(boardSurface, [0.38, 0.42, 0.5, 0.78]),
+          textureStrength: 0.24 * steelBoost,
+          edgeColor: [0.8, 0.84, 0.92],
+          edgeStrength: 0.2,
+        };
       }
-      if (cell.revealed) return blendOver(boardSurface, palette.revealed);
+      if (cell.revealed) {
+        return {
+          baseColor: steelRevealedBase,
+          textureStrength: 0.2 * steelBoost,
+          edgeColor: [0.76, 0.8, 0.86],
+          edgeStrength: 0.12,
+        };
+      }
       if (getVisualState().cheatMode && cell.special) {
-        return blendOver(boardSurface, [palette.highlight[0], palette.highlight[1], palette.highlight[2], 0.55]);
+        return {
+          baseColor: steelSpecialBase,
+          textureStrength: 0.28 * steelBoost,
+          edgeColor: [0.9, 0.94, 1],
+          edgeStrength: 0.16,
+        };
       }
-      return blendOver(boardSurface, palette.hidden);
+      return {
+        baseColor: steelHiddenBase,
+        textureStrength: 0.26 * steelBoost,
+        edgeColor: [0.34, 0.38, 0.46],
+        edgeStrength: 0.12,
+      };
     }
 
     return {

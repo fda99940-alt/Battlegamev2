@@ -17,6 +17,10 @@ function escapeClosingScriptTag(source) {
   return source.replace(/<\/script>/gi, '<\\/script>');
 }
 
+function stripDeferAttribute(scriptTag) {
+  return scriptTag.replace(/\sdefer(?=[\s>])/i, '');
+}
+
 async function minifyCss(cssPath) {
   const cssSource = await readFile(cssPath, 'utf8');
   const result = await transform(cssSource, {
@@ -74,7 +78,8 @@ async function buildSingleHtml() {
       await mkdir(path.dirname(distScriptPath), { recursive: true });
       await copyFile(scriptPath, distScriptPath);
       localExternalScriptCount += 1;
-      rebuiltHtml += fullTag;
+      // Preserve execution order with inlined scripts by removing defer.
+      rebuiltHtml += stripDeferAttribute(fullTag);
       continue;
     }
     if (EXTERNAL_SRC_PATTERN.test(scriptSrc)) {

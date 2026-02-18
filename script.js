@@ -2081,7 +2081,11 @@ const difficultyPresets = {
   }
 
   function loadRendererMode() {
-    return normalizeRendererMode(safeGetItem(rendererStorageKey));
+    const storedMode = safeGetItem(rendererStorageKey);
+    if (!storedMode) {
+      return 'three';
+    }
+    return normalizeRendererMode(storedMode);
   }
 
   function buildRendererContextForMode(mode) {

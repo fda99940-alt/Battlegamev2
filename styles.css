@@ -795,6 +795,8 @@ body {
 .webgl-cell-label,
 .three-cell-label {
   display: flex;
+  width: 100%;
+  height: 100%;
   align-items: center;
   justify-content: center;
   color: var(--text-primary);
@@ -850,16 +852,129 @@ body {
   color: var(--accent);
 }
 
+.board-wrapper[data-renderer="three"] .three-cell-label--flagged {
+  color: #d7f2ff;
+  font-size: clamp(0.66rem, 1.45vw, 1.08rem);
+  text-shadow: 0 0 8px rgba(114, 218, 255, 0.42), 0 0 14px rgba(58, 116, 168, 0.26);
+  isolation: isolate;
+}
+
+.board-wrapper[data-renderer="three"] .three-cell-label--flagged::before {
+  content: "";
+  position: absolute;
+  width: 56%;
+  height: 56%;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 28%, rgba(225, 246, 255, 0.7), rgba(54, 98, 132, 0.84) 62%, rgba(12, 22, 38, 0.95) 100%);
+  border: 1px solid rgba(152, 226, 255, 0.54);
+  box-shadow: inset 0 1px 0 rgba(236, 250, 255, 0.38),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.42),
+    0 0 14px rgba(84, 176, 255, 0.26);
+  z-index: -1;
+}
+
+.board-wrapper[data-renderer="three"] .three-cell-label--flagged::after {
+  content: "";
+  position: absolute;
+  width: 70%;
+  height: 70%;
+  border-radius: 999px;
+  border: 1px solid rgba(142, 218, 255, 0.4);
+  box-shadow: 0 0 0 1px rgba(8, 16, 24, 0.72);
+  z-index: -1;
+}
+
 .webgl-cell-label--mine,
 .three-cell-label--mine {
   color: var(--danger);
   text-shadow: 0 0 8px rgba(255, 107, 107, 0.35);
 }
 
+.board-wrapper[data-renderer="three"] .three-cell-label--mine {
+  color: #ffd7bf;
+  font-size: clamp(0.7rem, 1.55vw, 1.2rem);
+  text-shadow: 0 0 10px rgba(255, 150, 90, 0.45), 0 0 18px rgba(255, 78, 58, 0.25);
+  isolation: isolate;
+}
+
+.board-wrapper[data-renderer="three"] .three-cell-label--mine::before {
+  content: "";
+  position: absolute;
+  width: 56%;
+  height: 56%;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 28%, rgba(255, 228, 194, 0.7), rgba(131, 43, 35, 0.82) 62%, rgba(42, 13, 18, 0.95) 100%);
+  border: 1px solid rgba(255, 190, 150, 0.55);
+  box-shadow: inset 0 1px 0 rgba(255, 244, 225, 0.35),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.45),
+    0 0 14px rgba(255, 102, 60, 0.28);
+  z-index: -1;
+}
+
+.board-wrapper[data-renderer="three"] .three-cell-label--mine::after {
+  content: "";
+  position: absolute;
+  width: 70%;
+  height: 70%;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 182, 128, 0.38);
+  box-shadow: 0 0 0 1px rgba(35, 13, 14, 0.7);
+  z-index: -1;
+}
+
 .webgl-cell-label--special,
 .three-cell-label--special {
   color: var(--highlight);
   font-size: clamp(0.58rem, 1.35vw, 1.08rem);
+}
+
+/* Three-only overlay tuning for static metallic renderer */
+.board-wrapper[data-renderer="three"] .board-three {
+  filter: saturate(0.52) contrast(1.08) brightness(0.95);
+}
+
+.board-wrapper[data-renderer="three"] .three-cell-label--covered {
+  background: linear-gradient(
+    152deg,
+    rgba(228, 236, 255, 0.14) 0%,
+    rgba(155, 170, 205, 0.08) 28%,
+    rgba(26, 31, 45, 0.22) 58%,
+    rgba(6, 8, 14, 0.3) 100%
+  );
+  box-shadow: inset 0 1px 0 rgba(232, 238, 255, 0.2),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.52),
+    inset 0 0 0 1px rgba(118, 132, 168, 0.26),
+    0 2px 5px rgba(0, 0, 0, 0.22);
+  transition: transform 0.1s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.board-wrapper[data-renderer="three"] .three-cell-label--revealed {
+  background: linear-gradient(
+    148deg,
+    rgba(242, 247, 255, 0.16) 0%,
+    rgba(194, 206, 232, 0.1) 34%,
+    rgba(80, 92, 122, 0.08) 62%,
+    rgba(22, 27, 40, 0.14) 100%
+  );
+  box-shadow: inset 0 1px 0 rgba(246, 250, 255, 0.2),
+    inset 0 -1px 0 rgba(9, 12, 20, 0.3),
+    inset 0 0 0 1px rgba(182, 194, 220, 0.26);
+}
+
+.board-wrapper[data-renderer="three"] .three-cell-label--covered:hover {
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(238, 244, 255, 0.25),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.48),
+    inset 0 0 0 1px rgba(178, 190, 220, 0.34),
+    0 4px 9px rgba(0, 0, 0, 0.3);
+}
+
+.board-wrapper[data-renderer="three"] .three-cell-label--covered:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 1px 0 rgba(200, 212, 238, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.58),
+    inset 0 0 0 1px rgba(150, 166, 204, 0.24),
+    0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .svg-cell-group {
