@@ -6,7 +6,7 @@ import { transform } from 'esbuild';
 const projectRoot = process.cwd();
 const inputHtmlPath = path.resolve(projectRoot, 'index.html');
 const outputDirPath = path.resolve(projectRoot, 'dist');
-const outputHtmlPath = path.resolve(outputDirPath, 'index.single.html');
+const outputHtmlPath = path.resolve(outputDirPath, 'mindsweeper-play.html');
 
 const SCRIPT_TAG_PATTERN = /<script\s+[^>]*src=["']([^"']+)["'][^>]*><\/script>/gi;
 const STYLESHEET_TAG_PATTERN = /<link\s+[^>]*rel=["']stylesheet["'][^>]*href=["']([^"']+)["'][^>]*>/i;

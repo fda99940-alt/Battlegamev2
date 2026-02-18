@@ -4,8 +4,9 @@
 
 ## Start playing (recommended)
 
-1. Download `dist/index.single.html`.
-2. Open it in any modern browser.
+1. Download the latest release file: [mindsweeper-play.html](https://github.com/fda99940-alt/Battlegamev2/releases/latest/download/mindsweeper-play.html)
+2. If no release is available yet, use the repo file: [`dist/mindsweeper-play.html`](./dist/mindsweeper-play.html)
+3. Open it in any modern browser.
 
 That file is self-contained and ready to play.
 
@@ -51,7 +52,7 @@ npm run build:single
 
 Output file:
 
-- `dist/index.single.html`
+- `dist/mindsweeper-play.html`
 
 The build script reads `index.html`, inlines `styles.css`, inlines every `<script src="...">` in existing order, and minifies the inlined code with `esbuild`.
 

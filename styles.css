@@ -1415,6 +1415,37 @@ button.ghost {
   color: var(--text-faint);
 }
 
+.hero-repo-link {
+  margin-top: 0.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.05rem;
+  padding: 0.45rem 0.8rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--ghost-border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ghost-color);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.hero-repo-link:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.hero-repo-link:focus-visible {
+  outline: 2px solid var(--highlight);
+  outline-offset: 2px;
+}
+
+.app-shell--playing .hero-repo-link {
+  margin-top: 0;
+}
+
 .history-list {
   display: flex;
   flex-direction: column;
