@@ -1,6 +1,7 @@
 const translationBundle = window.MindsweeperTranslations || {};
 const LANGUAGE_OPTIONS = translationBundle.LANGUAGE_OPTIONS || [];
 const TRANSLATIONS = translationBundle.TRANSLATIONS || {};
+const APP_VERSION = '1.1.0';
 
 /**
  * Main entry point that scopes Mindsweeper logic, prepares DOM references, and keeps state isolated.
@@ -43,6 +44,7 @@ const historyPanel = document.querySelector('.panel.history');
 const boardWrapper = document.querySelector('.board-wrapper');
 const toggleFocusModeBtn = document.getElementById('toggleFocusMode');
 const appShellEl = document.querySelector('.app-shell');
+const appVersionBadgeEl = document.getElementById('appVersionBadge');
 const toggleNeighborDebugBtn = document.getElementById('toggleNeighborDebug');
 const neighborDebugEl = document.getElementById('neighborDebug');
 const themeButtons = document.querySelectorAll('[data-theme-option]');
@@ -248,6 +250,13 @@ const difficultyPresets = {
   function updatePlayLayoutState() {
     if (!appShellEl) return;
     appShellEl.classList.toggle('app-shell--playing', Boolean(gameActive || isReplaying));
+  }
+
+  function applyAppVersion() {
+    if (!appVersionBadgeEl) return;
+    const versionText = `v${APP_VERSION}`;
+    appVersionBadgeEl.textContent = versionText;
+    appVersionBadgeEl.title = `Mindsweeper ${versionText}`;
   }
 
   function updateFocusModeButton() {
@@ -496,6 +505,7 @@ const difficultyPresets = {
    * Initializes the UI, translations, theme, presets, history, and game state.
    */
   function init() {
+    applyAppVersion();
     applyRendererMode(rendererMode, { persist: false, restart: false, rebuildFaces: false });
     initRendererModeSelector();
     ensureCubeFaces(config.faces);

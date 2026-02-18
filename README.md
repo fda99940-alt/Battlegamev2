@@ -80,6 +80,20 @@ npm run build:three-vendor
 
 `renderers/three.vendor.entry.js` intentionally imports only the Three APIs used by this project so the vendor bundle stays smaller than exposing the full library globally.
 
+### Visual version badge
+
+The app header shows a small visual version badge (`vX.Y.Z`).
+Configure it in one place:
+
+- `script.js` -> `APP_VERSION`
+- Current value: `1.1.0`
+
+After changing it, regenerate the distributable:
+
+```bash
+npm run build:single
+```
+
 ## Testing
 
 Run the lightweight Node test harness:

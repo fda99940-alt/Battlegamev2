@@ -388,6 +388,13 @@ body {
   min-width: 220px;
 }
 
+.hero-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
 .hero-greeting {
   font-size: clamp(1.25rem, 2.5vw, 1.75rem);
   font-weight: 600;
@@ -407,6 +414,29 @@ body {
 .hero h1 {
   font-size: clamp(2.4rem, 4vw, 3rem);
   margin: 0.25rem 0;
+}
+
+.version-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.75rem;
+  padding: 0.2rem 0.52rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--panel-border) 80%, #fff 20%);
+  background: color-mix(in srgb, var(--panel-surface) 72%, #000 28%);
+  color: var(--text-faint);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.app-shell--playing .version-badge {
+  font-size: 0.7rem;
+  padding: 0.16rem 0.48rem;
+  opacity: 0.9;
 }
 
 .hero .lede {
