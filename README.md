@@ -5,10 +5,16 @@
 ## Start playing (recommended)
 
 1. Download the latest release file: [mindsweeper-play.html](https://github.com/fda99940-alt/Battlegamev2/releases/latest/download/mindsweeper-play.html)
-2. If no release is available yet, use the repo file: [`dist/mindsweeper-play.html`](./dist/mindsweeper-play.html)
-3. Open it in any modern browser.
+2. Open it in any modern browser.
+3. Click **Start game**.
 
-That file is self-contained and ready to play.
+Watch out for special fields while playing:
+- `⟳ Rotation`: rotates the board.
+- `⇋ Flip`: mirrors the board.
+- `🐶 Dog`: auto-flags a random unmarked mine.
+- `🛡 Guardian`: gives a shield that blocks the next mine hit.
+
+`mindsweeper-play.html` is self-contained and ready to run.
 
 ![Mindsweeper Screenshot](./Mindsweeper.png)
 
