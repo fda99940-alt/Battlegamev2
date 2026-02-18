@@ -20,9 +20,12 @@ Watch out for special fields while playing:
 
 ![Mindsweeper Focus Mode Screenshot](./Mindsweeper_Focus.png)
 
-## Structure overview
+## Project structure (for contributors)
 
-- `index.html`: bootstrapper that wires `styles.css`, locale files, `translations.js`, renderer modules in `renderers/*.js`, and `script.js`. The markup scopes every UI region—board, status, controls, theme toggles, difficulty presets, language dropdown (flags included), history panel, seed copy/join tools, and room-code tracker.
+If you just want to play, use the release file above and skip this section.
+
+- `dist/mindsweeper-play.html`: generated single-file distributable used for releases.
+- `index.html`: source entry page used to generate the distributable build.
 - `styles.css`: visual system that defines six palettes (Neon, Dusk, Sunrise, Midnight, Verdant, Ember), cube-face transforms, zero-gap grids, and responsive helpers so the board and controls stay tidy.
 - `translations/locales/*.js`: each language lives in its own file that registers its localized strings plus the seed/share copy text on `window.MindsweeperTranslations.TRANSLATIONS` and `SEED_TERMS`.
 - `translations.js`: aggregates the `LANGUAGE_OPTIONS` list, loads the per-locale registrations, augments theme names, and derives Braille output from English before exposing the bundle to the app.
@@ -43,7 +46,7 @@ Watch out for special fields while playing:
 - `script.js`: top-level app orchestrator that composes modules, coordinates renderer mode/board mode/game lifecycle, and owns shared runtime state.
 - `tests/*.test.js` + `tests/helpers/loadBrowserModule.js`: lightweight Node test harness for browser-style modules via VM loading.
 
-## Running from source
+## Running from source (contributors)
 
 Open `index.html` in a modern browser. No server is required.
 
@@ -60,7 +63,7 @@ Output file:
 
 - `dist/mindsweeper-play.html`
 
-The build script reads `index.html`, inlines `styles.css`, inlines every `<script src="...">` in existing order, and minifies the inlined code with `esbuild`.
+The build script uses `index.html` as source, inlines `styles.css`, inlines every `<script src="...">` in existing order, and minifies the result with `esbuild`.
 
 ## Testing
 
