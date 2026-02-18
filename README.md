@@ -33,6 +33,21 @@
 
 Open `index.html` in a modern browser. No build step or server is required—the UI is fully interactive out of the box. Try several games, tweak Rows/Cols/Faces/Mines/rotation/flip counts, switch `Board: Cube` / `Board: 2D`, choose a renderer (`DOM`, `Canvas`, `SVG`, `WebGL`) from the controls dropdown, toggle themes/languages, and use the history tools to replay or delete previous runs.
 
+## Single-file build
+
+To generate a distributable single HTML file with inlined/minified CSS and JS:
+
+```bash
+npm install
+npm run build:single
+```
+
+Output file:
+
+- `dist/index.single.html`
+
+The build script reads `index.html`, inlines `styles.css`, inlines every `<script src="...">` in existing order, and minifies the inlined code with `esbuild`.
+
 ## Testing
 
 Run the lightweight Node test harness:

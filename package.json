@@ -2,6 +2,11 @@
   "name": "battlegamev2",
   "private": true,
   "scripts": {
-    "test": "node --test tests/*.test.js"
+    "test": "node --test tests/*.test.js",
+    "build:single": "node scripts/build-single-file.mjs",
+    "build": "npm run build:single"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.10"
   }
 }
