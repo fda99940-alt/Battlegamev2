@@ -113,7 +113,9 @@
       const scaleX = specialsEnabled && flipHorizontal ? -1 : 1;
       const scaleY = specialsEnabled && flipVertical ? -1 : 1;
       const spinY = specialsEnabled ? rotationAngle : 0;
-      const zoomDistance = (cubeZoom - 1) * Math.max(cubeEl.clientWidth * 0.75, 240);
+      const zoomDistance = cubeZoom >= 1
+        ? (cubeZoom - 1) * Math.max(cubeEl.clientWidth * 0.65, 260)
+        : -(1 - cubeZoom) * Math.max(cubeEl.clientWidth * 2.4, 900);
       cubeEl.style.transform = `translateZ(${zoomDistance}px) rotateX(${cubePitch}deg) rotateY(${cubeYaw + spinY}deg) scale(${scaleX}, ${scaleY})`;
       updateWrapperSpacing(false);
     }
