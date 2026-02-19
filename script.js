@@ -1,7 +1,7 @@
 const translationBundle = window.MindsweeperTranslations || {};
 const LANGUAGE_OPTIONS = translationBundle.LANGUAGE_OPTIONS || [];
 const TRANSLATIONS = translationBundle.TRANSLATIONS || {};
-const APP_VERSION = '1.1.0';
+const APP_VERSION = '1.1.1';
 
 /**
  * Main entry point that scopes Mindsweeper logic, prepares DOM references, and keeps state isolated.
@@ -2200,13 +2200,17 @@ const difficultyPresets = {
     };
     const factory = factoryByMode[mode] || factoryByMode.dom;
     if (typeof factory === 'function') {
-      const renderer = factory(context);
-      if (renderer) return renderer;
+      try {
+        const renderer = factory(context);
+        if (renderer) return renderer;
+      } catch (_error) {}
     }
     const domFactory = factoryByMode.dom;
     if (typeof domFactory === 'function') {
-      const domRenderer = domFactory(buildRendererContextForMode('dom'));
-      if (domRenderer) return domRenderer;
+      try {
+        const domRenderer = domFactory(buildRendererContextForMode('dom'));
+        if (domRenderer) return domRenderer;
+      } catch (_error) {}
     }
     return domFallback;
   }
@@ -2221,6 +2225,14 @@ const difficultyPresets = {
   function applyRendererMode(mode, options = {}) {
     const { persist = true, restart = false, rebuildFaces = true } = options;
     let requestedMode = normalizeRendererMode(mode);
+    const wasRendererMode = rendererMode;
+    const switchingMode = requestedMode !== wasRendererMode;
+    if (switchingMode) {
+      try {
+        activeRenderer?.dispose?.();
+      } catch (_error) {}
+      activeRenderer = null;
+    }
     if (requestedMode === 'three' && !isThreeSupported()) {
       requestedMode = isWebglSupported() ? 'webgl' : 'canvas';
     }

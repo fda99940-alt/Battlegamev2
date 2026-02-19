@@ -548,6 +548,9 @@
 
     return {
       id: 'three',
+      dispose() {
+        disposeAllThreeState();
+      },
       ensureFaces: ensureCubeFacesThree,
       layoutFaces: layoutCubeFacesThree,
       renderBoard: renderBoardThree,

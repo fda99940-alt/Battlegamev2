@@ -34,6 +34,25 @@
     let faceWebglOverlayByFace = {};
     let webglStateByFace = {};
 
+    function disposeWebglState(state) {
+      if (!state?.gl) return;
+      const { gl, program, buffer } = state;
+      try {
+        if (buffer) gl.deleteBuffer(buffer);
+      } catch (_error) {}
+      try {
+        if (program) gl.deleteProgram(program);
+      } catch (_error) {}
+      try {
+        gl.getExtension('WEBGL_lose_context')?.loseContext?.();
+      } catch (_error) {}
+    }
+
+    function disposeAllWebglState() {
+      Object.values(webglStateByFace).forEach((state) => disposeWebglState(state));
+      webglStateByFace = {};
+    }
+
     function renderBoardWebgl() {
       forEachCell((cell) => {
         cell.element = null;
@@ -116,6 +135,7 @@
     function ensureCubeFacesWebgl(count = 6) {
       if (!cubeEl) return;
       const safeCount = normalizeFaceCount(Number(count) || 6);
+      disposeAllWebglState();
       cubeEl.innerHTML = '';
       for (let i = 0; i < safeCount; i += 1) {
         const faceEl = document.createElement('div');
@@ -158,7 +178,6 @@
         return acc;
       }, {});
 
-      webglStateByFace = {};
       layoutCubeFacesWebgl();
     }
 
@@ -405,6 +424,9 @@
 
     return {
       id: 'webgl',
+      dispose() {
+        disposeAllWebglState();
+      },
       ensureFaces: ensureCubeFacesWebgl,
       layoutFaces: layoutCubeFacesWebgl,
       renderBoard: renderBoardWebgl,

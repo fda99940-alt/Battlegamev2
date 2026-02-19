@@ -64,10 +64,9 @@ npm run build:single
 Output file:
 
 - `dist/mindsweeper-play.html`
-- `dist/renderers/three.vendor.js` (copied local Three runtime loaded by the HTML build)
 
 The build script uses `index.html` as source, inlines `styles.css`, inlines every `<script src="...">` in existing order, and minifies the result with `esbuild`.
-For `dist` output, `renderers/three.vendor.js` is copied as a local sidecar script and loaded in-order (without `defer`) so Three renderer support is available during initial renderer selection.
+The generated `dist/mindsweeper-play.html` is fully self-contained (including the local Three runtime), so it can be moved and opened as a standalone file.
 
 ### Refreshing local Three vendor bundle
 
