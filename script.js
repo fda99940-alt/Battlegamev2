@@ -1,7 +1,7 @@
 const translationBundle = window.MindsweeperTranslations || {};
 const LANGUAGE_OPTIONS = translationBundle.LANGUAGE_OPTIONS || [];
 const TRANSLATIONS = translationBundle.TRANSLATIONS || {};
-const APP_VERSION = '1.1.1';
+const APP_VERSION = '1.2.0';
 
 /**
  * Main entry point that scopes Mindsweeper logic, prepares DOM references, and keeps state isolated.
@@ -43,6 +43,10 @@ const historyShowMoreBtn = document.getElementById('historyShowMore');
 const historyPanel = document.querySelector('.panel.history');
 const boardWrapper = document.querySelector('.board-wrapper');
 const toggleFocusModeBtn = document.getElementById('toggleFocusMode');
+const toggleToastHistoryBtn = document.getElementById('toggleToastHistory');
+const toastHistoryPanelEl = document.getElementById('toastHistoryPanel');
+const toastHistoryListEl = document.getElementById('toastHistoryList');
+const clearToastHistoryBtn = document.getElementById('clearToastHistory');
 const appShellEl = document.querySelector('.app-shell');
 const appVersionBadgeEl = document.getElementById('appVersionBadge');
 const toggleNeighborDebugBtn = document.getElementById('toggleNeighborDebug');
@@ -246,6 +250,9 @@ const difficultyPresets = {
   const avatarPulseDuration = 1400;
   let avatarHistory = [];
   const avatarHistoryLimit = 5;
+  let toastHistory = [];
+  const toastHistoryLimit = 10;
+  let toastHistoryVisible = false;
 
   function updatePlayLayoutState() {
     if (!appShellEl) return;
@@ -263,6 +270,67 @@ const difficultyPresets = {
     if (!toggleFocusModeBtn) return;
     toggleFocusModeBtn.textContent = `Focus: ${focusMode ? 'on' : 'off'}`;
     toggleFocusModeBtn.setAttribute('aria-pressed', String(focusMode));
+  }
+
+  function updateToastHistoryButton() {
+    if (!toggleToastHistoryBtn) return;
+    toggleToastHistoryBtn.textContent = `Toasts: ${toastHistoryVisible ? 'on' : 'off'}`;
+    toggleToastHistoryBtn.setAttribute('aria-pressed', String(toastHistoryVisible));
+    toggleToastHistoryBtn.setAttribute('title', 'Show or hide toast history');
+    toggleToastHistoryBtn.setAttribute('aria-label', 'Show or hide toast history');
+  }
+
+  function renderToastHistory() {
+    if (!toastHistoryListEl) return;
+    if (!toastHistory.length) {
+      const empty = document.createElement('li');
+      empty.className = 'toast-history-empty';
+      empty.textContent = 'No toast messages yet.';
+      toastHistoryListEl.replaceChildren(empty);
+      return;
+    }
+    const nodes = toastHistory.map((entry) => {
+      const item = document.createElement('li');
+      if (entry?.avatarIcon) {
+        const icon = document.createElement('span');
+        icon.className = 'toast-history-entry__icon';
+        icon.textContent = entry.avatarIcon;
+        if (entry.avatarName) {
+          icon.setAttribute('title', entry.avatarName);
+          icon.setAttribute('aria-label', `Avatar: ${entry.avatarName}`);
+        }
+        const text = document.createElement('span');
+        text.className = 'toast-history-entry__text';
+        text.textContent = entry.message || '';
+        item.append(icon, text);
+      } else {
+        item.textContent = entry?.message || '';
+      }
+      item.title = entry?.message || '';
+      return item;
+    });
+    toastHistoryListEl.replaceChildren(...nodes);
+  }
+
+  function appendToastHistory(message, options = {}) {
+    if (!message) return;
+    toastHistory = [
+      {
+        message,
+        avatarIcon: options.avatarIcon || '',
+        avatarName: options.avatarName || '',
+      },
+      ...toastHistory,
+    ].slice(0, toastHistoryLimit);
+    renderToastHistory();
+  }
+
+  function setToastHistoryVisible(visible) {
+    toastHistoryVisible = Boolean(visible);
+    if (toastHistoryPanelEl) {
+      toastHistoryPanelEl.hidden = !toastHistoryVisible;
+    }
+    updateToastHistoryButton();
   }
 
   function applyFocusMode(enabled, options = {}) {
@@ -326,6 +394,19 @@ const difficultyPresets = {
   if (toggleFocusModeBtn) {
     toggleFocusModeBtn.addEventListener('click', () => {
       applyFocusMode(!focusMode);
+    });
+  }
+
+  if (toggleToastHistoryBtn) {
+    toggleToastHistoryBtn.addEventListener('click', () => {
+      setToastHistoryVisible(!toastHistoryVisible);
+    });
+  }
+
+  if (clearToastHistoryBtn) {
+    clearToastHistoryBtn.addEventListener('click', () => {
+      toastHistory = [];
+      renderToastHistory();
     });
   }
 
@@ -525,6 +606,8 @@ const difficultyPresets = {
     initRoomJoin();
     initNeighborDebugToggle();
     applyFocusMode(focusMode, { persist: false });
+    renderToastHistory();
+    setToastHistoryVisible(false);
     renderHistory();
     applyCheatState();
     startNewGame();
@@ -873,6 +956,7 @@ const difficultyPresets = {
    * @param {Object} cell Target cell data.
    */
   function revealCell(cell, options = {}) {
+    const revealBatch = options.revealBatch || { specialToastShown: false };
     boardActions.revealCell({
       cell,
       gameActive,
@@ -880,6 +964,7 @@ const difficultyPresets = {
       recordAction: options.recordAction ?? true,
       checkVictory: options.checkVictory ?? true,
       userAction: options.userAction ?? true,
+      revealBatch,
       guardianShields,
       setGuardianShields: (value) => {
         guardianShields = value;
@@ -936,7 +1021,7 @@ const difficultyPresets = {
   /**
    * Activates a discovered special cell when special effects are enabled.
    */
-  function triggerSpecial(special, cell) {
+  function triggerSpecial(special, cell, options = {}) {
     boardActions.triggerSpecial({
       special,
       cell,
@@ -964,11 +1049,15 @@ const difficultyPresets = {
         guardianTriggers += 1;
         guardianShields += 1;
         showStatusMessage('status.guardianReady', { shields: guardianShields });
-        showGuardianToast('status.guardianReady', { shields: guardianShields });
       },
       applyTransform,
       updateStatus,
       commentOnSpecial,
+      showSpecialToast,
+      toastContext: {
+        revealBatch: options.revealBatch,
+        replay: options.replay ?? false,
+      },
     });
   }
 
@@ -1076,7 +1165,7 @@ const difficultyPresets = {
     revealAllMines();
     showStatusMessage('status.loss');
     saveRun('loss');
-    speakAvatar('loss', { pos: describeCellPosition(cell) });
+    speakAvatar('loss', { pos: describeCellPosition(cell) }, { toast: true });
   }
 
   /**
@@ -1088,7 +1177,7 @@ const difficultyPresets = {
     revealAllMines();
     showStatusMessage('status.win');
     saveRun('win');
-    speakAvatar('win', { size: `${config.rows}×${config.cols}` });
+    speakAvatar('win', { size: `${config.rows}×${config.cols}` }, { toast: true });
   }
 
   /**
@@ -1231,11 +1320,10 @@ const difficultyPresets = {
     setStatus(t(key, replacements));
   }
 
-  function showGuardianToast(key, replacements = {}) {
-    if (!guardianToastEl) return;
-    const text = t(key, replacements);
-    if (!text) return;
-    guardianToastEl.textContent = text;
+  function showToast(message, options = {}) {
+    if (!guardianToastEl || !message) return;
+    appendToastHistory(message, options);
+    guardianToastEl.textContent = message;
     guardianToastEl.classList.add('toast--visible');
     if (guardianToastTimer) {
       clearTimeout(guardianToastTimer);
@@ -1243,6 +1331,42 @@ const difficultyPresets = {
     guardianToastTimer = setTimeout(() => {
       guardianToastEl.classList.remove('toast--visible');
     }, 3200);
+  }
+
+  function showGuardianToast(key, replacements = {}) {
+    const text = t(key, replacements);
+    showToast(text);
+  }
+
+  function showSpecialToast(special, cell, options = {}) {
+    if (!special || options.replay) return;
+    const revealBatch = options.revealBatch;
+    if (revealBatch?.specialToastShown) return;
+    const pos = describeCellPosition(cell);
+    const avatarIcon = avatarPersonas[currentAvatarPersona]?.icon || '🤖';
+    let key = '';
+    let replacements = { pos };
+    if (special.type === 'rotation') {
+      key = 'specialRotation';
+      replacements.direction = special.direction === 'ccw' ? 'counter-clockwise' : 'clockwise';
+    } else if (special.type === 'flip') {
+      key = 'specialFlip';
+      replacements.axis = special.axis === 'horizontal' ? 'horizontally' : 'vertically';
+    } else if (special.type === 'dog') {
+      key = 'specialDog';
+    } else if (special.type === 'guardian') {
+      key = 'specialGuardian';
+    }
+    if (!key) return;
+    const avatarLine = resolveAvatarLine(key, replacements);
+    if (!avatarLine) return;
+    showToast(avatarLine, {
+      avatarIcon,
+      avatarName: getCurrentAvatarName(),
+    });
+    if (revealBatch) {
+      revealBatch.specialToastShown = true;
+    }
   }
 
   function updateGuardianIndicator() {
@@ -1430,6 +1554,12 @@ const difficultyPresets = {
     });
   }
 
+  function getCurrentAvatarName() {
+    const optionLabel = avatarSelectEl?.querySelector(`option[value="${currentAvatarPersona}"]`)?.textContent;
+    if (optionLabel) return optionLabel.trim();
+    return currentAvatarPersona.charAt(0).toUpperCase() + currentAvatarPersona.slice(1);
+  }
+
   function getAvatarLines(key) {
     return avatarCommentary.getAvatarLines({
       translations: TRANSLATIONS,
@@ -1464,6 +1594,13 @@ const difficultyPresets = {
   function speakAvatar(key, replacements = {}, options = {}) {
     const message = resolveAvatarLine(key, replacements);
     setAvatarComment(message, options);
+    if (options.toast) {
+      const avatarIcon = avatarPersonas[currentAvatarPersona]?.icon || '🤖';
+      showToast(message, {
+        avatarIcon,
+        avatarName: getCurrentAvatarName(),
+      });
+    }
   }
 
   function appendAvatarHistory(message) {

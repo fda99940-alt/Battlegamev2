@@ -85,7 +85,7 @@ The app header shows a small visual version badge (`vX.Y.Z`).
 Configure it in one place:
 
 - `script.js` -> `APP_VERSION`
-- Current value: `1.1.1`
+- Current value: `1.2.0`
 
 After changing it, regenerate the distributable:
 

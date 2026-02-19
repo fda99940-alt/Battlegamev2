@@ -50,6 +50,7 @@
       recordAction = true,
       checkVictory = true,
       userAction = true,
+      revealBatch = null,
       guardianShields,
       setGuardianShields,
       describeCellPosition,
@@ -106,12 +107,12 @@
       runActions.push({ type: 'reveal', face: cell.face, row: cell.row, col: cell.col });
     }
     if (cell.special) {
-      triggerSpecial(cell.special, cell);
+      triggerSpecial(cell.special, cell, { revealBatch, replay });
     }
     if (!cell.isMine && cell.neighborMines === 0) {
       getNeighbors(cell).forEach((neighbor) => {
         if (!neighbor.revealed) {
-          revealCell(neighbor, { recordAction: false, replay, checkVictory, userAction: false });
+          revealCell(neighbor, { recordAction: false, replay, checkVictory, userAction: false, revealBatch });
         }
       });
     }
@@ -163,6 +164,8 @@
       applyTransform,
       updateStatus,
       commentOnSpecial,
+      showSpecialToast,
+      toastContext = {},
     } = options;
 
     if (!special || special.triggered) return;
@@ -185,6 +188,7 @@
     applyTransform();
     updateStatus();
     commentOnSpecial(special, cell);
+    showSpecialToast?.(special, cell, toastContext);
   }
 
   window.MindsweeperBoardActions = {

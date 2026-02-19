@@ -286,6 +286,70 @@ body {
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
 }
 
+.toast-history-panel {
+  width: min(620px, 96%);
+  margin: -0.25rem auto 0.35rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--panel-border);
+  background: color-mix(in srgb, var(--panel-surface) 78%, #000 22%);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+}
+
+.toast-history-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--text-faint);
+}
+
+.toast-history-panel ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.toast-history-panel li {
+  font-size: 0.8rem;
+  line-height: 1.25;
+  color: var(--text-primary);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  overflow-wrap: anywhere;
+  border-radius: 0.55rem;
+  padding: 0.38rem 0.48rem;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.toast-history-entry__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.1rem;
+  font-size: 0.9rem;
+  line-height: 1;
+  cursor: help;
+}
+
+.toast-history-entry__text {
+  min-width: 0;
+}
+
+.toast-history-empty {
+  color: var(--text-faint);
+  font-style: italic;
+}
+
 .game-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(300px, 340px);
@@ -537,6 +601,33 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.15);
   transition: box-shadow 0.3s ease, transform 0.3s ease;
   cursor: pointer;
+  position: relative;
+}
+
+.avatar-window__portrait[data-avatar-name]::after {
+  content: attr(data-avatar-name);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.35rem);
+  transform: translateX(-50%) translateY(0.2rem);
+  white-space: nowrap;
+  font-size: 0.68rem;
+  line-height: 1;
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--panel-surface) 82%, #000 18%);
+  border: 1px solid var(--panel-border);
+  border-radius: 999px;
+  padding: 0.24rem 0.45rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.32);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.16s ease, transform 0.16s ease;
+  z-index: 7;
+}
+
+.avatar-window__portrait[data-avatar-name]:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 .avatar-window__speech-group {
@@ -1789,4 +1880,16 @@ button.ghost {
     min-width: 160px;
     padding-inline: 0.85rem;
   }
+}
+
+.toast-history-panel__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.toast-history-clear {
+  font-size: 0.7rem;
+  padding: 0.16rem 0.48rem;
+  line-height: 1.1;
 }

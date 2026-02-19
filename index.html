@@ -70,6 +70,19 @@
         <button type="button" class="ghost status-focus-toggle" id="toggleFocusMode" aria-pressed="false">
           Focus: off
         </button>
+        <button type="button" class="ghost status-focus-toggle" id="toggleToastHistory" aria-pressed="false">
+          Toasts: off
+        </button>
+      </div>
+      <div class="toast-history-panel" id="toastHistoryPanel" hidden>
+        <div class="toast-history-panel__head">
+          <strong>Toast history</strong>
+          <div class="toast-history-panel__actions">
+            <span>Last 10</span>
+            <button type="button" class="ghost toast-history-clear" id="clearToastHistory">Clear</button>
+          </div>
+        </div>
+        <ul id="toastHistoryList"></ul>
       </div>
       <section class="game-layout">
         <div class="field-column">

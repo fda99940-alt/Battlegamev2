@@ -59,12 +59,18 @@
     } = options;
 
     const normalized = avatarPersonas[persona] ? persona : defaultPersona;
+    const personaLabel =
+      avatarSelectEl?.querySelector(`option[value="${normalized}"]`)?.textContent?.trim() ||
+      normalized.charAt(0).toUpperCase() + normalized.slice(1);
     if (currentAvatarPersona === normalized && force !== true) {
       return currentAvatarPersona;
     }
 
     if (avatarPortraitEl) {
       avatarPortraitEl.textContent = avatarPersonas[normalized].icon;
+      avatarPortraitEl.setAttribute('data-avatar-name', personaLabel);
+      avatarPortraitEl.setAttribute('title', personaLabel);
+      avatarPortraitEl.setAttribute('aria-label', `Avatar persona: ${personaLabel}`);
     }
     if (avatarSelectEl) {
       avatarSelectEl.value = normalized;
