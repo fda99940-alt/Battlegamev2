@@ -887,15 +887,6 @@ body {
   touch-action: none;
 }
 
-.board-svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-  touch-action: none;
-}
-
-.board-webgl,
 .board-three {
   display: block;
   width: 100%;
@@ -904,7 +895,6 @@ body {
   touch-action: none;
 }
 
-.board-webgl-overlay,
 .board-three-overlay {
   position: absolute;
   inset: 0;
@@ -913,7 +903,6 @@ body {
   padding: 0;
 }
 
-.webgl-cell-label,
 .three-cell-label {
   display: flex;
   width: 100%;
@@ -933,7 +922,6 @@ body {
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
 }
 
-.webgl-cell-label--covered,
 .three-cell-label--covered {
   background: linear-gradient(
     160deg,
@@ -946,7 +934,6 @@ body {
     0 2px 4px rgba(0, 0, 0, 0.25);
 }
 
-.webgl-cell-label--covered:hover,
 .three-cell-label--covered:hover {
   transform: translateY(-1px);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32),
@@ -954,7 +941,6 @@ body {
     0 4px 8px rgba(0, 0, 0, 0.28);
 }
 
-.webgl-cell-label--covered:active,
 .three-cell-label--covered:active {
   transform: translateY(1px);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18),
@@ -962,13 +948,11 @@ body {
     0 1px 2px rgba(0, 0, 0, 0.22);
 }
 
-.webgl-cell-label--revealed,
 .three-cell-label--revealed {
   background: rgba(255, 255, 255, 0.08);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
 }
 
-.webgl-cell-label--flagged,
 .three-cell-label--flagged {
   color: var(--accent);
 }
@@ -1005,7 +989,6 @@ body {
   z-index: -1;
 }
 
-.webgl-cell-label--mine,
 .three-cell-label--mine {
   color: var(--danger);
   text-shadow: 0 0 8px rgba(255, 107, 107, 0.35);
@@ -1043,7 +1026,6 @@ body {
   z-index: -1;
 }
 
-.webgl-cell-label--special,
 .three-cell-label--special {
   color: var(--highlight);
   font-size: clamp(0.58rem, 1.35vw, 1.08rem);
@@ -1096,57 +1078,6 @@ body {
     inset 0 -1px 0 rgba(0, 0, 0, 0.58),
     inset 0 0 0 1px rgba(150, 166, 204, 0.24),
     0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-.svg-cell-group {
-  cursor: pointer;
-}
-
-.svg-cell {
-  fill: rgba(255, 255, 255, 0.045);
-  stroke: var(--panel-border);
-  stroke-width: 0.02;
-  vector-effect: non-scaling-stroke;
-  transition: fill 0.12s ease, opacity 0.12s ease;
-}
-
-.svg-cell-group:hover .svg-cell:not(.cell--revealed) {
-  fill: rgba(255, 255, 255, 0.12);
-}
-
-.svg-cell.cell--revealed {
-  fill: rgba(255, 255, 255, 0.12);
-}
-
-.svg-cell.cell--mine {
-  fill: rgba(255, 107, 107, 0.45);
-}
-
-.svg-cell.cell--flagged {
-  fill: rgba(90, 242, 199, 0.18);
-}
-
-.svg-cell.cell--special-rotation,
-.svg-cell.cell--special-flip,
-.svg-cell.cell--special-dog,
-.svg-cell.cell--special-guardian {
-  stroke: var(--highlight);
-}
-
-.svg-cell__value {
-  text-anchor: middle;
-  dominant-baseline: middle;
-  fill: var(--text-primary);
-  font-size: 0.5px;
-  font-weight: 700;
-  font-family: var(--cell-font, "Space Grotesk", "Inter", "Segoe UI Emoji", "Apple Color Emoji", sans-serif);
-  pointer-events: none;
-}
-
-.svg-cell__value--special {
-  fill: var(--highlight);
-  opacity: 0.9;
-  font-size: 0.58px;
 }
 
 .board-wrapper[data-board-mode="2d"] .cube-scene {
@@ -1404,34 +1335,16 @@ body {
   box-shadow: inset 0 0 0 2px rgba(255, 196, 95, 0.9);
 }
 
-.webgl-cell-label.neighbor-debug--origin,
 .three-cell-label.neighbor-debug--origin {
   box-shadow: inset 0 0 0 2px var(--highlight);
 }
 
-.webgl-cell-label.neighbor-debug--target,
 .three-cell-label.neighbor-debug--target {
   box-shadow: inset 0 0 0 2px var(--danger);
 }
 
-.webgl-cell-label.neighbor-debug--neighbor,
 .three-cell-label.neighbor-debug--neighbor {
   box-shadow: inset 0 0 0 2px rgba(255, 196, 95, 0.9);
-}
-
-.svg-cell.neighbor-debug--origin {
-  stroke: var(--highlight);
-  stroke-width: 0.1;
-}
-
-.svg-cell.neighbor-debug--target {
-  stroke: var(--danger);
-  stroke-width: 0.1;
-}
-
-.svg-cell.neighbor-debug--neighbor {
-  stroke: rgba(255, 196, 95, 0.9);
-  stroke-width: 0.08;
 }
 
 .panel-header {

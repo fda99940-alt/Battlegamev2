@@ -31,8 +31,6 @@ If you just want to play, use the release file above and skip this section.
 - `translations.js`: aggregates the `LANGUAGE_OPTIONS` list, loads the per-locale registrations, augments theme names, and derives Braille output from English before exposing the bundle to the app.
 - `renderers/domRenderer.js`: DOM renderer implementation (button-grid board creation, DOM-mode transforms, and DOM hit resolution).
 - `renderers/canvasRenderer.js`: Canvas renderer implementation (face canvas creation, resize/draw pipeline, and canvas hit testing).
-- `renderers/svgRenderer.js`: SVG renderer implementation (vector cell generation/sync, face SVG setup, and SVG hit testing).
-- `renderers/webglRenderer.js`: WebGL renderer implementation (GPU fill pipeline, overlay labels, WebGL support probe, and WebGL hit testing).
 - `renderers/three.vendor.js`: local bundled Three runtime used to expose global `THREE` without relying on a CDN.
 - `renderers/threeRenderer.js`: Three.js renderer implementation (Three-powered face rendering, overlay labels, Three support probe, and hit testing).
 - `modules/coreUtils.js`: shared utility helpers (clamping, seeded RNG, shuffle/pick helpers, formatting, and color helpers).
@@ -111,7 +109,7 @@ Current automated coverage focuses on:
 1. **Keyboard-focused controls**: Arrow keys move focus, Enter/Space reveal, and F flags—every action works without a mouse.
 2. **Mouse camera controls (3D mode)**: Left-drag orbits the board, and mouse wheel zooms in/out with a camera-depth transform (non-distorting) so perspective remains stable while inspecting dense layouts.
 3. **Board mode switch**: Toggle between `Board: Cube` (3D dice-style board) and `Board: 2D` (single front-face plane). Switching mode starts a fresh board with mode-appropriate cell/mine limits.
-4. **Renderer mode switch**: Choose `DOM`, `Canvas`, `SVG`, `WebGL`, or `Three.js` from the controls dropdown. `DOM` preserves native button-grid behavior, `Canvas` favors draw performance on bigger boards, `SVG` gives crisp scalable vector cells with class-based styling and easy hit testing, `WebGL` draws fast GPU-backed cell fills with an overlay label layer for clear numbers/icons, and `Three.js` uses a Three-powered render path with overlay hit targets, a static metallic surface treatment, and badge-styled mine/flag markers.
+4. **Renderer mode switch**: Choose `DOM`, `Canvas`, or `Three.js` from the controls dropdown. `DOM` preserves native button-grid behavior, `Canvas` favors draw performance on bigger boards, and `Three.js` uses a Three-powered render path with overlay hit targets, a static metallic surface treatment, and badge-styled mine/flag markers.
 5. **Cube-only 3D scaling**: 3D mode uses a fixed six-face cube (`d6`). Mines/specials inputs are still per-face values, multiplied by active faces (1 in `2D`, 6 in `Cube`) before a run starts.
 6. **Difficulty presets**: Easy/Medium/Hard buttons seed the recommended inputs and immediately restart with that setup while highlighting the active preset.
 7. **Rotation & flip fields**: Reveal specials to rotate the board or mirror it horizontally/vertically, and optionally disable these effects with “Specials: on/off”.
@@ -132,8 +130,8 @@ Current automated coverage focuses on:
     - **Teasing (😜)**: Flirty, teasing remarks that pull no punches about the board’s drama and add extra flavor to any hot streak or failure.
     - **Megumin (🧙‍♀️)**: Explosion-obsessed spellcaster who narrates in bombastic, cosplay-ready bursts and treats every special tile as a stage for “Explosion!”
     - **Friren (🧝‍♀️)**: Calm, wandering mage with meditative, storybook commentary that steadies the pace and highlights quiet lessons even amid chaos.
-19. **Face badges + visual polish**: Face icons now appear on rendered faces for quicker orientation, and covered cells in modern renderers have stronger depth/hover/press feedback.
-20. **Special icon consistency**: Rotation, flip, dog, and guardian specials now use consistent icon markers across renderer modes for better readability.
+19. **Face badges + visual polish**: Face icons now appear on rendered faces for quicker orientation, and covered cells in `Canvas` and `Three.js` have stronger depth/hover/press feedback.
+20. **Special icon consistency**: Rotation, flip, dog, and guardian specials now use consistent icon markers across `DOM`, `Canvas`, and `Three.js` modes for better readability.
 21. **Win/loss polish**: Winning reveals every mine before declaring victory, matching the loss behavior so the board state is obvious either way.
 22. **Focus mode**: A `Focus: on/off` toggle in the status strip hides non-essential chrome (hero, avatar, history, themes, debug helpers) to keep attention on board play and core controls.
 

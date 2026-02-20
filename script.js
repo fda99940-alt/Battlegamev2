@@ -57,7 +57,7 @@ const boardModeStorageKey = 'mindsweeperBoardMode';
 const rendererStorageKey = 'mindsweeperRenderer';
 const neighborDebugStorageKey = 'mindsweeperNeighborDebug';
 const focusModeStorageKey = 'mindsweeperFocusMode';
-const SUPPORTED_RENDERERS = ['dom', 'canvas', 'svg', 'webgl', 'three'];
+const SUPPORTED_RENDERERS = ['dom', 'canvas', 'three'];
 const availableThemes = ['neon', 'dusk', 'sunrise', 'midnight', 'verdant', 'ember'];
 const defaultTheme = 'ember';
 const presetButtons = document.querySelectorAll('[data-preset]');
@@ -1100,14 +1100,6 @@ const difficultyPresets = {
     return markerByType[type] || '✦';
   }
 
-  function isWebglSupported() {
-    const checker = window.MindsweeperRenderers?.isWebglSupported;
-    if (typeof checker === 'function') {
-      return checker();
-    }
-    return false;
-  }
-
   function isThreeSupported() {
     const checker = window.MindsweeperRenderers?.isThreeSupported;
     if (typeof checker === 'function') {
@@ -1864,8 +1856,6 @@ const difficultyPresets = {
       const rendererLabels = {
         dom: 'DOM',
         canvas: 'Canvas',
-        svg: 'SVG',
-        webgl: 'WebGL',
         three: 'Three.js',
       };
       option.textContent = rendererLabels[mode] || mode.toUpperCase();
@@ -2279,25 +2269,6 @@ const difficultyPresets = {
         clamp,
       };
     }
-    if (mode === 'svg') {
-      return {
-        ...common,
-        getFaceCount,
-        normalizeFaceId,
-        getNumberColor,
-        getSpecialMarker,
-      };
-    }
-    if (mode === 'webgl') {
-      return {
-        ...common,
-        forEachCell,
-        getNumberColor,
-        getSpecialMarker,
-        clamp,
-        normalizeFaceId,
-      };
-    }
     if (mode === 'three') {
       return {
         ...common,
@@ -2331,8 +2302,6 @@ const difficultyPresets = {
     const factoryByMode = {
       dom: factories.createDomRenderer,
       canvas: factories.createCanvasRenderer,
-      svg: factories.createSvgRenderer,
-      webgl: factories.createWebglRenderer,
       three: factories.createThreeRenderer,
     };
     const factory = factoryByMode[mode] || factoryByMode.dom;
@@ -2371,9 +2340,6 @@ const difficultyPresets = {
       activeRenderer = null;
     }
     if (requestedMode === 'three' && !isThreeSupported()) {
-      requestedMode = isWebglSupported() ? 'webgl' : 'canvas';
-    }
-    if (requestedMode === 'webgl' && !isWebglSupported()) {
       requestedMode = 'canvas';
     }
     rendererMode = requestedMode;
