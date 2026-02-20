@@ -62,9 +62,7 @@
     const personaLabel =
       avatarSelectEl?.querySelector(`option[value="${normalized}"]`)?.textContent?.trim() ||
       normalized.charAt(0).toUpperCase() + normalized.slice(1);
-    if (currentAvatarPersona === normalized && force !== true) {
-      return currentAvatarPersona;
-    }
+    const shouldPersist = persist && (force === true || currentAvatarPersona !== normalized);
 
     if (avatarPortraitEl) {
       avatarPortraitEl.textContent = avatarPersonas[normalized].icon;
@@ -76,7 +74,7 @@
       avatarSelectEl.value = normalized;
       avatarSelectEl.parentElement?.setAttribute('data-avatar-icon', avatarPersonas[normalized].icon);
     }
-    if (persist) {
+    if (shouldPersist) {
       safeSetItem(avatarPersonaKey, normalized);
     }
 

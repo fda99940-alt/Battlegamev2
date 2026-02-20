@@ -673,7 +673,7 @@ body {
   font-size: 0.85rem;
   appearance: none;
   padding-left: 2rem;
-  display: none;
+  display: block;
 }
 
 .avatar-select.avatar-select--active select {
