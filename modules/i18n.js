@@ -94,24 +94,11 @@
     languageSelect.value = currentLocale;
   }
 
-  function updateLanguageLabel(options = {}) {
-    const {
-      languageLabel,
-      languages = [],
-      currentLocale,
-    } = options;
-
-    if (!languageLabel || !languages.length) return;
-    const lang = languages.find((entry) => entry.code === currentLocale) || languages[0];
-    languageLabel.textContent = `${lang.flag} ${lang.name}`;
-  }
-
   window.MindsweeperI18n = {
     loadLocale,
     resolveTranslation,
     translate,
     applyStaticTranslations,
     populateLanguageSelect,
-    updateLanguageLabel,
   };
 })();

@@ -1465,28 +1465,19 @@ button.ghost {
 .theme-switcher {
   margin-top: 1rem;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
   color: var(--text-faint);
 }
 
-.theme-buttons {
-  display: flex;
-  gap: 0.35rem;
-}
-
-.theme-toggle {
-  min-width: 5rem;
-  padding-inline: 0.8rem;
-}
-
-.theme-toggle--active {
-  background: linear-gradient(135deg, var(--highlight), var(--accent));
-  color: var(--bg);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  transform: translateY(-1px);
+.theme-switcher select {
+  border-radius: 0.45rem;
+  border: 1px solid var(--ghost-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+  padding: 0.35rem 0.6rem;
+  font-size: 0.9rem;
 }
 
 .preset-switcher {
@@ -1528,12 +1519,6 @@ button.ghost {
   display: flex;
   align-items: center;
   gap: 0.35rem;
-}
-
-.language-selector span {
-  padding: 0.15rem 0.6rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
 }
 
 .language-selector select {

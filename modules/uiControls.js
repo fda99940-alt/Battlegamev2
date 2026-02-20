@@ -5,6 +5,7 @@
       availableThemes = [],
       defaultTheme,
       root = document.documentElement,
+      themeSelect,
       themeButtons = [],
       safeSetItem,
       themeStorageKey,
@@ -14,6 +15,9 @@
 
     const themeName = availableThemes.includes(name) ? name : defaultTheme;
     root.setAttribute('data-theme', themeName);
+    if (themeSelect) {
+      themeSelect.value = themeName;
+    }
     themeButtons.forEach((button) => {
       const isActive = button.dataset.themeOption === themeName;
       button.classList.toggle('theme-toggle--active', isActive);
@@ -28,6 +32,7 @@
 
   function initThemeSwitcher(options = {}) {
     const {
+      themeSelect,
       themeButtons = [],
       safeGetItem,
       themeStorageKey,
@@ -35,6 +40,11 @@
       applyTheme,
     } = options;
 
+    if (themeSelect) {
+      themeSelect.addEventListener('change', () => {
+        applyTheme(themeSelect.value);
+      });
+    }
     themeButtons.forEach((button) => {
       button.addEventListener('click', () => {
         applyTheme(button.dataset.themeOption);

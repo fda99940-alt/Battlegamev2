@@ -51,7 +51,7 @@ const appShellEl = document.querySelector('.app-shell');
 const appVersionBadgeEl = document.getElementById('appVersionBadge');
 const toggleNeighborDebugBtn = document.getElementById('toggleNeighborDebug');
 const neighborDebugEl = document.getElementById('neighborDebug');
-const themeButtons = document.querySelectorAll('[data-theme-option]');
+const themeSelectEl = document.getElementById('themeSelect');
 const themeStorageKey = 'mindsweeperTheme';
 const boardModeStorageKey = 'mindsweeperBoardMode';
 const rendererStorageKey = 'mindsweeperRenderer';
@@ -161,7 +161,6 @@ const difficultyPresets = {
   const roomMapKey = 'mindsweeperRooms';
   let roomMap = historyStore.loadRoomMap({ safeGetJSON, roomMapKey });
   const languageSelect = document.getElementById('languageSelect');
-  const languageLabel = document.getElementById('languageLabel');
   const localeKey = 'mindsweeperLocale';
   const languages = LANGUAGE_OPTIONS;
   const avatarCommentEl = document.getElementById('avatarComment');
@@ -1737,20 +1736,7 @@ const difficultyPresets = {
       updateSpecialsButton();
       updateShowMinesButton();
       updateConfigScalingNote();
-      updateLanguageLabel();
       renderHistory();
-    });
-    updateLanguageLabel();
-  }
-
-  /**
-   * Updates the localized language label display to match the dropdown selection.
-   */
-  function updateLanguageLabel() {
-    i18n.updateLanguageLabel({
-      languageLabel,
-      languages,
-      currentLocale,
     });
   }
 
@@ -1816,11 +1802,11 @@ const difficultyPresets = {
   }
 
   /**
-   * Hooks up theme buttons and applies a stored preference.
+   * Hooks up the theme selector and applies a stored preference.
    */
   function initThemeSwitcher() {
     uiControls.initThemeSwitcher({
-      themeButtons,
+      themeSelect: themeSelectEl,
       safeGetItem,
       themeStorageKey,
       defaultTheme,
@@ -1837,7 +1823,7 @@ const difficultyPresets = {
       availableThemes,
       defaultTheme,
       root: document.documentElement,
-      themeButtons,
+      themeSelect: themeSelectEl,
       safeSetItem,
       themeStorageKey,
       persist: options.persist ?? true,

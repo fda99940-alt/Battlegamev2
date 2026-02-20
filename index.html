@@ -29,7 +29,6 @@
           <div class="hero-language-switcher">
             <span data-i18n-key="label.language">Language</span>
             <div class="language-selector">
-              <span id="languageLabel">🇺🇸 English</span>
               <select id="languageSelect"></select>
             </div>
           </div>
@@ -241,26 +240,14 @@
               </div>
               <div class="theme-switcher" aria-label="Choose a theme">
                 <span data-i18n-key="label.themes">Themes</span>
-                <div class="theme-buttons">
-                  <button type="button" class="ghost theme-toggle" data-theme-option="neon" aria-pressed="false">
-                    <span data-i18n-key="theme.neon">Neon</span>
-                  </button>
-                  <button type="button" class="ghost theme-toggle" data-theme-option="dusk" aria-pressed="false">
-                    <span data-i18n-key="theme.dusk">Dusk</span>
-                  </button>
-                  <button type="button" class="ghost theme-toggle" data-theme-option="sunrise" aria-pressed="false">
-                    <span data-i18n-key="theme.sunrise">Sunrise</span>
-                  </button>
-                  <button type="button" class="ghost theme-toggle" data-theme-option="midnight" aria-pressed="false">
-                    <span data-i18n-key="theme.midnight">Midnight</span>
-                  </button>
-                  <button type="button" class="ghost theme-toggle" data-theme-option="verdant" aria-pressed="false">
-                    <span data-i18n-key="theme.verdant">Verdant</span>
-                  </button>
-                  <button type="button" class="ghost theme-toggle" data-theme-option="ember" aria-pressed="false">
-                    <span data-i18n-key="theme.ember">Ember</span>
-                  </button>
-                </div>
+                <select id="themeSelect" aria-label="Select theme">
+                  <option value="neon" data-i18n-key="theme.neon">Neon</option>
+                  <option value="dusk" data-i18n-key="theme.dusk">Dusk</option>
+                  <option value="sunrise" data-i18n-key="theme.sunrise">Sunrise</option>
+                  <option value="midnight" data-i18n-key="theme.midnight">Midnight</option>
+                  <option value="verdant" data-i18n-key="theme.verdant">Verdant</option>
+                  <option value="ember" data-i18n-key="theme.ember">Ember</option>
+                </select>
               </div>
             </details>
           </section>
