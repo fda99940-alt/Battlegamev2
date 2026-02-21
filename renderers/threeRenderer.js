@@ -24,6 +24,7 @@
       faceId,
       getNumberColor,
       getSpecialMarker,
+      getThreeTextureOverlay,
       clamp,
       normalizeFaceId,
       setFaceBoards,
@@ -228,9 +229,14 @@
         'three-cell-label--flagged',
         'three-cell-label--mine',
         'three-cell-label--special',
-        'three-cell-label--special-corner'
+        'three-cell-label--special-corner',
+        'three-cell-label--revealed-texture'
       );
       label.removeAttribute('data-special-marker');
+      label.style.removeProperty('background-image');
+      label.style.removeProperty('background-size');
+      label.style.removeProperty('background-position');
+      label.style.removeProperty('background-repeat');
       if (cell.revealed) {
         label.classList.add('three-cell-label--revealed');
       } else {
@@ -249,6 +255,22 @@
       if (cell.revealed && cell.neighborMines > 0) {
         label.textContent = String(cell.neighborMines);
         label.style.color = getNumberColor(cell.neighborMines);
+      }
+      const textureOverlay = getThreeTextureOverlay?.();
+      if (cell.revealed && textureOverlay?.url) {
+        const config = getConfig();
+        const cols = Math.max(config?.cols || 1, 1);
+        const rows = Math.max(config?.rows || 1, 1);
+        const xDen = Math.max(cols - 1, 1);
+        const yDen = Math.max(rows - 1, 1);
+        label.classList.add('three-cell-label--revealed-texture');
+        label.style.backgroundImage = [
+          'linear-gradient(148deg, rgba(242, 247, 255, 0.06) 0%, rgba(194, 206, 232, 0.04) 34%, rgba(80, 92, 122, 0.02) 62%, rgba(22, 27, 40, 0.05) 100%)',
+          `url("${textureOverlay.url}")`,
+        ].join(', ');
+        label.style.backgroundSize = `100% 100%, ${cols * 100}% ${rows * 100}%`;
+        label.style.backgroundPosition = `center center, ${(cell.col / xDen) * 100}% ${(cell.row / yDen) * 100}%`;
+        label.style.backgroundRepeat = 'no-repeat, no-repeat';
       }
       if (cell.revealed && cell.special) {
         label.classList.add('three-cell-label--special-corner');

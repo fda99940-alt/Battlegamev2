@@ -34,6 +34,10 @@ const configScaleInfoEl = document.getElementById('configScaleInfo');
 const toggleSpecialsBtn = document.getElementById('toggleSpecials');
 const toggleBoardModeBtn = document.getElementById('toggleBoardMode');
 const rendererModeSelectEl = document.getElementById('rendererModeSelect');
+const threeTextureControlsEl = document.getElementById('threeTextureControls');
+const threeTextureInputEl = document.getElementById('threeTextureInput');
+const clearThreeTextureBtn = document.getElementById('clearThreeTexture');
+const threeTextureNameEl = document.getElementById('threeTextureName');
 const showMinesBtn = document.getElementById('showMinesHandle');
 const clearHistoryBtn = document.getElementById('clearHistory');
 const historyList = document.getElementById('historyList');
@@ -252,6 +256,7 @@ const difficultyPresets = {
   let toastHistory = [];
   const toastHistoryLimit = 10;
   let toastHistoryVisible = false;
+  let threeTextureData = null;
 
   function updatePlayLayoutState() {
     if (!appShellEl) return;
@@ -447,6 +452,21 @@ const difficultyPresets = {
     });
   }
 
+  if (threeTextureInputEl) {
+    threeTextureInputEl.addEventListener('change', async (event) => {
+      const file = event.target?.files?.[0];
+      if (!file) return;
+      await applyThreeTextureFile(file);
+      event.target.value = '';
+    });
+  }
+
+  if (clearThreeTextureBtn) {
+    clearThreeTextureBtn.addEventListener('click', () => {
+      clearThreeTexture();
+    });
+  }
+
   if (cubeEl) {
     cubeEl.addEventListener('pointerdown', (event) => {
       if (boardMode === '2d') return;
@@ -588,6 +608,7 @@ const difficultyPresets = {
     applyAppVersion();
     applyRendererMode(rendererMode, { persist: false, restart: false, rebuildFaces: false });
     initRendererModeSelector();
+    updateThreeTextureControls();
     ensureCubeFaces(config.faces);
     initLanguageSwitcher();
     initAvatarSwitcher();
@@ -2112,6 +2133,93 @@ const difficultyPresets = {
     showMinesBtn.textContent = cheatMode ? t('button.hideMines') : t('button.showMines');
   }
 
+  function updateThreeTextureControls() {
+    if (threeTextureControlsEl) {
+      threeTextureControlsEl.hidden = rendererMode !== 'three';
+    }
+    if (boardWrapper) {
+      boardWrapper.setAttribute('data-three-texture', threeTextureData ? 'on' : 'off');
+    }
+    if (threeTextureNameEl) {
+      threeTextureNameEl.textContent = threeTextureData?.name || 'Default metal texture';
+      threeTextureNameEl.title = threeTextureData?.name || '';
+    }
+    if (clearThreeTextureBtn) {
+      clearThreeTextureBtn.disabled = !threeTextureData;
+    }
+  }
+
+  function clearThreeTexture() {
+    if (threeTextureData?.textureUrl) {
+      URL.revokeObjectURL(threeTextureData.textureUrl);
+    }
+    threeTextureData = null;
+    updateThreeTextureControls();
+    activeRenderer?.syncAll?.();
+    setStatus('Three texture cleared.');
+  }
+
+  async function applyThreeTextureFile(file) {
+    if (!file || !String(file.type || '').startsWith('image/')) {
+      setStatus('Please choose an image file for the Three texture.');
+      return;
+    }
+
+    let textureUrl = '';
+    try {
+      textureUrl = URL.createObjectURL(file);
+      const image = await loadImageFile(file);
+      const texture = createThreeTextureRecord(file.name, textureUrl);
+      if (!texture) {
+        URL.revokeObjectURL(textureUrl);
+        setStatus('Unable to read texture image.');
+        return;
+      }
+      if (threeTextureData?.textureUrl) {
+        URL.revokeObjectURL(threeTextureData.textureUrl);
+      }
+      threeTextureData = texture;
+      updateThreeTextureControls();
+      activeRenderer?.syncAll?.();
+      setStatus(`Three texture loaded: ${texture.name}`);
+    } catch (_error) {
+      if (textureUrl) {
+        URL.revokeObjectURL(textureUrl);
+      }
+      setStatus('Unable to load that image as a Three texture.');
+    }
+  }
+
+  function loadImageFile(file) {
+    return new Promise((resolve, reject) => {
+      const objectUrl = URL.createObjectURL(file);
+      const image = new Image();
+      image.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+        resolve(image);
+      };
+      image.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error('image decode failed'));
+      };
+      image.src = objectUrl;
+    });
+  }
+
+  function createThreeTextureRecord(name = 'Uploaded texture', textureUrl = '') {
+    return {
+      name,
+      textureUrl,
+    };
+  }
+
+  function getThreeTextureOverlay() {
+    if (!threeTextureData?.textureUrl) return null;
+    return {
+      url: threeTextureData.textureUrl,
+    };
+  }
+
   function getFaceCount() {
     const configuredFaces = normalizeFaceCount(Number(facesInput?.value) || config.faces || 6);
     return boardMode === '2d' ? 1 : configuredFaces;
@@ -2263,6 +2371,7 @@ const difficultyPresets = {
         getSpecialMarker,
         clamp,
         normalizeFaceId,
+        getThreeTextureOverlay,
       };
     }
     return common;
@@ -2332,6 +2441,7 @@ const difficultyPresets = {
     activeRenderer = createRenderer(rendererMode);
     boardWrapper?.setAttribute('data-renderer', rendererMode);
     updateRendererModeSelect();
+    updateThreeTextureControls();
     if (persist) {
       safeSetItem(rendererStorageKey, rendererMode);
     }

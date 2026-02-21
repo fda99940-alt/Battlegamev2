@@ -1084,6 +1084,24 @@ body {
     inset 0 0 0 1px rgba(182, 194, 220, 0.26);
 }
 
+.board-wrapper[data-renderer="three"] .three-cell-label--revealed-texture {
+  /* Inline background-image/background-size/background-position are applied in syncThreeOverlayCell. */
+  background-repeat: no-repeat;
+}
+
+.board-wrapper[data-renderer="three"][data-three-texture="on"] .three-cell-label--revealed:not(.three-cell-label--revealed-texture) {
+  background: linear-gradient(
+    148deg,
+    rgba(242, 247, 255, 0.06) 0%,
+    rgba(194, 206, 232, 0.04) 34%,
+    rgba(80, 92, 122, 0.02) 62%,
+    rgba(22, 27, 40, 0.05) 100%
+  );
+  box-shadow: inset 0 1px 0 rgba(246, 250, 255, 0.1),
+    inset 0 -1px 0 rgba(9, 12, 20, 0.16),
+    inset 0 0 0 1px rgba(182, 194, 220, 0.13);
+}
+
 .board-wrapper[data-renderer="three"] .three-cell-label--covered:hover {
   transform: translateY(-1px);
   box-shadow: inset 0 1px 0 rgba(238, 244, 255, 0.25),
@@ -1531,6 +1549,44 @@ button.ghost {
   color: var(--text-primary);
   padding: 0.35rem 0.6rem;
   font-size: 0.9rem;
+}
+
+.three-texture-controls {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.86rem;
+  color: var(--text-faint);
+}
+
+.three-texture-controls[hidden] {
+  display: none;
+}
+
+.three-texture-controls input[type="file"] {
+  max-width: min(100%, 230px);
+  border-radius: 0.45rem;
+  border: 1px solid var(--ghost-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+  padding: 0.28rem 0.45rem;
+  font-size: 0.78rem;
+}
+
+.three-texture-controls button {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.three-texture-name {
+  min-width: 0;
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-faint);
 }
 
 .preset-switcher {

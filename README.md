@@ -32,7 +32,7 @@ If you just want to play, use the release file above and skip this section.
 - `renderers/domRenderer.js`: DOM renderer implementation (button-grid board creation, DOM-mode transforms, and DOM hit resolution).
 - `renderers/canvasRenderer.js`: Canvas renderer implementation (face canvas creation, resize/draw pipeline, and canvas hit testing).
 - `renderers/three.vendor.js`: local bundled Three runtime used to expose global `THREE` without relying on a CDN.
-- `renderers/threeRenderer.js`: Three.js renderer implementation (Three-powered face rendering, overlay labels, Three support probe, and hit testing).
+- `renderers/threeRenderer.js`: Three.js renderer implementation (Three-powered face rendering, overlay labels, Three support probe, hit testing, and revealed-tile texture overlays from optional uploaded images).
 - `modules/coreUtils.js`: shared utility helpers (clamping, seeded RNG, shuffle/pick helpers, formatting, and color helpers).
 - `modules/historyStore.js`: history list filtering/rendering plus run/room-map persistence helpers.
 - `modules/i18n.js`: locale selection, translation lookup, template replacement, and static text hydration.
@@ -110,30 +110,49 @@ Current automated coverage focuses on:
 2. **Mouse camera controls (3D mode)**: Left-drag orbits the board, and mouse wheel zooms in/out with a camera-depth transform (non-distorting) so perspective remains stable while inspecting dense layouts.
 3. **Board mode switch**: Toggle between `Board: Cube` (3D dice-style board) and `Board: 2D` (single front-face plane). Switching mode starts a fresh board with mode-appropriate cell/mine limits.
 4. **Renderer mode switch**: Choose `DOM`, `Canvas`, or `Three.js` from the controls dropdown. `DOM` preserves native button-grid behavior, `Canvas` favors draw performance on bigger boards, and `Three.js` uses a Three-powered render path with overlay hit targets, a static metallic surface treatment, and badge-styled mine/flag markers.
-5. **Cube-only 3D scaling**: 3D mode uses a fixed six-face cube (`d6`). Mines/specials inputs are still per-face values, multiplied by active faces (1 in `2D`, 6 in `Cube`) before a run starts.
-6. **Difficulty presets**: Easy/Medium/Hard buttons seed the recommended inputs and immediately restart with that setup while highlighting the active preset.
-7. **Rotation & flip fields**: Reveal specials to rotate the board or mirror it horizontally/vertically, and optionally disable these effects with “Specials: on/off”.
-8. **Dog special tile**: Discovering a Dog tile flags a random unmarked mine automatically, so every good sniff buys you a little safety without touching the mine count input or flagging manually.
-9. **Guardian special tile**: Stepping on a Guardian tile arms a temporary shield that automatically flags the next mine you would have hit, letting you recover without ending the run.
-10. **Cheat view**: “Show mines” temporarily highlights raw mine locations and special tiles for inspection before you commit to a move.
-11. **Neighbor debug inspector**: A `Debug: on/off` toggle under the board lists the currently hovered/focused cell neighbors (including cross-face seams) and highlights origin/neighbor cells directly on the board to verify adjacency behavior.
-12. **History + replay**: Runs capture timestamps, configurations, board mode, layouts, mine positions, special trigger counts, and action sequences; the panel shows each run’s board type, and replay auto-switches to the corresponding mode before playback. In cube mode, replay camera motion follows each revealed cell so the active face stays in view. History supports result/date filters, paginated loading (`Show more`), and a bounded internal scroll area so long lists stay contained. Each entry also exposes a copyable room code plus a join form for instant replays.
-13. **Seed sharing**: A deterministic seed string above the board encodes configuration (including `faces`) plus RNG state so the same board/special placement can be recreated by copying/pasting the seed (even into prompts). Clicking **Start game** intentionally rolls a fresh seed for the new board.
-14. **Persistence**: LocalStorage keeps runs (`mindsweeperRuns`), board mode (`mindsweeperBoardMode`), renderer mode (`mindsweeperRenderer`), active theme (`mindsweeperTheme`), locale, focus mode (`mindsweeperFocusMode`), and history panel collapse state so your setup survives reloads. If no renderer is stored yet, the app starts with `Three.js` by default.
-15. **Localization-ready**: Every UI string routes through the `TRANSLATIONS` map; the dropdown shows flag + name, and selecting a new locale rewrites hero text, labels, hints, and status messages (including playful dialects like Klingon, Pirate, LOLcat, and Braille).
-16. **Hero personas**: Multilingual hero text changes tone per locale, covering canonical translations plus fantasy/dialect voices (Yoda, Elvish, Melodia, Angry mode, etc.).
-17. **Commentary avatar**: An above-board avatar narrates each move, keeps a rolling five-line conversation history, lets you choose between the polite guide, the evil heckler, the anime-inspired “cute” bunny, or the teasing anime girl, and tapping the portrait briefly reveals the dropdown so you can change voices without adding extra chrome.
-18. **Avatar bios**:
+5. **Three texture uploads (revealed-only)**: In `Three.js` mode you can upload an image in the controls panel; the image is mapped as a shared face texture and shown on revealed tiles only via the lightweight overlay layer, while covered tiles keep the default metallic style for better performance.
+6. **Cube-only 3D scaling**: 3D mode uses a fixed six-face cube (`d6`). Mines/specials inputs are still per-face values, multiplied by active faces (1 in `2D`, 6 in `Cube`) before a run starts.
+7. **Difficulty presets**: Easy/Medium/Hard buttons seed the recommended inputs and immediately restart with that setup while highlighting the active preset.
+8. **Rotation & flip fields**: Reveal specials to rotate the board or mirror it horizontally/vertically, and optionally disable these effects with “Specials: on/off”.
+9. **Dog special tile**: Discovering a Dog tile flags a random unmarked mine automatically, so every good sniff buys you a little safety without touching the mine count input or flagging manually.
+10. **Guardian special tile**: Stepping on a Guardian tile arms a temporary shield that automatically flags the next mine you would have hit, letting you recover without ending the run.
+11. **Cheat view**: “Show mines” temporarily highlights raw mine locations and special tiles for inspection before you commit to a move.
+12. **Neighbor debug inspector**: A `Debug: on/off` toggle under the board lists the currently hovered/focused cell neighbors (including cross-face seams) and highlights origin/neighbor cells directly on the board to verify adjacency behavior.
+13. **History + replay**: Runs capture timestamps, configurations, board mode, layouts, mine positions, special trigger counts, and action sequences; the panel shows each run’s board type, and replay auto-switches to the corresponding mode before playback. In cube mode, replay camera motion follows each revealed cell so the active face stays in view. History supports result/date filters, paginated loading (`Show more`), and a bounded internal scroll area so long lists stay contained. Each entry also exposes a copyable room code plus a join form for instant replays.
+14. **Seed sharing**: A deterministic seed string above the board encodes configuration (including `faces`) plus RNG state so the same board/special placement can be recreated by copying/pasting the seed (even into prompts). Clicking **Start game** intentionally rolls a fresh seed for the new board.
+15. **Persistence**: LocalStorage keeps runs (`mindsweeperRuns`), board mode (`mindsweeperBoardMode`), renderer mode (`mindsweeperRenderer`), active theme (`mindsweeperTheme`), locale, focus mode (`mindsweeperFocusMode`), and history panel collapse state so your setup survives reloads. If no renderer is stored yet, the app starts with `Three.js` by default.
+16. **Localization-ready**: Every UI string routes through the `TRANSLATIONS` map; the dropdown shows flag + name, and selecting a new locale rewrites hero text, labels, hints, and status messages (including playful dialects like Klingon, Pirate, LOLcat, and Braille).
+17. **Hero personas**: Multilingual hero text changes tone per locale, covering canonical translations plus fantasy/dialect voices (Yoda, Elvish, Melodia, Angry mode, etc.).
+18. **Commentary avatar**: An above-board avatar narrates each move, keeps a rolling five-line conversation history, lets you choose between the polite guide, the evil heckler, the anime-inspired “cute” bunny, or the teasing anime girl, and tapping the portrait briefly reveals the dropdown so you can change voices without adding extra chrome.
+19. **Avatar bios**:
     - **Friendly (🤖)**: Steady, encouraging narration that celebrates every safe reveal and flags each learnable pattern with calm optimism.
     - **Evil (😈)**: Taunting, dramatic commentary that enjoys every misstep and reminds you the mines are always hungry—good for players who enjoy contrarian banter.
     - **Cute (🐰)**: Sugary anime-style cheers, encouragement, and sparkle-filled whispers that treat every special as a confetti moment.
     - **Teasing (😜)**: Flirty, teasing remarks that pull no punches about the board’s drama and add extra flavor to any hot streak or failure.
     - **Megumin (🧙‍♀️)**: Explosion-obsessed spellcaster who narrates in bombastic, cosplay-ready bursts and treats every special tile as a stage for “Explosion!”
     - **Friren (🧝‍♀️)**: Calm, wandering mage with meditative, storybook commentary that steadies the pace and highlights quiet lessons even amid chaos.
-19. **Face badges + visual polish**: Face icons now appear on rendered faces for quicker orientation, and covered cells in `Canvas` and `Three.js` have stronger depth/hover/press feedback.
-20. **Special icon consistency**: Rotation, flip, dog, and guardian specials now use consistent icon markers across `DOM`, `Canvas`, and `Three.js`; when revealed, the special marker appears as a corner badge so center mine-count numbers stay readable.
-21. **Win/loss polish**: Winning reveals every mine before declaring victory, matching the loss behavior so the board state is obvious either way.
-22. **Focus mode**: A `Focus: on/off` toggle in the status strip hides non-essential chrome (hero, avatar, history, themes, debug helpers) to keep attention on board play and core controls.
+20. **Face badges + visual polish**: Face icons now appear on rendered faces for quicker orientation, and covered cells in `Canvas` and `Three.js` have stronger depth/hover/press feedback.
+21. **Special icon consistency**: Rotation, flip, dog, and guardian specials now use consistent icon markers across `DOM`, `Canvas`, and `Three.js`; when revealed, the special marker appears as a corner badge so center mine-count numbers stay readable.
+22. **Win/loss polish**: Winning reveals every mine before declaring victory, matching the loss behavior so the board state is obvious either way.
+23. **Focus mode**: A `Focus: on/off` toggle in the status strip hides non-essential chrome (hero, avatar, history, themes, debug helpers) to keep attention on board play and core controls.
+
+### Three Texture Technical Hints
+
+- Upload flow lives in `script.js`:
+  - `applyThreeTextureFile(...)` creates a blob URL (`URL.createObjectURL(file)`), validates decode, stores `{ name, textureUrl }` in runtime state, and triggers renderer sync.
+  - `clearThreeTexture()` revokes the active blob URL (`URL.revokeObjectURL(...)`) before clearing state.
+- Renderer plumbing:
+  - `buildRendererContextForMode('three')` passes `getThreeTextureOverlay()` into `renderers/threeRenderer.js`.
+  - `getThreeTextureOverlay()` exposes the active blob URL only when a texture is loaded.
+- Reveal-only texture display in `renderers/threeRenderer.js`:
+  - `syncThreeOverlayCell(cell)` applies texture only when `cell.revealed` is true.
+  - Texture is set on the HTML overlay label (`.three-cell-label`) as inline `background-image` (gradient + image), not on WebGL geometry.
+  - Background size/position map one shared image across each face (`cols * 100%` / `rows * 100%`, per-cell background position).
+- Performance rationale:
+  - The WebGL pass stays on low-cost metallic shading (no per-vertex texture sampling loops).
+  - Texture work is pushed to lightweight CSS backgrounds on revealed overlay labels.
+- Styling hooks:
+  - `.three-cell-label--revealed-texture` in `styles.css` provides base defaults; inline styles in `syncThreeOverlayCell(...)` are authoritative.
 
 ## Future improvements
 
