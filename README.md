@@ -131,7 +131,7 @@ Current automated coverage focuses on:
     - **Megumin (🧙‍♀️)**: Explosion-obsessed spellcaster who narrates in bombastic, cosplay-ready bursts and treats every special tile as a stage for “Explosion!”
     - **Friren (🧝‍♀️)**: Calm, wandering mage with meditative, storybook commentary that steadies the pace and highlights quiet lessons even amid chaos.
 19. **Face badges + visual polish**: Face icons now appear on rendered faces for quicker orientation, and covered cells in `Canvas` and `Three.js` have stronger depth/hover/press feedback.
-20. **Special icon consistency**: Rotation, flip, dog, and guardian specials now use consistent icon markers across `DOM`, `Canvas`, and `Three.js` modes for better readability.
+20. **Special icon consistency**: Rotation, flip, dog, and guardian specials now use consistent icon markers across `DOM`, `Canvas`, and `Three.js`; when revealed, the special marker appears as a corner badge so center mine-count numbers stay readable.
 21. **Win/loss polish**: Winning reveals every mine before declaring victory, matching the loss behavior so the board state is obvious either way.
 22. **Focus mode**: A `Focus: on/off` toggle in the status strip hides non-essential chrome (hero, avatar, history, themes, debug helpers) to keep attention on board play and core controls.
 

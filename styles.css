@@ -1031,6 +1031,26 @@ body {
   font-size: clamp(0.58rem, 1.35vw, 1.08rem);
 }
 
+.three-cell-label--special-corner::after {
+  content: attr(data-special-marker);
+  position: absolute;
+  top: 0.1rem;
+  right: 0.12rem;
+  width: clamp(0.62rem, 1.45vw, 0.92rem);
+  height: clamp(0.62rem, 1.45vw, 0.92rem);
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.42rem, 0.95vw, 0.62rem);
+  line-height: 1;
+  color: var(--highlight);
+  background: rgba(0, 0, 0, 0.46);
+  border: 1px solid color-mix(in srgb, var(--highlight) 70%, white 30%);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.38);
+  pointer-events: none;
+}
+
 /* Three-only overlay tuning for static metallic renderer */
 .board-wrapper[data-renderer="three"] .board-three {
   filter: saturate(0.52) contrast(1.08) brightness(0.95);
@@ -1185,15 +1205,24 @@ body {
 .cell--special-rotation::after,
 .cell--special-flip::after {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 0.95rem;
+  top: 0.1rem;
+  right: 0.12rem;
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.62rem;
   line-height: 1;
   color: var(--highlight);
+  background: rgba(0, 0, 0, 0.44);
+  border: 1px solid color-mix(in srgb, var(--highlight) 70%, white 30%);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.32);
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   opacity: 0;
   transition: opacity 0.2s ease;
+  pointer-events: none;
 }
 
 .cell--special-rotation::after {
@@ -1209,16 +1238,31 @@ body {
   opacity: 0.85;
 }
 
+.cell--revealed.cell--special-rotation::after,
+.cell--revealed.cell--special-flip::after {
+  opacity: 0.9;
+}
+
 .cell--special-dog::after,
 .cell--special-guardian::after {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1rem;
+  top: 0.1rem;
+  right: 0.12rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.64rem;
   opacity: 0;
   transition: opacity 0.2s ease;
+  color: var(--highlight);
+  background: rgba(0, 0, 0, 0.44);
+  border: 1px solid color-mix(in srgb, var(--highlight) 70%, white 30%);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.32);
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
 }
 
 .cell--special-dog::after {
@@ -1229,13 +1273,22 @@ body {
   opacity: 0.9;
 }
 
+.cell--revealed.cell--special-dog::after {
+  opacity: 0.95;
+}
+
 .cell--special-guardian::after {
   content: "🛡";
   color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 78%, white 22%);
 }
 
 .cell[data-show-cheat="true"].cell--special-guardian::after {
   opacity: 0.9;
+}
+
+.cell--revealed.cell--special-guardian::after {
+  opacity: 0.95;
 }
 
 .cell[data-show-cheat="true"] {

@@ -183,6 +183,55 @@ test('revealCell with zero adjacent mines does not print a number', () => {
   assert.equal(recurseCalls, 1);
 });
 
+test('revealCell on special cell still prints neighbor number on DOM cell', () => {
+  const element = createMockElement();
+  const cell = {
+    face: 'f0',
+    row: 2,
+    col: 2,
+    isMine: false,
+    neighborMines: 3,
+    special: { type: 'rotation', direction: 'cw', triggered: false },
+    revealed: false,
+    flagged: false,
+    element,
+  };
+
+  boardActions.revealCell({
+    cell,
+    gameActive: true,
+    replay: false,
+    recordAction: false,
+    checkVictory: false,
+    userAction: false,
+    guardianShields: 0,
+    setGuardianShields: () => {},
+    describeCellPosition: () => 'f0 3,3',
+    speakAvatar: () => {},
+    showStatusMessage: () => {},
+    showGuardianToast: () => {},
+    applyFlag: () => {},
+    rendererMode: 'dom',
+    getNumberColor: () => '#000',
+    activeRenderer: { syncCell: () => {} },
+    setRevealedCount: () => {},
+    getRevealedCount: () => 0,
+    isReplaying: false,
+    runActions: [],
+    triggerSpecial: () => {},
+    getNeighbors: () => [],
+    revealCell: () => {},
+    commentOnReveal: () => {},
+    updateStatus: () => {},
+    handleLoss: () => {},
+    checkForWin: () => false,
+    handleWin: () => {},
+  });
+
+  assert.equal(cell.revealed, true);
+  assert.equal(String(element.textContent), '3');
+});
+
 test('revealCell on mine with guardian shield flags cell instead of losing', () => {
   const cell = {
     face: 'f0',

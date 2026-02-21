@@ -227,8 +227,10 @@
         'three-cell-label--revealed',
         'three-cell-label--flagged',
         'three-cell-label--mine',
-        'three-cell-label--special'
+        'three-cell-label--special',
+        'three-cell-label--special-corner'
       );
+      label.removeAttribute('data-special-marker');
       if (cell.revealed) {
         label.classList.add('three-cell-label--revealed');
       } else {
@@ -247,6 +249,10 @@
       if (cell.revealed && cell.neighborMines > 0) {
         label.textContent = String(cell.neighborMines);
         label.style.color = getNumberColor(cell.neighborMines);
+      }
+      if (cell.revealed && cell.special) {
+        label.classList.add('three-cell-label--special-corner');
+        label.setAttribute('data-special-marker', getSpecialMarker(cell.special.type));
         return;
       }
       if (!cell.revealed && getVisualState().cheatMode && cell.special) {

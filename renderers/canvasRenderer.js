@@ -218,6 +218,10 @@
         context2d.textAlign = 'center';
         context2d.textBaseline = 'middle';
         context2d.fillText(String(cell.neighborMines), boxX + boxW / 2, boxY + boxH / 2);
+      }
+
+      if (cell.revealed && cell.special) {
+        drawCanvasSpecialCornerMarker(context2d, boxX, boxY, boxW, boxH, getSpecialMarker(cell.special.type), palette);
         return;
       }
 
@@ -228,6 +232,30 @@
         context2d.textBaseline = 'middle';
         context2d.fillText(getSpecialMarker(cell.special.type), boxX + boxW / 2, boxY + boxH / 2);
       }
+    }
+
+    function drawCanvasSpecialCornerMarker(context2d, boxX, boxY, boxW, boxH, marker, palette) {
+      const badgeSize = Math.max(Math.min(boxW, boxH) * 0.38, 9);
+      const margin = Math.max(Math.min(boxW, boxH) * 0.07, 1.5);
+      const cx = boxX + boxW - margin - badgeSize * 0.5;
+      const cy = boxY + margin + badgeSize * 0.5;
+
+      context2d.fillStyle = 'rgba(0, 0, 0, 0.45)';
+      context2d.beginPath();
+      context2d.arc(cx, cy, badgeSize * 0.5, 0, Math.PI * 2);
+      context2d.fill();
+
+      context2d.strokeStyle = palette.highlight;
+      context2d.lineWidth = Math.max(badgeSize * 0.08, 1);
+      context2d.beginPath();
+      context2d.arc(cx, cy, badgeSize * 0.5, 0, Math.PI * 2);
+      context2d.stroke();
+
+      context2d.fillStyle = palette.highlight;
+      context2d.font = `${Math.max(Math.floor(badgeSize * 0.58), 7)}px sans-serif`;
+      context2d.textAlign = 'center';
+      context2d.textBaseline = 'middle';
+      context2d.fillText(marker, cx, cy);
     }
 
     return {
