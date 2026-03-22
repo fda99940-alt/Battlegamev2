@@ -107,8 +107,8 @@ Current automated coverage focuses on:
 ## Key features
 
 1. **Keyboard-focused controls**: Arrow keys move focus, Enter/Space reveal, and F flags—every action works without a mouse.
-2. **Mouse camera controls (3D mode)**: Left-drag orbits the board, and mouse wheel zooms in/out with a camera-depth transform (non-distorting) so perspective remains stable while inspecting dense layouts.
-3. **Board mode switch**: Toggle between `Board: Cube` (3D dice-style board) and `Board: 2D` (single front-face plane). Switching mode starts a fresh board with mode-appropriate cell/mine limits.
+2. **Mouse drag controls (2D + 3D)**: In `Cube` mode, left-drag orbits the board and mouse wheel zooms with a camera-depth transform (non-distorting). In `2D` mode, holding left click and dragging rotates the field, while click-without-drag still reveals as usual.
+3. **Board mode switch + 2D six-side adjacency**: Toggle between `Board: Cube` (3D dice-style board) and `Board: 2D` (single front-face plane). `2D` mode uses a six-neighbor adjacency model (hex-style row parity), so each field behaves as if it has six sides instead of classic 8-way square neighbors.
 4. **Renderer mode switch**: Choose `DOM`, `Canvas`, or `Three.js` from the controls dropdown. `DOM` preserves native button-grid behavior, `Canvas` favors draw performance on bigger boards, and `Three.js` uses a Three-powered render path with overlay hit targets, a static metallic surface treatment, and badge-styled mine/flag markers.
 5. **Three texture uploads (revealed-only)**: In `Three.js` mode you can upload an image in the controls panel; the image is mapped as a shared face texture and shown on revealed tiles only via the lightweight overlay layer, while covered tiles keep the default metallic style for better performance.
 6. **Cube-only 3D scaling**: 3D mode uses a fixed six-face cube (`d6`). Mines/specials inputs are still per-face values, multiplied by active faces (1 in `2D`, 6 in `Cube`) before a run starts.
@@ -136,6 +136,8 @@ Current automated coverage focuses on:
 22. **Special icon consistency**: Rotation, flip, dog, and guardian specials now use consistent icon markers across `DOM`, `Canvas`, and `Three.js`; when revealed, the special marker appears as a corner badge so center mine-count numbers stay readable.
 23. **Win/loss polish**: Winning reveals every mine before declaring victory, matching the loss behavior so the board state is obvious either way.
 24. **Focus mode**: A `Focus: on/off` toggle in the status strip hides non-essential chrome (hero, avatar, history, themes, debug helpers) to keep attention on board play and core controls.
+25. **Challenge mode (pace timer)**: Optional challenge rules require revealing a configured number of cells within a repeating time window (`Challenge mode`, `Reveals per window`, `Window seconds`). If the quota is missed, the run is lost immediately. The live challenge pace chip appears next to the `Toasts` toggle and pulses urgently near timeout.
+26. **Challenge metadata in run history**: Completed runs persist challenge settings (`challengeMode`, `challengeTarget`, `challengeWindowSeconds`) inside each run `config`, so exported/imported history keeps challenge context.
 
 ### Three Texture Technical Hints
 

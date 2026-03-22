@@ -28,6 +28,10 @@
         language: 'Language, speak it you will',
         on: 'On, engage it',
         off: 'Off, quiet now',
+        challengePace: 'Pace of challenge',
+        challengeMode: 'Mode of challenge',
+        challengeTarget: 'Reveals per window',
+        challengeWindow: 'Window seconds',
       },
       theme: {
         neon: 'Neon',
@@ -97,6 +101,7 @@
         replayProgress: 'Replaying run from {timestamp} ({step}/{total}), close you are',
         replayComplete: 'Replay complete. Apply a new layout to play, you must',
         loss: 'You hit a mine! All mines reveal themselves and laugh, a lesson in humility this is',
+        challengeLoss: 'Failed, the challenge is: reveal {target} cells every {seconds}s.',
         win: 'Victory! Every safe cell has been found, proud be',
         enterRoom: 'Enter a room code first, do not rush',
         roomNotFound: 'Room {code} not found, lost it is',

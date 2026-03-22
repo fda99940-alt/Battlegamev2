@@ -28,6 +28,10 @@
         language: 'Langue',
         on: 'activé',
         off: 'désactivé',
+        challengePace: 'Rythme du defi',
+        challengeMode: 'Mode defi',
+        challengeTarget: 'Revelations par intervalle',
+        challengeWindow: 'Secondes de l\'intervalle',
       },
       theme: {
         neon: 'Néon',
@@ -97,6 +101,7 @@
         replayProgress: 'Relecture ({step}/{total}) de {timestamp}',
         replayComplete: 'Relecture terminée. Recalculez un nouveau plan.',
         loss: 'Boom ! Vous avez touché une mine, et elles font une ovation moqueuse en apparaissant.',
+        challengeLoss: 'Defi echoue : revele {target} cases toutes les {seconds}s.',
         win: 'Victoire ! Toutes les cases sûres révélées.',
         enterRoom: 'Entrez un code de salle d’abord.',
         roomNotFound: 'Salle {code} introuvable.',

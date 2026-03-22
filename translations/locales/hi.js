@@ -28,6 +28,10 @@
         language: 'भाषा',
         on: 'चालू',
         off: 'बंद',
+        challengePace: 'चुनौती गति',
+        challengeMode: 'चुनौती मोड',
+        challengeTarget: 'प्रति विंडो खुली कोशिकाएँ',
+        challengeWindow: 'विंडो सेकंड',
       },
       theme: {
         neon: 'नियोन',
@@ -97,6 +101,7 @@
         replayProgress: '{timestamp} से रन चल रहा है ({step}/{total})',
         replayComplete: 'रीप्ले पूरा। नया लेआउट लागू करें।',
         loss: 'आपने एक बम पर क्लिक किया! सारे बम हँसकर कह रहे हैं कि अब तुम सबको दिखा दोगे।',
+        challengeLoss: 'चुनौती असफल: हर {seconds} सेकंड में {target} सेल खोलें।',
         win: 'विजय! सभी सुरक्षित कोशिकाएँ मिल गईं।',
         enterRoom: 'पहले रूम कोड डालें।',
         roomNotFound: 'रूम {code} नहीं मिला।',

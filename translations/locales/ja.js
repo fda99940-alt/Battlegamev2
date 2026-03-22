@@ -28,6 +28,10 @@
         language: '言語',
         on: 'オン',
         off: 'オフ',
+        challengePace: 'チャレンジペース',
+        challengeMode: 'チャレンジモード',
+        challengeTarget: '1ウィンドウあたりの公開数',
+        challengeWindow: 'ウィンドウ秒数',
       },
       theme: {
         neon: 'ネオン',
@@ -97,6 +101,7 @@
         replayProgress: '{timestamp} のプレイを回放中 ({step}/{total})',
         replayComplete: 'リプレイ完了。新しいレイアウトを設定してください。',
         loss: '地雷を踏みました！地雷たち全員が「ほらね」と笑って飛び出しています。',
+        challengeLoss: 'チャレンジ失敗: {seconds}秒ごとに{target}マスを公開してください。',
         win: '勝利！安全なセルはすべて発見されました。',
         enterRoom: 'まずルームコードを入力してください。',
         roomNotFound: 'ルーム {code} は見つかりませんでした。',

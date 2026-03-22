@@ -28,6 +28,10 @@
         language: 'Lamba',
         on: 'yalta',
         off: 'yúlta',
+        challengePace: 'Ture liltë',
+        challengeMode: 'Ture modo',
+        challengeTarget: 'Enta cellyar an lume-penna',
+        challengeWindow: 'Lume-penna secondor',
       },
       theme: {
         neon: 'Elenya',
@@ -97,6 +101,7 @@
         replayProgress: 'Nyarna ({step}/{total}) atar {timestamp}',
         replayComplete: 'Nyarna ná caure. Áicanë i nórë.',
         loss: 'Mina hosta! Ilqua minion úva, ar órenyallo lómi nótë rúcina.',
+        challengeLoss: 'Ture uva: panya {target} cellyar ilya {seconds}s.',
         win: 'Alcar! Ilqua órenyallo omenta.',
         enterRoom: 'Anta ecca vórë.',
         roomNotFound: 'Cemen {code} úvë hlarë.',

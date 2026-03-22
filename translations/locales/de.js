@@ -28,6 +28,10 @@
         language: 'Sprache',
         on: 'an',
         off: 'aus',
+        challengePace: 'Herausforderungstempo',
+        challengeMode: 'Herausforderungsmodus',
+        challengeTarget: 'Aufdeckungen pro Zeitfenster',
+        challengeWindow: 'Fenster in Sekunden',
       },
       theme: {
         neon: 'Neon',
@@ -97,6 +101,7 @@
         replayProgress: 'Replay ({step}/{total}) von {timestamp}',
         replayComplete: 'Replay beendet. Neues Layout anwenden.',
         loss: 'Verloren! Du hast eine Mine erwischt, und alle anderen Minen johlen über dein Scheitern.',
+        challengeLoss: 'Herausforderung fehlgeschlagen: Decke alle {seconds}s mindestens {target} Felder auf.',
         win: 'Gewonnen! Alle sicheren Felder offen.',
         enterRoom: 'Zuerst Code eingeben.',
         roomNotFound: 'Raum {code} nicht gefunden.',

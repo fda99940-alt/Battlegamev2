@@ -28,6 +28,10 @@
         language: '♬♪♬',
         on: '♪',
         off: '♩',
+        challengePace: '♫ Challenge tempo',
+        challengeMode: '♬ Challenge mode',
+        challengeTarget: 'Reveals per measure',
+        challengeWindow: 'Measure seconds',
       },
       theme: {
         neon: '♪♪',
@@ -97,6 +101,7 @@
         replayProgress: '♫{step}/{total}',
         replayComplete: '♬',
         loss: '♩♬♩ (♫♭♩ mines mock your sour cadence)',
+        challengeLoss: '♩ Challenge failed: reveal {target} cells every {seconds}s.',
         win: '♪♫♪',
         enterRoom: '♫♪',
         roomNotFound: '{code}♬',

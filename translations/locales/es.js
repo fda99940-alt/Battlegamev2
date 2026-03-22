@@ -28,6 +28,10 @@
         language: 'Idioma',
         on: 'on',
         off: 'off',
+        challengePace: 'Ritmo del desafio',
+        challengeMode: 'Modo desafio',
+        challengeTarget: 'Casillas por intervalo',
+        challengeWindow: 'Segundos del intervalo',
       },
       theme: {
         neon: 'Neón',
@@ -97,6 +101,7 @@
         replayProgress: 'Reproduciendo partida del {timestamp} ({step}/{total})',
         replayComplete: 'Reproducción finalizada. Aplica un nuevo diseño.',
         loss: '¡Boom! Las minas se burlan mientras se revelan todas tú errores.',
+        challengeLoss: 'Desafio fallido: revela {target} casillas cada {seconds}s.',
         win: '¡Victoria! Todas las casillas seguras fueron descubiertas.',
         enterRoom: 'Introduce un código de sala primero.',
         roomNotFound: 'Sala {code} no encontrada.',

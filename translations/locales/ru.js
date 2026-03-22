@@ -28,6 +28,10 @@
         language: 'Язык',
         on: 'вкл',
         off: 'выкл',
+        challengePace: 'Темп испытания',
+        challengeMode: 'Режим испытания',
+        challengeTarget: 'Открытий за окно',
+        challengeWindow: 'Секунды окна',
       },
       theme: {
         neon: 'Неон',
@@ -97,6 +101,7 @@
         replayProgress: 'Идёт воспроизведение ({step}/{total}) от {timestamp}',
         replayComplete: 'Повтор завершён. Примените новую сетку.',
         loss: 'Вы попали на мину! Все мины теперь ржут над тем, как вы угадали самый очевидный шаг.',
+        challengeLoss: 'Испытание провалено: открывайте {target} клеток каждые {seconds}с.',
         win: 'Победа! Все безопасные клетки открыты.',
         enterRoom: 'Сначала введите код.',
         roomNotFound: 'Комната {code} не найдена.',

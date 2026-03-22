@@ -28,6 +28,10 @@
       language: 'Lingua',
       on: 'attivo',
       off: 'spento',
+        challengePace: 'Ritmo sfida',
+        challengeMode: 'Modalita sfida',
+        challengeTarget: 'Scoperte per intervallo',
+        challengeWindow: 'Secondi intervallo',
       seed: 'Seed',
     },
     theme: {
@@ -99,6 +103,7 @@
       replayProgress: 'Replay ({step}/{total}) da {timestamp}. Tieni il ritmo.',
       replayComplete: 'Replay completato. Evita la stessa mina.',
       loss: 'Hai appena colpito una mina. Le mine brindano alla tua incompetenza.',
+        challengeLoss: 'Sfida fallita: rivela {target} celle ogni {seconds}s.',
       win: 'Vittoria. Una mossa audace per una volta.',
       enterRoom: 'Inserisci un seed, se ne hai uno.',
       roomNotFound: 'Seed {code} non trovato. Che sorpresa.',

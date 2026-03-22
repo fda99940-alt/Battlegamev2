@@ -28,6 +28,10 @@
         language: 'Idioma',
         on: 'ligado',
         off: 'desligado',
+        challengePace: 'Ritmo do desafio',
+        challengeMode: 'Modo desafio',
+        challengeTarget: 'Revelacoes por janela',
+        challengeWindow: 'Segundos da janela',
       },
       theme: {
         neon: 'Neon',
@@ -97,6 +101,7 @@
         replayProgress: 'Reproduzindo ({step}/{total}) de {timestamp}',
         replayComplete: 'Replay finalizado. Crie um novo layout.',
         loss: 'Você pisou em uma mina! As minas agora fazem festa apontando para você.',
+        challengeLoss: 'Desafio falhou: revele {target} celulas a cada {seconds}s.',
         win: 'Vitória! Todas as células seguras abertas.',
         enterRoom: 'Digite um código de sala primeiro.',
         roomNotFound: 'Sala {code} não encontrada.',

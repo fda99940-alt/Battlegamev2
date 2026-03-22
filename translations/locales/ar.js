@@ -28,6 +28,10 @@
         language: 'اللغة',
         on: 'تشغيل',
         off: 'إيقاف',
+        challengePace: 'وتيرة التحدي',
+        challengeMode: 'وضع التحدي',
+        challengeTarget: 'الخلايا لكل نافذة',
+        challengeWindow: 'ثواني النافذة',
       },
       theme: {
         neon: 'نيون',
@@ -97,6 +101,7 @@
         replayProgress: 'إعادة ({step}/{total}) من {timestamp}',
         replayComplete: 'انتهت الإعادة. قم بإعداد لوحة جديدة.',
         loss: 'انفجار! وقعت على لغم، والكل يضحك لأنك اخترت طريق الغباء.',
+        challengeLoss: 'فشل التحدي: اكشف {target} خلية كل {seconds} ثانية.',
         win: 'نجاح! كل الخلايا الآمنة مكشوفة.',
         enterRoom: 'أدخل الكود أولاً.',
         roomNotFound: 'الغرفة {code} غير موجودة.',

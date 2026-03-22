@@ -274,11 +274,75 @@ body {
 
 .floating-start-row {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   gap: 0.55rem;
   margin-top: -1.05rem;
   margin-bottom: -0.45rem;
+}
+
+.challenge-pace-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.52rem 0.92rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--highlight) 48%, var(--panel-border) 52%);
+  background:
+    linear-gradient(120deg, color-mix(in srgb, var(--highlight) 16%, transparent 84%), transparent 40%),
+    color-mix(in srgb, var(--panel-surface) 70%, #000 30%);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--highlight) 18%, transparent 82%) inset,
+    0 0 24px color-mix(in srgb, var(--highlight) 26%, transparent 74%);
+  color: color-mix(in srgb, var(--text-primary) 74%, var(--text-faint) 26%);
+  font-size: 0.82rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  animation: challengeChipGlow 2.4s ease-in-out infinite;
+}
+
+.challenge-pace-chip__label {
+  white-space: nowrap;
+  text-transform: uppercase;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.challenge-pace-chip strong {
+  color: color-mix(in srgb, var(--highlight) 58%, #fff 42%);
+  font-size: 1rem;
+  text-shadow: 0 0 12px color-mix(in srgb, var(--highlight) 48%, transparent 52%);
+}
+
+.challenge-pace-chip--urgent {
+  border-color: color-mix(in srgb, var(--danger) 62%, #fff 38%);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--danger) 32%, transparent 68%) inset,
+    0 0 28px color-mix(in srgb, var(--danger) 48%, transparent 52%);
+  animation: challengeChipUrgent 0.8s ease-in-out infinite;
+}
+
+@keyframes challengeChipGlow {
+  0%,
+  100% {
+    transform: translateY(0);
+    filter: saturate(0.95);
+  }
+  50% {
+    transform: translateY(-1px);
+    filter: saturate(1.15);
+  }
+}
+
+@keyframes challengeChipUrgent {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.045);
+  }
 }
 
 .floating-start-btn {

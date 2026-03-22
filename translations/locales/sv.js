@@ -28,6 +28,10 @@
         language: 'Språk',
         on: 'på',
         off: 'av',
+        challengePace: 'Utmaningstempo',
+        challengeMode: 'Utmaningslage',
+        challengeTarget: 'Avslojanden per fonster',
+        challengeWindow: 'Fonster i sekunder',
       },
       theme: {
         neon: 'Neon',
@@ -97,6 +101,7 @@
         replayProgress: 'Repriserar ({step}/{total}) från {timestamp}',
         replayComplete: 'Repris klar. Välj ny layout.',
         loss: 'Ajdå! En mina bröt upp och de andra småskrattar på avstånd.',
+        challengeLoss: 'Utmaning misslyckades: avslöja {target} rutor var {seconds}:e sekund.',
         win: 'Seger! Alla säkra rutor funna.',
         enterRoom: 'Ange kod först.',
         roomNotFound: 'Rum {code} hittades inte.',

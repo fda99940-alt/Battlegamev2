@@ -28,6 +28,10 @@
       language: 'Dil',
       on: 'açık',
       off: 'kapalı',
+        challengePace: 'Meydan okuma temposu',
+        challengeMode: 'Meydan okuma modu',
+        challengeTarget: 'Pencere basina acma',
+        challengeWindow: 'Pencere saniyesi',
       seed: 'Seed',
     },
     theme: {
@@ -98,6 +102,7 @@
       replayProgress: '{timestamp} tarihli oyunun ({step}/{total}) tekrar oynatılıyor. Takip et.',
       replayComplete: 'Tekrar tamamlandı. Aynı mayına basma.',
       loss: 'Mayına bastın. Mayınlar senin acını kutluyor.',
+        challengeLoss: 'Meydan okuma basarisiz: her {seconds} sn icinde {target} hucre ac.',
       win: 'Zafer. Nadir bir cesaret hareketi.',
       enterRoom: 'Bir seed gir, ya da en azından dene.',
       roomNotFound: 'Seed {code} bulunamadı. Şaşırtıcı değil.',

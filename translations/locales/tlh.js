@@ -28,6 +28,10 @@
         language: 'Hol',
         on: 'lIj',
         off: 'QIj',
+        challengePace: 'QapmeH mI\'',
+        challengeMode: 'QapmeH Dotlh',
+        challengeTarget: 'poH mI\'Daq yIleghbogh velmey',
+        challengeWindow: 'poH lup',
       },
       theme: {
         neon: 'ne\'on',
@@ -97,6 +101,7 @@
         replayProgress: 'replay ({step}/{total}) {timestamp}',
         replayComplete: 'replay puS. Layout chu\'.',
         loss: 'mab vIje\'laH! Hoch mInwI\'pu\' vIraj, SoH baq wovmoH.',
+        challengeLoss: 'QaplaHbe\': {seconds}s retlhDaq {target} velmey yIlegh.',
         win: 'Qap! rop legh.',
         enterRoom: 'code vIghItlh.',
         roomNotFound: 'lux {code} lu\'e\'.',

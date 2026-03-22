@@ -28,6 +28,10 @@
         language: 'Lingvo',
         on: 'ŝaltita',
         off: 'malŝaltita',
+        challengePace: 'Defia ritmo',
+        challengeMode: 'Defia reĝimo',
+        challengeTarget: 'Malkaŝoj por fenestro',
+        challengeWindow: 'Fenestraj sekundoj',
       },
       theme: {
         neon: 'Neono',
@@ -97,6 +101,7 @@
         replayProgress: 'Re-ludante ({step}/{total}) de {timestamp}',
         replayComplete: 'Re-ludo finiĝis. Apliki novan agordon.',
         loss: 'Boom! Vi frapis minon kaj ĉiuj minoj nun grakas, montrante kiom vi malbone pensas.',
+        challengeLoss: 'Defio malsukcesis: malkaŝu {target} ĉelojn ĉiujn {seconds}s.',
         win: 'Venko! Ĉeloj malkovritaj.',
         enterRoom: 'Unue enigu kodon.',
         roomNotFound: 'Ĉambro {code} ne trovita.',

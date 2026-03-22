@@ -28,6 +28,10 @@
       language: 'ভাষা',
       on: 'চালু',
       off: 'বন্ধ',
+        challengePace: 'চ্যালেঞ্জ গতি',
+        challengeMode: 'চ্যালেঞ্জ মোড',
+        challengeTarget: 'প্রতি উইন্ডোতে উন্মোচিত ঘর',
+        challengeWindow: 'উইন্ডোর সেকেন্ড',
       seed: 'সিড',
     },
     theme: {
@@ -99,6 +103,7 @@
       replayProgress: '{timestamp} রানের ({step}/{total}) পুনরাবৃত্তি চলছে. খেয়াল রাখো.',
       replayComplete: 'রিপ্লে শেষ. একই মাইন এড়াও.',
       loss: 'মাইন লাগল. মাইনগুলো তোমার ব্যর্থতা উদযাপন করছে।',
+        challengeLoss: 'চ্যালেঞ্জ ব্যর্থ: প্রতি {seconds} সেকেন্ডে {target}টি ঘর খুলতে হবে।',
       win: 'বিজয়! এই বার্তা খুব সাহসী।',
       enterRoom: 'একটা সিড দাও, যদি থাকে।',
       roomNotFound: 'সিড {code} পাওয়া যায়নি. অচমকাকার নয়।',

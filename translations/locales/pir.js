@@ -28,6 +28,10 @@
         language: 'Tongue',
         on: 'hoist',
         off: 'lowered',
+        challengePace: 'Trial pace',
+        challengeMode: 'Trial mode',
+        challengeTarget: 'Reveals per watch',
+        challengeWindow: 'Watch seconds',
       },
       theme: {
         neon: 'Neon',
@@ -97,6 +101,7 @@
         replayProgress: 'Replaying ({step}/{total}) from {timestamp}',
         replayComplete: 'Replay done. Reset the rig.',
         loss: 'Boom! A mine exploded and the crew be cackling about yer lack of sea sense.',
+        challengeLoss: 'Ye failed the trial: reveal {target} tiles every {seconds}s.',
         win: 'Victory! All safe tiles found.',
         enterRoom: 'Enter a room code first.',
         roomNotFound: 'Room {code} not found.',

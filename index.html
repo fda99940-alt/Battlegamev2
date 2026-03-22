@@ -72,6 +72,10 @@
         <button type="button" class="ghost status-focus-toggle" id="toggleToastHistory" aria-pressed="false">
           Toasts: off
         </button>
+        <div class="challenge-pace-chip" id="challengePaceChip" hidden>
+          <span class="challenge-pace-chip__label" data-i18n-key="label.challengePace">Challenge pace</span>
+          <strong id="challengeProgress">Off</strong>
+        </div>
       </div>
       <div class="toast-history-panel" id="toastHistoryPanel" hidden>
         <div class="toast-history-panel__head">
@@ -219,6 +223,20 @@
               <p class="config-scale-note" id="configScaleInfo" data-i18n-key="config.scaleInfoPlaceholder">
                 Counts are per face and multiplied by active faces.
               </p>
+              <div class="advanced-controls__grid">
+                <label>
+                  <span data-i18n-key="label.challengeMode">Challenge mode</span>
+                  <input type="checkbox" id="challengeModeInput" />
+                </label>
+                <label>
+                  <span data-i18n-key="label.challengeTarget">Reveals per window</span>
+                  <input type="number" id="challengeTargetInput" min="1" max="40" value="6" />
+                </label>
+                <label>
+                  <span data-i18n-key="label.challengeWindow">Window seconds</span>
+                  <input type="number" id="challengeWindowInput" min="3" max="120" value="15" />
+                </label>
+              </div>
               <div class="actions">
                 <label class="renderer-switcher" for="rendererModeSelect">
                   <span>Renderer</span>

@@ -28,6 +28,10 @@
         language: '语言',
         on: '开启',
         off: '关闭',
+        challengePace: '挑战节奏',
+        challengeMode: '挑战模式',
+        challengeTarget: '每窗口揭示数',
+        challengeWindow: '窗口秒数',
       },
       theme: {
         neon: '霓虹',
@@ -97,6 +101,7 @@
         replayProgress: '正在回放于 {timestamp} 的对局 ({step}/{total})',
         replayComplete: '回放完成，请应用新布局。',
         loss: '踩雷啦！所有地雷一起跳出来嘲笑你，喊着“看，我早就说了”。',
+        challengeLoss: '挑战失败：每{seconds}秒需揭示{target}格。',
         win: '胜利！所有安全格已找到。',
         enterRoom: '请先输入房间代码。',
         roomNotFound: '未找到房间 {code}。',

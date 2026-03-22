@@ -14,6 +14,7 @@ const statusMessage = document.getElementById('statusMessage');
 const remainingMinesEl = document.getElementById('remainingMines');
 const elapsedTimeEl = document.getElementById('elapsedTime');
 const revealedCountEl = document.getElementById('revealedCount');
+const challengeProgressEl = document.getElementById('challengeProgress');
 const rotationCountEl = document.getElementById('rotationCount');
 const flipCountEl = document.getElementById('flipCount');
 const dogCountEl = document.getElementById('dogCount');
@@ -28,6 +29,9 @@ const rotationInput = document.getElementById('rotationInput');
 const flipInput = document.getElementById('flipInput');
 const dogInput = document.getElementById('dogInput');
 const guardianInput = document.getElementById('guardianInput');
+const challengeModeInput = document.getElementById('challengeModeInput');
+const challengeTargetInput = document.getElementById('challengeTargetInput');
+const challengeWindowInput = document.getElementById('challengeWindowInput');
 const facesInput = document.getElementById('facesInput');
 const faceShapeInfoEl = document.getElementById('faceShapeInfo');
 const configScaleInfoEl = document.getElementById('configScaleInfo');
@@ -57,6 +61,7 @@ const toggleToastHistoryBtn = document.getElementById('toggleToastHistory');
 const toastHistoryPanelEl = document.getElementById('toastHistoryPanel');
 const toastHistoryListEl = document.getElementById('toastHistoryList');
 const clearToastHistoryBtn = document.getElementById('clearToastHistory');
+const challengePaceChipEl = document.getElementById('challengePaceChip');
 const appShellEl = document.querySelector('.app-shell');
 const appVersionBadgeEl = document.getElementById('appVersionBadge');
 const toggleNeighborDebugBtn = document.getElementById('toggleNeighborDebug');
@@ -203,6 +208,9 @@ const difficultyPresets = {
     flipSpecials: 12,
     dogSpecials: 6,
     guardianSpecials: 6,
+    challengeMode: false,
+    challengeTarget: 6,
+    challengeWindowSeconds: 15,
   };
 
   let grid = [];
@@ -246,6 +254,8 @@ const difficultyPresets = {
   let neighborDebugOriginNodes = [];
   let neighborDebugNeighborNodes = [];
   let neighborDebugHoverNodes = [];
+  let challengeWindowStartRevealed = 0;
+  let challengeWindowDeadline = 0;
 
   const NEIGHBORS = [
     [-1, -1],
@@ -371,8 +381,54 @@ const difficultyPresets = {
     }
     elapsedTimer = setInterval(() => {
       if (!gameActive || !runStartTime) return;
+      processChallengeTick(Date.now());
       updateStatus();
     }, 1000);
+  }
+
+  function isChallengeEnabled() {
+    return Boolean(config?.challengeMode);
+  }
+
+  function getChallengeTarget() {
+    return Math.max(Number(config?.challengeTarget) || 1, 1);
+  }
+
+  function getChallengeWindowSeconds() {
+    return Math.max(Number(config?.challengeWindowSeconds) || 1, 1);
+  }
+
+  function getChallengeWindowMs() {
+    return getChallengeWindowSeconds() * 1000;
+  }
+
+  function resetChallengeTracking(now = Date.now()) {
+    challengeWindowStartRevealed = revealedCount;
+    challengeWindowDeadline = isChallengeEnabled() ? now + getChallengeWindowMs() : 0;
+  }
+
+  function getChallengeSnapshot(now = Date.now()) {
+    if (!isChallengeEnabled() || !gameActive) return null;
+    return {
+      target: getChallengeTarget(),
+      revealedInWindow: Math.max(revealedCount - challengeWindowStartRevealed, 0),
+      remainingMs: Math.max(challengeWindowDeadline - now, 0),
+      windowSeconds: getChallengeWindowSeconds(),
+    };
+  }
+
+  function processChallengeTick(now = Date.now()) {
+    if (!gameActive || !isChallengeEnabled()) return;
+    const target = getChallengeTarget();
+    const revealedInWindow = Math.max(revealedCount - challengeWindowStartRevealed, 0);
+    if (revealedInWindow >= target) {
+      challengeWindowStartRevealed = revealedCount;
+      challengeWindowDeadline = now + getChallengeWindowMs();
+      return;
+    }
+    if (challengeWindowDeadline > 0 && now > challengeWindowDeadline) {
+      handleChallengeLoss({ target, seconds: getChallengeWindowSeconds() });
+    }
   }
 
   configForm.addEventListener('submit', (event) => {
@@ -741,6 +797,7 @@ const difficultyPresets = {
     renderBoard();
     applyTransform();
     applyCheatState();
+    resetChallengeTracking(runStartTime);
     const layoutPayload = layout || captureLayoutPayload();
     currentRoomCode = roomCode || generateRoomCode(config, currentRoomSeed);
     updateSeedDisplay();
@@ -964,6 +1021,13 @@ const difficultyPresets = {
       maxGuardianPerFace
     );
     const guardianSpecials = guardianPerFace * faceCount;
+    const challengeMode = Boolean(challengeModeInput?.checked ?? config.challengeMode);
+    const challengeTarget = clamp(Number(challengeTargetInput?.value) || config.challengeTarget || 6, 1, 40);
+    const challengeWindowSeconds = clamp(
+      Number(challengeWindowInput?.value) || config.challengeWindowSeconds || 15,
+      3,
+      120
+    );
 
     applyConfigToInputs({
       rows,
@@ -974,6 +1038,9 @@ const difficultyPresets = {
       flipSpecials,
       dogSpecials,
       guardianSpecials,
+      challengeMode,
+      challengeTarget,
+      challengeWindowSeconds,
     });
     updateConfigScalingNote();
     return {
@@ -985,6 +1052,9 @@ const difficultyPresets = {
       flipSpecials,
       dogSpecials,
       guardianSpecials,
+      challengeMode,
+      challengeTarget,
+      challengeWindowSeconds,
     };
   }
 
@@ -1006,6 +1076,23 @@ const difficultyPresets = {
     }
     if (guardianInput) {
       guardianInput.value = toPerFaceCount(values.guardianSpecials ?? 0);
+    }
+    if (challengeModeInput) {
+      challengeModeInput.checked = Boolean(values.challengeMode ?? config.challengeMode ?? false);
+    }
+    if (challengeTargetInput) {
+      challengeTargetInput.value = clamp(
+        Number(values.challengeTarget ?? config.challengeTarget ?? 6) || 6,
+        1,
+        40
+      );
+    }
+    if (challengeWindowInput) {
+      challengeWindowInput.value = clamp(
+        Number(values.challengeWindowSeconds ?? config.challengeWindowSeconds ?? 15) || 15,
+        3,
+        120
+      );
     }
     updateConfigScalingNote();
   }
@@ -1227,9 +1314,27 @@ const difficultyPresets = {
    * Refreshes counters showing mines remaining, revealed cells, and specials triggered.
    */
   function updateStatus() {
+    const now = Date.now();
+    processChallengeTick(now);
     remainingMinesEl.textContent = Math.max(config.mines - flaggedCount, 0);
     if (elapsedTimeEl) {
       elapsedTimeEl.textContent = runStartTime ? formatElapsed(Date.now() - runStartTime) : '00:00';
+    }
+    if (challengeProgressEl) {
+      const challenge = getChallengeSnapshot(now);
+      if (challengePaceChipEl) {
+        challengePaceChipEl.hidden = !isChallengeEnabled();
+      }
+      if (challenge) {
+        challengeProgressEl.textContent = `${challenge.revealedInWindow}/${challenge.target} • ${formatElapsed(challenge.remainingMs)}`;
+        challengePaceChipEl?.classList.toggle('challenge-pace-chip--urgent', challenge.remainingMs <= 5000);
+      } else if (isChallengeEnabled()) {
+        challengeProgressEl.textContent = `0/${getChallengeTarget()} • 00:00`;
+        challengePaceChipEl?.classList.remove('challenge-pace-chip--urgent');
+      } else {
+        challengeProgressEl.textContent = t('label.off');
+        challengePaceChipEl?.classList.remove('challenge-pace-chip--urgent');
+      }
     }
     revealedCountEl.textContent = revealedCount;
     rotationCountEl.textContent = rotationTriggers;
@@ -1265,6 +1370,19 @@ const difficultyPresets = {
     showStatusMessage('status.loss');
     saveRun('loss');
     speakAvatar('loss', { pos: describeCellPosition(cell) }, { toast: true });
+  }
+
+  function handleChallengeLoss(details = {}) {
+    if (!gameActive) return;
+    gameActive = false;
+    updatePlayLayoutState();
+    revealAllMines();
+    showStatusMessage('status.challengeLoss', {
+      target: details.target || getChallengeTarget(),
+      seconds: details.seconds || getChallengeWindowSeconds(),
+    });
+    saveRun('loss');
+    speakAvatar('loss', { pos: 'challenge timer' }, { toast: true });
   }
 
   /**
@@ -2084,6 +2202,8 @@ const difficultyPresets = {
     focusCell = { face: faceId(0), row: 0, col: 0 };
     suppressNextReveal = false;
     cubeDrag = null;
+    challengeWindowStartRevealed = 0;
+    challengeWindowDeadline = 0;
   }
 
   /**

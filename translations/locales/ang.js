@@ -28,6 +28,10 @@
         language: 'Language',
         on: 'on',
         off: 'off',
+        challengePace: 'Cempes hraednes',
+        challengeMode: 'Cempes gemod',
+        challengeTarget: 'Atywungena be timan-rim',
+        challengeWindow: 'Tima-rimes secunda',
       },
       theme: {
         neon: 'Neon',
@@ -97,6 +101,7 @@
         replayProgress: 'Replaying ({step}/{total}) from {timestamp}. Keep up, maybe?',
         replayComplete: 'Replay complete. Try not to trigger the same mine.',
         loss: 'You just hit a mine. The mines are celebrating your incompetence.',
+        challengeLoss: 'Cempes forloren: aetiew {target} feldas aelce {seconds}s.',
         win: 'Victory. Bold move for once.',
         enterRoom: 'Enter a room code, if you even have one.',
         roomNotFound: 'Room {code} not found. Shocker.',

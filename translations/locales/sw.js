@@ -28,6 +28,10 @@
         language: 'Lugha',
         on: 'washa',
         off: 'zimwa',
+        challengePace: 'Kasi ya changamoto',
+        challengeMode: 'Hali ya changamoto',
+        challengeTarget: 'Vifunuo kwa dirisha',
+        challengeWindow: 'Sekunde za dirisha',
       },
       theme: {
         neon: 'Neon',
@@ -97,6 +101,7 @@
         replayProgress: 'Inarudisha mchezo wa {timestamp} ({step}/{total})',
         replayComplete: 'Rudisha limekamilika. Jaribu mipangilio mpya.',
         loss: 'Umgongano! Mina zote zimeruka na kukutabasamu kama wewe ni mzuri wa kuchapisha tu.',
+        challengeLoss: 'Changamoto imefeli: funua seli {target} kila sekunde {seconds}.',
         win: 'Ushindi! Selimu zote salama zimefichuliwa.',
         enterRoom: 'Weka msimbo wa chumba kwanza.',
         roomNotFound: 'Chumba {code} hakikupatikana.',

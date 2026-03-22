@@ -28,6 +28,10 @@
         language: 'Tongue',
         on: 'on',
         off: 'off',
+        challengePace: 'Challenge zoomies',
+        challengeMode: 'Challenge modez',
+        challengeTarget: 'Reveals per winda',
+        challengeWindow: 'Winda seconds',
       },
       theme: {
         neon: 'Neon',
@@ -97,6 +101,7 @@
         replayProgress: 'Replay ({step}/{total}) from {timestamp}',
         replayComplete: 'Replay done. Apply new layout.',
         loss: 'O noes! Mine exploded and all da other mines is laughing at ur foibles.',
+        challengeLoss: 'Challenge fail: reveal {target} tiles every {seconds}s.',
         win: 'Yay! All safe cells found.',
         enterRoom: 'Enter a room code first.',
         roomNotFound: 'Room {code} not found.',
