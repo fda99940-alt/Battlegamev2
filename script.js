@@ -1,7 +1,7 @@
 const translationBundle = window.MindsweeperTranslations || {};
 const LANGUAGE_OPTIONS = translationBundle.LANGUAGE_OPTIONS || [];
 const TRANSLATIONS = translationBundle.TRANSLATIONS || {};
-const APP_VERSION = '1.2.0';
+const APP_VERSION = '1.3.0';
 
 /**
  * Main entry point that scopes Mindsweeper logic, prepares DOM references, and keeps state isolated.
