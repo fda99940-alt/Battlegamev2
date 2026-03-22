@@ -67,6 +67,7 @@
     const {
       runs = [],
       clearHistoryBtn,
+      exportHistoryBtn,
       historyList,
       historyVisibleCount = 20,
       historyPageSize = 20,
@@ -76,6 +77,8 @@
       t = (key) => key,
       formatTimestamp = (value) => String(value),
       resolveReplayBoardMode = () => 'cube',
+      emptyMessageKey = 'history.empty',
+      filteredEmptyMessageKey = 'history.filteredEmpty',
     } = options;
 
     if (!historyList) return;
@@ -90,8 +93,12 @@
       historyFilterDate,
     });
 
+    if (exportHistoryBtn) {
+      exportHistoryBtn.disabled = runs.length === 0;
+    }
+
     if (!runs.length) {
-      historyList.innerHTML = `<p class="history-empty">${t('history.empty')}</p>`;
+      historyList.innerHTML = `<p class="history-empty">${t(emptyMessageKey)}</p>`;
       updateHistoryShowMoreButton({
         historyShowMoreBtn,
         totalFilteredCount: 0,
@@ -103,7 +110,7 @@
     }
 
     if (!filteredRuns.length) {
-      historyList.innerHTML = `<p class="history-empty">${t('history.filteredEmpty')}</p>`;
+      historyList.innerHTML = `<p class="history-empty">${t(filteredEmptyMessageKey)}</p>`;
       updateHistoryShowMoreButton({
         historyShowMoreBtn,
         totalFilteredCount: 0,
@@ -175,6 +182,12 @@
       replayButton.dataset.id = run.id;
       replayButton.textContent = t('button.replay');
 
+      const exportButton = document.createElement('button');
+      exportButton.type = 'button';
+      exportButton.dataset.action = 'export';
+      exportButton.dataset.id = run.id;
+      exportButton.textContent = t('button.exportRun');
+
       const deleteButton = document.createElement('button');
       deleteButton.type = 'button';
       deleteButton.className = 'delete';
@@ -183,6 +196,7 @@
       deleteButton.textContent = t('button.delete');
 
       runActionsEl.appendChild(replayButton);
+      runActionsEl.appendChild(exportButton);
       runActionsEl.appendChild(deleteButton);
       wrapper.appendChild(runActionsEl);
       historyList.appendChild(wrapper);

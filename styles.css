@@ -1722,6 +1722,69 @@ button.ghost {
   margin-bottom: 0.6rem;
 }
 
+.history-tabs {
+  display: flex;
+  gap: 0.45rem;
+  margin-bottom: 0.75rem;
+}
+
+.history-tab {
+  font-size: 0.78rem;
+  padding: 0.4rem 0.75rem;
+}
+
+.history-tab.is-active {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--text-primary);
+}
+
+.history-tab-panel {
+  display: none;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.history-tab-panel.is-active {
+  display: flex;
+}
+
+.history-tab-panel[hidden] {
+  display: none !important;
+}
+
+.history-import {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.history-import__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.history-import__file {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--text-faint);
+}
+
+.history-import__file input[type="file"] {
+  font-size: 0.78rem;
+  color: var(--text-primary);
+}
+
+.history-import__hint {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-faint);
+}
+
 .history-toolbar label {
   display: inline-flex;
   align-items: center;
@@ -1810,6 +1873,11 @@ button.ghost {
 }
 
 .panel.history.history--collapsed .history-toolbar {
+  display: none;
+}
+
+.panel.history.history--collapsed .history-tabs,
+.panel.history.history--collapsed .history-tab-panel {
   display: none;
 }
 

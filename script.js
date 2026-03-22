@@ -40,6 +40,12 @@ const clearThreeTextureBtn = document.getElementById('clearThreeTexture');
 const threeTextureNameEl = document.getElementById('threeTextureName');
 const showMinesBtn = document.getElementById('showMinesHandle');
 const clearHistoryBtn = document.getElementById('clearHistory');
+const exportHistoryBtn = document.getElementById('exportHistory');
+const historyTabButtons = document.querySelectorAll('[data-history-tab]');
+const historyTabPanels = document.querySelectorAll('[data-history-panel]');
+const importHistoryFileInput = document.getElementById('importHistoryFile');
+const importHistoryList = document.getElementById('importHistoryList');
+const clearImportedHistoryBtn = document.getElementById('clearImportedHistory');
 const historyList = document.getElementById('historyList');
 const historyResultFilterEl = document.getElementById('historyResultFilter');
 const historyDateFilterEl = document.getElementById('historyDateFilter');
@@ -61,6 +67,8 @@ const boardModeStorageKey = 'mindsweeperBoardMode';
 const rendererStorageKey = 'mindsweeperRenderer';
 const neighborDebugStorageKey = 'mindsweeperNeighborDebug';
 const focusModeStorageKey = 'mindsweeperFocusMode';
+const historyTabStorageKey = 'mindsweeperHistoryTab';
+const importedRunsKey = 'mindsweeperImportedRuns';
 const SUPPORTED_RENDERERS = ['dom', 'canvas', 'three'];
 const availableThemes = ['neon', 'dusk', 'sunrise', 'midnight', 'verdant', 'ember'];
 const defaultTheme = 'ember';
@@ -200,6 +208,7 @@ const difficultyPresets = {
   let grid = [];
   let runActions = [];
   let runs = historyStore.loadRuns({ safeGetJSON, historyKey });
+  let importedRuns = safeGetJSON(importedRunsKey, []);
   let gameActive = false;
   let boardMode = loadBoardMode();
   let rendererMode = loadRendererMode();
@@ -422,6 +431,10 @@ const difficultyPresets = {
     renderHistory();
   });
 
+  if (exportHistoryBtn) {
+    exportHistoryBtn.addEventListener('click', exportHistory);
+  }
+
   if (historyResultFilterEl) {
     historyResultFilterEl.addEventListener('change', () => {
       historyFilterResult = historyResultFilterEl.value;
@@ -442,6 +455,44 @@ const difficultyPresets = {
     historyShowMoreBtn.addEventListener('click', () => {
       historyVisibleCount += historyPageSize;
       renderHistory();
+    });
+  }
+
+  if (importHistoryFileInput) {
+    importHistoryFileInput.addEventListener('change', async (event) => {
+      const file = event.target?.files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        const runsFromFile = normalizeImportedRuns(data);
+        if (!runsFromFile.length) {
+          showStatusMessage('status.importEmpty');
+        } else {
+          const { added, skipped } = mergeImportedRuns(runsFromFile);
+          renderImportedHistory();
+          if (added > 0) {
+            showStatusMessage('status.importSuccess', { count: added });
+          } else if (skipped > 0) {
+            showStatusMessage('status.importInvalid');
+          } else {
+            showStatusMessage('status.importEmpty');
+          }
+        }
+      } catch (error) {
+        console.error('Unable to import history JSON', error);
+        showStatusMessage('status.importFailed');
+      } finally {
+        event.target.value = '';
+      }
+    });
+  }
+
+  if (clearImportedHistoryBtn) {
+    clearImportedHistoryBtn.addEventListener('click', () => {
+      importedRuns = [];
+      persistImportedRuns();
+      renderImportedHistory();
     });
   }
 
@@ -590,6 +641,8 @@ const difficultyPresets = {
     if (!runRecord) return;
     if (action === 'replay') {
       startReplay(runRecord);
+    } else if (action === 'export') {
+      exportSingleRun(runRecord);
     } else if (action === 'delete') {
       if (runRecord.roomCode) {
         delete roomMap[runRecord.roomCode];
@@ -600,6 +653,30 @@ const difficultyPresets = {
       renderHistory();
     }
   });
+
+  if (importHistoryList) {
+    importHistoryList.addEventListener('click', (event) => {
+      if (isReplaying) return;
+      const actionBtn = event.target.closest('button[data-action]');
+      if (!actionBtn) return;
+      const { action, id } = actionBtn.dataset;
+      const runRecord = importedRuns.find((run) => run.id === id);
+      if (!runRecord) return;
+      if (action === 'replay') {
+        if (!runRecord.seed && !runRecord.minePositions?.length) {
+          showStatusMessage('status.importMissingSeed');
+          return;
+        }
+        startReplay(runRecord);
+      } else if (action === 'export') {
+        exportSingleRun(runRecord);
+      } else if (action === 'delete') {
+        importedRuns = importedRuns.filter((run) => run.id !== id);
+        persistImportedRuns();
+        renderImportedHistory();
+      }
+    });
+  }
 
   /**
    * Initializes the UI, translations, theme, presets, history, and game state.
@@ -622,6 +699,7 @@ const difficultyPresets = {
       facesInput.value = '6';
     }
     initHistoryCollapse();
+    initHistoryTabs();
     syncHistoryFiltersUI();
     initRoomJoin();
     initNeighborDebugToggle();
@@ -629,6 +707,7 @@ const difficultyPresets = {
     renderToastHistory();
     setToastHistoryVisible(false);
     renderHistory();
+    renderImportedHistory();
     applyCheatState();
     startNewGame();
     renderNeighborDebug();
@@ -754,6 +833,14 @@ const difficultyPresets = {
    * @param {Object} record Saved run data.
    */
   function loadLayout(record) {
+    const hasMinePositions = Array.isArray(record?.minePositions) && record.minePositions.length > 0;
+    if (!hasMinePositions) {
+      const seedValue = record?.seed || createRandomSeed();
+      const rng = createRng(seedValue);
+      placeMines(config.mines, rng);
+      assignSpecials(rng);
+      return;
+    }
     applyLayoutFromPayload({
       minePositions: record.minePositions,
       rotationSpecials: record.rotationSpecials,
@@ -1283,6 +1370,7 @@ const difficultyPresets = {
     historyStore.renderHistory({
       runs,
       clearHistoryBtn,
+      exportHistoryBtn,
       historyList,
       historyVisibleCount,
       historyPageSize,
@@ -1292,6 +1380,25 @@ const difficultyPresets = {
       t,
       formatTimestamp,
       resolveReplayBoardMode,
+    });
+  }
+
+  function renderImportedHistory() {
+    if (!importHistoryList) return;
+    historyStore.renderHistory({
+      runs: importedRuns,
+      clearHistoryBtn: clearImportedHistoryBtn,
+      historyList: importHistoryList,
+      historyVisibleCount: importedRuns.length,
+      historyPageSize: Math.max(importedRuns.length, 1),
+      historyFilterResult: 'all',
+      historyFilterDate: 'all',
+      historyShowMoreBtn: null,
+      t,
+      formatTimestamp,
+      resolveReplayBoardMode,
+      emptyMessageKey: 'history.importEmpty',
+      filteredEmptyMessageKey: 'history.importEmpty',
     });
   }
 
@@ -1316,6 +1423,163 @@ const difficultyPresets = {
    */
   function persistRoomMap() {
     historyStore.persistRoomMap({ safeSetJSON, roomMapKey, roomMap });
+  }
+
+  function persistImportedRuns() {
+    safeSetJSON(importedRunsKey, importedRuns);
+  }
+
+  function createImportId(index) {
+    return `import-${Date.now()}-${Math.floor(Math.random() * 1000)}-${index}`;
+  }
+
+  function sanitizeImportedRun(run, index) {
+    if (!run || typeof run !== 'object') return null;
+    const configValue = run.config && typeof run.config === 'object' ? run.config : null;
+    const rows = Number(configValue?.rows);
+    const cols = Number(configValue?.cols);
+    const mines = Number(configValue?.mines);
+    if (!Number.isFinite(rows) || !Number.isFinite(cols) || !Number.isFinite(mines)) {
+      return null;
+    }
+    const sanitized = { ...run };
+    sanitized.config = {
+      ...configValue,
+      rows,
+      cols,
+      mines,
+    };
+    sanitized.id = typeof run.id === 'string' ? run.id : createImportId(index);
+    sanitized.result = run.result || 'unknown';
+    sanitized.actions = Array.isArray(run.actions) ? run.actions : [];
+    sanitized.duration = Number.isFinite(run.duration) ? run.duration : 0;
+    sanitized.timestamp = run.timestamp || new Date().toISOString();
+    sanitized.totalCells = Number.isFinite(run.totalCells)
+      ? run.totalCells
+      : rows * cols * (sanitized.config.faces || 6);
+    return sanitized;
+  }
+
+  function normalizeImportedRuns(payload) {
+    if (Array.isArray(payload)) return payload;
+    if (payload && Array.isArray(payload.runs)) return payload.runs;
+    return [];
+  }
+
+  function mergeImportedRuns(newRuns) {
+    const existingIds = new Set(importedRuns.map((run) => run.id));
+    let added = 0;
+    let skipped = 0;
+    newRuns.forEach((run, index) => {
+      const sanitized = sanitizeImportedRun(run, index);
+      if (!sanitized) {
+        skipped += 1;
+        return;
+      }
+      while (existingIds.has(sanitized.id)) {
+        sanitized.id = createImportId(index);
+      }
+      existingIds.add(sanitized.id);
+      importedRuns.unshift(sanitized);
+      added += 1;
+    });
+    if (added > 0) {
+      persistImportedRuns();
+    }
+    return { added, skipped };
+  }
+
+  function applyHistoryTab(tabKey, options = {}) {
+    const { persist = true } = options;
+    if (!historyTabButtons.length || !historyTabPanels.length) return;
+    historyTabButtons.forEach((button) => {
+      const isActive = button.dataset.historyTab === tabKey;
+      button.classList.toggle('is-active', isActive);
+      button.setAttribute('aria-selected', String(isActive));
+    });
+    historyTabPanels.forEach((panel) => {
+      const isActive = panel.dataset.historyPanel === tabKey;
+      panel.hidden = !isActive;
+      panel.classList.toggle('is-active', isActive);
+    });
+    if (persist) {
+      safeSetItem(historyTabStorageKey, tabKey);
+    }
+  }
+
+  function initHistoryTabs() {
+    if (!historyTabButtons.length || !historyTabPanels.length) return;
+    const stored = safeGetItem(historyTabStorageKey);
+    const initialTab = stored || 'runs';
+    applyHistoryTab(initialTab, { persist: false });
+    historyTabButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        applyHistoryTab(button.dataset.historyTab);
+      });
+    });
+  }
+
+  function buildHistoryExportPayload(filteredRuns) {
+    return {
+      version: APP_VERSION,
+      exportedAt: new Date().toISOString(),
+      totalRuns: runs.length,
+      exportedRuns: filteredRuns.length,
+      runs: filteredRuns,
+    };
+  }
+
+  function createHistoryExportFilename() {
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+    return `mindsweeper-history-${stamp}.json`;
+  }
+
+  function createRunExportFilename(runRecord) {
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const resultTag = runRecord?.result ? `${runRecord.result}-` : '';
+    return `mindsweeper-run-${resultTag}${stamp}.json`;
+  }
+
+  function stripMinePositions(runRecord) {
+    if (!runRecord || typeof runRecord !== 'object') return runRecord;
+    const sanitized = { ...runRecord };
+    delete sanitized.minePositions;
+    delete sanitized.rotationSpecials;
+    if (sanitized.layout && typeof sanitized.layout === 'object') {
+      sanitized.layout = { ...sanitized.layout };
+      delete sanitized.layout.minePositions;
+      delete sanitized.layout.rotationSpecials;
+    }
+    return sanitized;
+  }
+
+  function triggerJsonDownload(payload, filename) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+  }
+
+  function exportHistory() {
+    if (!runs.length) {
+      showStatusMessage('status.exportHistoryEmpty');
+      return;
+    }
+    const payload = buildHistoryExportPayload(runs);
+    triggerJsonDownload(payload, createHistoryExportFilename());
+    showStatusMessage('status.exportHistory', { count: runs.length });
+  }
+
+  function exportSingleRun(runRecord) {
+    if (!runRecord) return;
+    const payload = buildHistoryExportPayload([stripMinePositions(runRecord)]);
+    triggerJsonDownload(payload, createRunExportFilename(runRecord));
+    showStatusMessage('status.exportRun', { count: 1 });
   }
 
   /**

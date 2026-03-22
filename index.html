@@ -293,34 +293,64 @@
                 <button type="button" class="ghost" id="toggleHistory" data-i18n-key="button.hideHistory">
                   Hide history
                 </button>
+                <button type="button" class="ghost" id="exportHistory" data-i18n-key="button.exportHistory">
+                  Export JSON
+                </button>
                 <button type="button" class="ghost" id="clearHistory" data-i18n-key="button.clearHistory">
                   Clear history
                 </button>
               </div>
             </div>
-            <div class="history-toolbar">
-              <label>
-                <span data-i18n-key="history.filterResult">Result</span>
-                <select id="historyResultFilter">
-                  <option value="all" data-i18n-key="history.filterAll">All</option>
-                  <option value="win" data-i18n-key="history.filterWins">Wins</option>
-                  <option value="loss" data-i18n-key="history.filterLosses">Losses</option>
-                </select>
-              </label>
-              <label>
-                <span data-i18n-key="history.filterTime">Time</span>
-                <select id="historyDateFilter">
-                  <option value="all" data-i18n-key="history.filterAllTime">All time</option>
-                  <option value="24h" data-i18n-key="history.filter24h">Last 24h</option>
-                  <option value="7d" data-i18n-key="history.filter7d">Last 7 days</option>
-                  <option value="30d" data-i18n-key="history.filter30d">Last 30 days</option>
-                </select>
-              </label>
-              <button type="button" class="ghost history-more" id="historyShowMore" data-i18n-key="history.showMoreDefault">
-                Show 20 more
+            <div class="history-tabs" role="tablist">
+              <button type="button" class="ghost history-tab is-active" data-history-tab="runs" aria-selected="true" data-i18n-key="history.tabRuns">
+                Runs
+              </button>
+              <button type="button" class="ghost history-tab" data-history-tab="imports" aria-selected="false" data-i18n-key="history.tabImports">
+                Imports
               </button>
             </div>
-            <div id="historyList" class="history-list"></div>
+            <section class="history-tab-panel is-active" data-history-panel="runs">
+              <div class="history-toolbar">
+                <label>
+                  <span data-i18n-key="history.filterResult">Result</span>
+                  <select id="historyResultFilter">
+                    <option value="all" data-i18n-key="history.filterAll">All</option>
+                    <option value="win" data-i18n-key="history.filterWins">Wins</option>
+                    <option value="loss" data-i18n-key="history.filterLosses">Losses</option>
+                  </select>
+                </label>
+                <label>
+                  <span data-i18n-key="history.filterTime">Time</span>
+                  <select id="historyDateFilter">
+                    <option value="all" data-i18n-key="history.filterAllTime">All time</option>
+                    <option value="24h" data-i18n-key="history.filter24h">Last 24h</option>
+                    <option value="7d" data-i18n-key="history.filter7d">Last 7 days</option>
+                    <option value="30d" data-i18n-key="history.filter30d">Last 30 days</option>
+                  </select>
+                </label>
+                <button type="button" class="ghost history-more" id="historyShowMore" data-i18n-key="history.showMoreDefault">
+                  Show 20 more
+                </button>
+              </div>
+              <div id="historyList" class="history-list"></div>
+            </section>
+            <section class="history-tab-panel" data-history-panel="imports" hidden>
+              <div class="history-import">
+                <div class="history-import__controls">
+                  <label class="history-import__file">
+                    <span data-i18n-key="history.importLabel">Import JSON</span>
+                    <input type="file" id="importHistoryFile" accept="application/json">
+                  </label>
+                  <button type="button" class="ghost" id="clearImportedHistory" data-i18n-key="button.clearImports">
+                    Clear imports
+                  </button>
+                </div>
+                <p class="history-import__hint" data-i18n-key="history.importHint">
+                  Load exported JSON runs to replay them here.
+                </p>
+              </div>
+              <div id="importHistoryList" class="history-list"></div>
+            </section>
           </section>
         </aside>
       </section>
