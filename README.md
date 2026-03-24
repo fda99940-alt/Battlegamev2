@@ -156,6 +156,10 @@ Current automated coverage focuses on:
   - Texture work is pushed to lightweight CSS backgrounds on revealed overlay labels.
 - Styling hooks:
   - `.three-cell-label--revealed-texture` in `styles.css` provides base defaults; inline styles in `syncThreeOverlayCell(...)` are authoritative.
+- Cube seam orientation contract (important):
+  - Cube cross-face neighbor math in modules/boardTopology.js (FACE_BASIS + mapAcrossCubeEdge(...)) must stay aligned with the face transforms used in renderers/threeRenderer.js (setCubeFaceTransform(...)).
+  - If you rotate or re-orient any Three face without updating FACE_BASIS, seam neighbors will appear to jump to the wrong visible side even when the debug list is internally consistent.
+  - Quick sanity check after topology/renderer changes: in Cube mode, Cell 1:0:0 should include front-side neighbor 0:0:7 (not back-side 2:0:0).
 
 ## Future improvements
 
